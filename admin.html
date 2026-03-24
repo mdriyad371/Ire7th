@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | IRE Department</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a1a;
+            color: #eef5ff;
+            line-height: 1.5;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header {
+            background: linear-gradient(135deg, #00f2ff20, #ff336620);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid #00f2ff;
+        }
+        .header h1 { font-size: 2rem; margin-bottom: 10px; }
+        .header p { color: #00f2ff; }
+        .admin-section {
+            background: rgba(12, 22, 40, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 242, 255, 0.3);
+        }
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-left: 4px solid #00f2ff;
+            padding-left: 15px;
+        }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; color: #00f2ff; }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        input:focus, textarea:focus { outline: none; border-color: #00f2ff; }
+        button {
+            background: linear-gradient(135deg, #00f2ff, #00b8c4);
+            color: #050510;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        button.danger { background: linear-gradient(135deg, #ff4d6d, #cc2b4a); color: white; }
+        button.secondary { background: transparent; border: 1px solid #00f2ff; color: #00f2ff; }
+        .item-list { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .item-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .item-info { flex: 1; }
+        .item-title { font-weight: 600; margin-bottom: 5px; }
+        .item-detail { font-size: 0.8rem; color: #aaa; }
+        .item-actions { display: flex; gap: 10px; }
+        .item-actions button { padding: 6px 12px; font-size: 12px; margin: 0; }
+        .success-msg {
+            background: #00ff8844;
+            border: 1px solid #00ff88;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: none;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+        .nav-links { display: flex; gap: 15px; justify-content: center; margin-top: 15px; }
+        .nav-links a { color: #00f2ff; text-decoration: none; }
+        .warning {
+            background: #ffaa3344;
+            border: 1px solid #ffaa33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+        .live-preview-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #00f2ff;
+            color: #050510;
+            padding: 12px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(0,242,255,0.5);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-cog"></i> Admin Control Panel</h1>
+        <p>Manage Events, Notices, Courses & Routine</p>
+        <div class="nav-links">
+            <a href="index.html" target="_blank"><i class="fas fa-eye"></i> View Website</a>
+            <a href="#" onclick="exportData()"><i class="fas fa-download"></i> Export Data</a>
+            <a href="#" onclick="resetData()"><i class="fas fa-undo"></i> Reset to Default</a>
+        </div>
+    </div>
+
+    <div class="warning">
+        <i class="fas fa-info-circle"></i> All changes are saved automatically. Changes appear on website after refresh.
+    </div>
+
+    <div class="grid-2">
+        <!-- Events Section -->
+        <div class="admin-section">
+            <div class="section-title"><i class="fas fa-calendar-alt"></i> Manage Events</div>
+            <div>
+                <div class="form-group">
+                    <label>Event Title</label>
+                    <input type="text" id="eventTitle" placeholder="e.g., ইফতার মাহফিল ২০২৬">
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="text" id="eventDate" placeholder="e.g., March 25, 2026">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="eventDesc" rows="2" placeholder="Event description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Icon (emoji)</label>
+                    <input type="text" id="eventIcon" placeholder="e.g., 🌙" value="🎉">
+                </div>
+                <div class="form-group">
+                    <label>Image Name (put in images folder)</label>
+                    <input type="text" id="eventImage" placeholder="e.g., iftar.jpg">
+                </div>
+                <button onclick="addEvent()"><i class="fas fa-plus"></i> Add Event</button>
+            </div>
+            <div class="item-list" id="eventsList"></div>
+            <div id="eventSuccess" class="success-msg"></div>
+        </div>
+
+        <!-- Notices Section -->
+        <div class="admin-section">
+            <div class="section-title"><i class="fas fa-bullhorn"></i> Manage Notices</div>
+            <div>
+                <div class="form-group">
+                    <label>Notice Title</label>
+                    <input type="text" id="noticeTitle" placeholder="e.g., Midterm Exam Routine">
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="text" id="noticeDate" placeholder="e.g., March 10, 2026">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="noticeDesc" rows="2" placeholder="Notice details..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Icon (emoji)</label>
+                    <input type="text" id="noticeIcon" placeholder="e.g., 📢" value="📢">
+                </div>
+                <button onclick="addNotice()"><i class="fas fa-plus"></i> Add Notice</button>
+            </div>
+            <div class="item-list" id="noticesList"></div>
+            <div id="noticeSuccess" class="success-msg"></div>
+        </div>
+    </div>
+
+    <!-- Courses Section -->
+    <div class="admin-section">
+        <div class="section-title"><i class="fas fa-book"></i> Manage Courses</div>
+        <div class="grid-2">
+            <div>
+                <div class="form-group">
+                    <label>Course Code</label>
+                    <input type="text" id="courseCode" placeholder="e.g., PROG 111">
+                </div>
+                <div class="form-group">
+                    <label>Course Title</label>
+                    <input type="text" id="courseTitle" placeholder="e.g., Object Oriented Programming">
+                </div>
+            </div>
+            <div>
+                <div class="form-group">
+                    <label>Credit Hours</label>
+                    <input type="text" id="courseCredit" placeholder="e.g., 3.0">
+                </div>
+                <div class="form-group">
+                    <label>Teacher Name</label>
+                    <input type="text" id="courseTeacher" placeholder="e.g., Md. Ashiqussalehin (MAS)">
+                </div>
+            </div>
+        </div>
+        <button onclick="addCourse()"><i class="fas fa-plus"></i> Add Course</button>
+        <div class="item-list" id="coursesList"></div>
+        <div id="courseSuccess" class="success-msg"></div>
+    </div>
+
+    <!-- Routine Section -->
+    <div class="admin-section">
+        <div class="section-title"><i class="fas fa-calendar-week"></i> Manage Routine</div>
+        <div class="warning">
+            <i class="fas fa-info-circle"></i> Routine is managed via image file.
+        </div>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <button onclick="changeRoutineImage()"><i class="fas fa-upload"></i> Upload routine.jpg</button>
+            <button class="secondary" onclick="viewRoutine()"><i class="fas fa-eye"></i> View Current Routine</button>
+        </div>
+        <div id="routineInfo" style="margin-top: 15px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 12px;">
+            📌 Instructions: Save your routine image as <strong>routine.jpg</strong> in the same folder as your website files.
+        </div>
+    </div>
+</div>
+
+<a href="index.html" target="_blank" class="live-preview-btn"><i class="fas fa-external-link-alt"></i> Live Preview</a>
+
+<script>
+    let currentEvents = [];
+    let currentNotices = [];
+    let currentCourses = [];
+
+    function loadCurrentData() {
+        const savedEvents = localStorage.getItem('ire_events');
+        const savedNotices = localStorage.getItem('ire_notices');
+        const savedCourses = localStorage.getItem('ire_courses');
+        
+        if (savedEvents) currentEvents = JSON.parse(savedEvents);
+        else currentEvents = [
+            { title: "ইফতার মাহফিল ২০২৬", date: "March 25, 2026", desc: "Department of IRE organizes Iftar Mahfil.", icon: "🌙", image: "iftar.jpg" },
+            { title: "Orientation Program", date: "April 05, 2026", desc: "Welcome ceremony for new students.", icon: "🎓", image: "orientation.jpg" },
+            { title: "International Conference on Intelligent Robotics", date: "April 15, 2026", desc: "Robotics research paper submission.", icon: "🤖", image: "conference.jpg" },
+            { title: "Project Showcase - IRE Summer Fest", date: "June 12, 2026", desc: "Senior projects and robotics competition.", icon: "🚀", image: "showcase.jpg" }
+        ];
+        
+        if (savedNotices) currentNotices = JSON.parse(savedNotices);
+        else currentNotices = [
+            { title: "Midterm Exam Routine Published", date: "March 10, 2026", desc: "Midterm exams start from March 20.", icon: "📢" },
+            { title: "Robotics Workshop Registration Open", date: "March 15, 2026", desc: "3-day hands-on workshop.", icon: "🔧" },
+            { title: "Final Project Defense Schedule", date: "March 20, 2026", desc: "Project defense on April 10.", icon: "📄" },
+            { title: "New Semester Classes Begin", date: "March 25, 2026", desc: "L2T1 classes start from April 1.", icon: "📅" }
+        ];
+        
+        if (savedCourses) currentCourses = JSON.parse(savedCourses);
+        else currentCourses = [
+            { code: "PROG 111", title: "Object Oriented Programming Language", credit: "3.0", teacher: "Md. Ashiqussalehin (MAS)" },
+            { code: "PROG 112", title: "Object Oriented Programming Language Sessional", credit: "1.0", teacher: "Md. Ashiqussalehin (MAS)" },
+            { code: "CSE 113", title: "Data Structure and Algorithms", credit: "3.0", teacher: "Md Toukir Ahmed (MTA)" },
+            { code: "CSE 114", title: "Data Structure and Algorithms Sessional", credit: "1.0", teacher: "Md Toukir Ahmed (MTA)" },
+            { code: "CSE 115", title: "Discrete Mathematics and Graph Theory", credit: "1.0", teacher: "Suman Saha (SS)" },
+            { code: "SEC 105", title: "Basic Principles of Cyber Security", credit: "3.0", teacher: "Fahmida Ahmed Antara (FAA)" },
+            { code: "IRE 117", title: "Engineering Mechanics and Materials", credit: "3.0", teacher: "Sadia Enam (SE)" },
+            { code: "IRE 118", title: "Engineering Drawing", credit: "3.0", teacher: "Md. Ashiqussalehin (MAS)" }
+        ];
+        
+        renderAllLists();
+    }
+    
+    function saveAllData() {
+        localStorage.setItem('ire_events', JSON.stringify(currentEvents));
+        localStorage.setItem('ire_notices', JSON.stringify(currentNotices));
+        localStorage.setItem('ire_courses', JSON.stringify(currentCourses));
+    }
+    
+    function renderAllLists() {
+        renderEventsList();
+        renderNoticesList();
+        renderCoursesList();
+    }
+    
+    function renderEventsList() {
+        const container = document.getElementById('eventsList');
+        if (!container) return;
+        if (currentEvents.length === 0) {
+            container.innerHTML = '<p style="color: #888;">No events. Add one above.</p>';
+            return;
+        }
+        container.innerHTML = currentEvents.map((event, index) => `
+            <div class="item-card">
+                <div class="item-info">
+                    <div class="item-title">${event.icon} ${event.title}</div>
+                    <div class="item-detail">📅 ${event.date} | 🖼️ ${event.image || 'no image'}</div>
+                    <div class="item-detail">${event.desc ? event.desc.substring(0, 60) : ''}...</div>
+                </div>
+                <div class="item-actions">
+                    <button onclick="editEvent(${index})"><i class="fas fa-edit"></i></button>
+                    <button class="danger" onclick="deleteEvent(${index})"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    function renderNoticesList() {
+        const container = document.getElementById('noticesList');
+        if (!container) return;
+        if (currentNotices.length === 0) {
+            container.innerHTML = '<p style="color: #888;">No notices. Add one above.</p>';
+            return;
+        }
+        container.innerHTML = currentNotices.map((notice, index) => `
+            <div class="item-card">
+                <div class="item-info">
+                    <div class="item-title">${notice.icon} ${notice.title}</div>
+                    <div class="item-detail">📅 ${notice.date}</div>
+                    <div class="item-detail">${notice.desc ? notice.desc.substring(0, 60) : ''}...</div>
+                </div>
+                <div class="item-actions">
+                    <button onclick="editNotice(${index})"><i class="fas fa-edit"></i></button>
+                    <button class="danger" onclick="deleteNotice(${index})"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    function renderCoursesList() {
+        const container = document.getElementById('coursesList');
+        if (!container) return;
+        if (currentCourses.length === 0) {
+            container.innerHTML = '<p style="color: #888;">No courses. Add one above.</p>';
+            return;
+        }
+        container.innerHTML = currentCourses.map((course, index) => `
+            <div class="item-card">
+                <div class="item-info">
+                    <div class="item-title">${course.code} - ${course.title}</div>
+                    <div class="item-detail">📊 ${course.credit} Credits | 👨‍🏫 ${course.teacher}</div>
+                </div>
+                <div class="item-actions">
+                    <button onclick="editCourse(${index})"><i class="fas fa-edit"></i></button>
+                    <button class="danger" onclick="deleteCourse(${index})"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    function addEvent() {
+        const title = document.getElementById('eventTitle').value;
+        const date = document.getElementById('eventDate').value;
+        const desc = document.getElementById('eventDesc').value;
+        const icon = document.getElementById('eventIcon').value || '🎉';
+        const image = document.getElementById('eventImage').value;
+        if (!title || !date) { showMsg('eventSuccess', 'Please fill Title and Date', 'error'); return; }
+        currentEvents.push({ title, date, desc, icon, image });
+        saveAllData();
+        renderEventsList();
+        clearEventForm();
+        showMsg('eventSuccess', '✅ Event added successfully!');
+    }
+    
+    function deleteEvent(index) {
+        if (confirm('Delete this event?')) { currentEvents.splice(index, 1); saveAllData(); renderEventsList(); showMsg('eventSuccess', '🗑️ Event deleted!'); }
+    }
+    
+    function editEvent(index) {
+        const event = currentEvents[index];
+        document.getElementById('eventTitle').value = event.title;
+        document.getElementById('eventDate').value = event.date;
+        document.getElementById('eventDesc').value = event.desc || '';
+        document.getElementById('eventIcon').value = event.icon || '🎉';
+        document.getElementById('eventImage').value = event.image || '';
+        deleteEvent(index);
+        showMsg('eventSuccess', '✏️ Edit the details and click Add Event');
+    }
+    
+    function clearEventForm() {
+        document.getElementById('eventTitle').value = '';
+        document.getElementById('eventDate').value = '';
+        document.getElementById('eventDesc').value = '';
+        document.getElementById('eventIcon').value = '🎉';
+        document.getElementById('eventImage').value = '';
+    }
+    
+    function addNotice() {
+        const title = document.getElementById('noticeTitle').value;
+        const date = document.getElementById('noticeDate').value;
+        const desc = document.getElementById('noticeDesc').value;
+        const icon = document.getElementById('noticeIcon').value || '📢';
+        if (!title || !date) { showMsg('noticeSuccess', 'Please fill Title and Date', 'error'); return; }
+        currentNotices.push({ title, date, desc, icon });
+        saveAllData();
+        renderNoticesList();
+        clearNoticeForm();
+        showMsg('noticeSuccess', '✅ Notice added successfully!');
+    }
+    
+    function deleteNotice(index) {
+        if (confirm('Delete this notice?')) { currentNotices.splice(index, 1); saveAllData(); renderNoticesList(); showMsg('noticeSuccess', '🗑️ Notice deleted!'); }
+    }
+    
+    function editNotice(index) {
+        const notice = currentNotices[index];
+        document.getElementById('noticeTitle').value = notice.title;
+        document.getElementById('noticeDate').value = notice.date;
+        document.getElementById('noticeDesc').value = notice.desc || '';
+        document.getElementById('noticeIcon').value = notice.icon || '📢';
+        deleteNotice(index);
+        showMsg('noticeSuccess', '✏️ Edit the details and click Add Notice');
+    }
+    
+    function clearNoticeForm() {
+        document.getElementById('noticeTitle').value = '';
+        document.getElementById('noticeDate').value = '';
+        document.getElementById('noticeDesc').value = '';
+        document.getElementById('noticeIcon').value = '📢';
+    }
+    
+    function addCourse() {
+        const code = document.getElementById('courseCode').value;
+        const title = document.getElementById('courseTitle').value;
+        const credit = document.getElementById('courseCredit').value;
+        const teacher = document.getElementById('courseTeacher').value;
+        if (!code || !title) { showMsg('courseSuccess', 'Please fill Course Code and Title', 'error'); return; }
+        currentCourses.push({ code, title, credit, teacher });
+        saveAllData();
+        renderCoursesList();
+        clearCourseForm();
+        showMsg('courseSuccess', '✅ Course added successfully!');
+    }
+    
+    function deleteCourse(index) {
+        if (confirm('Delete this course?')) { currentCourses.splice(index, 1); saveAllData(); renderCoursesList(); showMsg('courseSuccess', '🗑️ Course deleted!'); }
+    }
+    
+    function editCourse(index) {
+        const course = currentCourses[index];
+        document.getElementById('courseCode').value = course.code;
+        document.getElementById('courseTitle').value = course.title;
+        document.getElementById('courseCredit').value = course.credit || '';
+        document.getElementById('courseTeacher').value = course.teacher || '';
+        deleteCourse(index);
+        showMsg('courseSuccess', '✏️ Edit the details and click Add Course');
+    }
+    
+    function clearCourseForm() {
+        document.getElementById('courseCode').value = '';
+        document.getElementById('courseTitle').value = '';
+        document.getElementById('courseCredit').value = '';
+        document.getElementById('courseTeacher').value = '';
+    }
+    
+    function changeRoutineImage() {
+        alert('📸 Instructions:\n\n1. Save your routine image as "routine.jpg"\n2. Upload it to the same folder as your website files\n3. Refresh the website to see the change');
+    }
+    
+    function viewRoutine() { window.open('routine.html', '_blank'); }
+    
+    function exportData() {
+        const dataStr = `// IRE Department Website Data\n// Generated on ${new Date().toLocaleString()}\n\nlet coursesData = ${JSON.stringify(currentCourses, null, 4)};\n\nlet eventsData = ${JSON.stringify(currentEvents, null, 4)};\n\nlet noticesData = ${JSON.stringify(currentNotices, null, 4)};`;
+        const blob = new Blob([dataStr], {type: 'application/javascript'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'data_backup.js';
+        a.click();
+        URL.revokeObjectURL(url);
+        showMsg('eventSuccess', '📥 Data exported as data_backup.js');
+    }
+    
+    function resetData() {
+        if (confirm('⚠️ WARNING: This will delete ALL your custom data and restore default content. Continue?')) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+    
+    function showMsg(elementId, msg, type = 'success') {
+        const el = document.getElementById(elementId);
+        if (el) {
+            el.textContent = msg;
+            el.style.display = 'block';
+            el.style.background = type === 'error' ? '#ff444444' : '#00ff8844';
+            setTimeout(() => { el.style.display = 'none'; }, 3000);
+        }
+    }
+    
+    loadCurrentData();
+</script>
+</body>
+</html>
