@@ -9,6 +9,41 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
+            <script>
+    // =============== SIMPLE LOGIN SYSTEM ===============
+    
+    // Set your password here (change it to your desired password)
+    const ADMIN_PASSWORD = "ire2026";
+    
+    // Check if already logged in
+    function checkLoginStatus() {
+        const loggedIn = sessionStorage.getItem('admin_logged_in');
+        if (loggedIn === 'true') {
+            return true;
+        }
+        return false;
+    }
+    
+    // Show login prompt
+    function showLoginPrompt() {
+        const password = prompt("🔐 Enter Admin Password to Access Control Panel:");
+        
+        if (password === ADMIN_PASSWORD) {
+            sessionStorage.setItem('admin_logged_in', 'true');
+            location.reload();
+        } else if (password !== null) {
+            alert("❌ Incorrect Password! Access Denied.");
+            window.location.href = "index.html";
+        } else {
+            window.location.href = "index.html";
+        }
+    }
+    
+    // Check on page load
+    if (!checkLoginStatus()) {
+        showLoginPrompt();
+    }
+</script>
             font-family: 'Inter', sans-serif;
             background: #0a0a1a;
             color: #eef5ff;
