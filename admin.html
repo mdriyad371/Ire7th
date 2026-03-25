@@ -163,32 +163,6 @@
             <div id="eventSuccess" class="success-msg"></div>
         </div>
 
-        <!-- Notices Section -->
-        <div class="admin-section">
-            <div class="section-title"><i class="fas fa-bullhorn"></i> Manage Notices</div>
-            <div>
-                <div class="form-group">
-                    <label>Notice Title</label>
-                    <input type="text" id="noticeTitle" placeholder="e.g., Midterm Exam Routine">
-                </div>
-                <div class="form-group">
-                    <label>Date</label>
-                    <input type="text" id="noticeDate" placeholder="e.g., March 10, 2026">
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="noticeDesc" rows="2" placeholder="Notice details..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Icon (emoji)</label>
-                    <input type="text" id="noticeIcon" placeholder="e.g., 📢" value="📢">
-                </div>
-                <button onclick="addNotice()"><i class="fas fa-plus"></i> Add Notice</button>
-            </div>
-            <div class="item-list" id="noticesList"></div>
-            <div id="noticeSuccess" class="success-msg"></div>
-        </div>
-    </div>
 
     <!-- Courses Section -->
     <div class="admin-section">
@@ -199,7 +173,39 @@
                     <label>Course Code</label>
                     <input type="text" id="courseCode" placeholder="e.g., PROG 111">
                 </div>
-                <div class="form-group">
+  <!-- Notices Section - Replace your existing notices section with this -->
+<div class="admin-section">
+    <div class="section-title"><i class="fas fa-bullhorn"></i> Manage Notices</div>
+    <div class="warning" style="background: #00f2ff22; border-color: #00f2ff;">
+        <i class="fas fa-bell"></i> <strong>Note:</strong> When you add a notice, ALL visitors will get a notification!
+    </div>
+    <div>
+        <div class="form-group">
+            <label>Notice Title</label>
+            <input type="text" id="noticeTitle" placeholder="e.g., Midterm Exam Routine">
+        </div>
+        <div class="form-group">
+            <label>Date</label>
+            <input type="text" id="noticeDate" placeholder="e.g., March 25, 2026">
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea id="noticeDesc" rows="3" placeholder="Notice details..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Icon (emoji)</label>
+            <input type="text" id="noticeIcon" placeholder="e.g., 📢" value="📢">
+        </div>
+        <button onclick="addNoticeWithNotification()" style="background: linear-gradient(135deg, #00f2ff, #ff4d6d);">
+            <i class="fas fa-bell"></i> Add & Send Notification
+        </button>
+        <button onclick="addNoticeWithoutNotification()" class="secondary">
+            <i class="fas fa-plus"></i> Add Only (No Notification)
+        </button>
+    </div>
+    <div class="item-list" id="noticesList"></div>
+    <div id="noticeSuccess" class="success-msg"></div>
+</div>              <div class="form-group">
                     <label>Course Title</label>
                     <input type="text" id="courseTitle" placeholder="e.g., Object Oriented Programming">
                 </div>
@@ -393,39 +399,124 @@
         document.getElementById('eventImage').value = '';
     }
     
-    function addNotice() {
-        const title = document.getElementById('noticeTitle').value;
-        const date = document.getElementById('noticeDate').value;
-        const desc = document.getElementById('noticeDesc').value;
-        const icon = document.getElementById('noticeIcon').value || '📢';
-        if (!title || !date) { showMsg('noticeSuccess', 'Please fill Title and Date', 'error'); return; }
-        currentNotices.push({ title, date, desc, icon });
-        saveAllData();
+    // =============== NOTICES FUNCTIONS (NEW) ===============
+
+let currentNotices = [];
+
+function loadCurrentNotices() {
+    const savedNotices = localStorage.getItem('ire_notices');
+    if (savedNotices) currentNotices = JSON.parse(savedNotices);
+    else currentNotices = [
+        { title: "Midterm Exam Routine Published", date: "March 10, 2026", desc: "Midterm exams start from March 20.", icon: "📢" },
+        { title: "Robotics Workshop Registration Open", date: "March 15, 2026", desc: "3-day hands-on workshop.", icon: "🔧" },
+        { title: "Final Project Defense Schedule", date: "March 20, 2026", desc: "Project defense on April 10.", icon: "📄" },
+        { title: "New Semester Classes Begin", date: "March 25, 2026", desc: "L2T1 classes start from April 1.", icon: "📅" }
+    ];
+    renderNoticesList();
+}
+
+function saveNoticesData() {
+    localStorage.setItem('ire_notices', JSON.stringify(currentNotices));
+    if (typeof window.noticesData !== 'undefined') {
+        window.noticesData = currentNotices;
+    }
+}
+
+function addNoticeWithNotification() {
+    const title = document.getElementById('noticeTitle').value;
+    const date = document.getElementById('noticeDate').value;
+    const desc = document.getElementById('noticeDesc').value;
+    const icon = document.getElementById('noticeIcon').value || '📢';
+    
+    if (!title || !date) {
+        showMsg('noticeSuccess', 'Please fill Title and Date', 'error');
+        return;
+    }
+    
+    const newNotice = { title, date, desc, icon };
+    currentNotices.push(newNotice);
+    saveNoticesData();
+    
+    const notificationData = { title, date, desc, timestamp: new Date().getTime() };
+    localStorage.setItem('new_notice_notification', JSON.stringify(notificationData));
+    
+    renderNoticesList();
+    clearNoticeForm();
+    showMsg('noticeSuccess', '✅ Notice added! Notification will be sent to all visitors.');
+    
+    if (Notification.permission === 'granted') {
+        new Notification('✅ Notice Published!', { body: `${title}\n📅 ${date}` });
+    }
+}
+
+function addNoticeWithoutNotification() {
+    const title = document.getElementById('noticeTitle').value;
+    const date = document.getElementById('noticeDate').value;
+    const desc = document.getElementById('noticeDesc').value;
+    const icon = document.getElementById('noticeIcon').value || '📢';
+    
+    if (!title || !date) {
+        showMsg('noticeSuccess', 'Please fill Title and Date', 'error');
+        return;
+    }
+    
+    currentNotices.push({ title, date, desc, icon });
+    saveNoticesData();
+    renderNoticesList();
+    clearNoticeForm();
+    showMsg('noticeSuccess', '✅ Notice added without notification.');
+}
+
+function renderNoticesList() {
+    const container = document.getElementById('noticesList');
+    if (!container) return;
+    if (currentNotices.length === 0) {
+        container.innerHTML = '<p style="color: #888;">No notices. Add one above.</p>';
+        return;
+    }
+    container.innerHTML = currentNotices.map((notice, index) => `
+        <div class="item-card">
+            <div class="item-info">
+                <div class="item-title">${notice.icon} ${notice.title}</div>
+                <div class="item-detail">📅 ${notice.date}</div>
+                <div class="item-detail">${notice.desc ? notice.desc.substring(0, 80) : ''}...</div>
+            </div>
+            <div class="item-actions">
+                <button onclick="editNotice(${index})"><i class="fas fa-edit"></i></button>
+                <button class="danger" onclick="deleteNotice(${index})"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function deleteNotice(index) {
+    if (confirm('Delete this notice?')) {
+        currentNotices.splice(index, 1);
+        saveNoticesData();
         renderNoticesList();
-        clearNoticeForm();
-        showMsg('noticeSuccess', '✅ Notice added successfully!');
+        showMsg('noticeSuccess', '🗑️ Notice deleted!');
     }
-    
-    function deleteNotice(index) {
-        if (confirm('Delete this notice?')) { currentNotices.splice(index, 1); saveAllData(); renderNoticesList(); showMsg('noticeSuccess', '🗑️ Notice deleted!'); }
-    }
-    
-    function editNotice(index) {
-        const notice = currentNotices[index];
-        document.getElementById('noticeTitle').value = notice.title;
-        document.getElementById('noticeDate').value = notice.date;
-        document.getElementById('noticeDesc').value = notice.desc || '';
-        document.getElementById('noticeIcon').value = notice.icon || '📢';
-        deleteNotice(index);
-        showMsg('noticeSuccess', '✏️ Edit the details and click Add Notice');
-    }
-    
-    function clearNoticeForm() {
-        document.getElementById('noticeTitle').value = '';
-        document.getElementById('noticeDate').value = '';
-        document.getElementById('noticeDesc').value = '';
-        document.getElementById('noticeIcon').value = '📢';
-    }
+}
+
+function editNotice(index) {
+    const notice = currentNotices[index];
+    document.getElementById('noticeTitle').value = notice.title;
+    document.getElementById('noticeDate').value = notice.date;
+    document.getElementById('noticeDesc').value = notice.desc || '';
+    document.getElementById('noticeIcon').value = notice.icon || '📢';
+    deleteNotice(index);
+    showMsg('noticeSuccess', '✏️ Edit the details and click Add Notice');
+}
+
+function clearNoticeForm() {
+    document.getElementById('noticeTitle').value = '';
+    document.getElementById('noticeDate').value = '';
+    document.getElementById('noticeDesc').value = '';
+    document.getElementById('noticeIcon').value = '📢';
+}
+
+// Initialize notices
+loadCurrentNotices();
     
     function addCourse() {
         const code = document.getElementById('courseCode').value;
