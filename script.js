@@ -128,3 +128,56 @@ document.addEventListener('DOMContentLoaded', function() {
 
 console.log("%c🤖 IRE Department Website | Developer: Md Riyad Hossen (IRE 7th Batch)", "color: #00f2ff; font-size: 14px; font-weight: bold;");
 console.log("%c📌 Admin Panel: Open admin.html to manage content", "color: #ffaa44; font-size: 12px;");
+// =============== NOTIFICATION CHECKER ===============
+
+function checkForNewNoticeNotification() {
+    const notificationData = localStorage.getItem('new_notice_notification');
+    if (notificationData) {
+        const notice = JSON.parse(notificationData);
+        const now = new Date().getTime();
+        if (now - notice.timestamp < 60000) {
+            showNoticeAlert(notice);
+        }
+        localStorage.removeItem('new_notice_notification');
+    }
+}
+
+function showNoticeAlert(notice) {
+    if (Notification.permission === 'granted') {
+        const notification = new Notification('📢 New Notice!', {
+            body: `${notice.title}\n📅 ${notice.date}`,
+            icon: 'https://cdn-icons-png.flaticon.com/512/190/190411.png'
+        });
+        notification.onclick = () => { window.location.href = 'notices.html'; };
+    }
+    showToastAlert(notice);
+}
+
+function showToastAlert(notice) {
+    const toast = document.createElement('div');
+    toast.innerHTML = `
+        <div style="font-size:2rem;">📢</div>
+        <div><strong>New Notice!</strong><br>${notice.title}<br><small>${notice.date}</small></div>
+        <button onclick="this.parentElement.remove()" style="background:none;border:none;font-size:1.2rem;">×</button>
+    `;
+    toast.style.cssText = `
+        position:fixed; top:20px; right:20px; background:#00f2ff; color:#050510;
+        padding:15px; border-radius:16px; display:flex; align-items:center; gap:12px;
+        z-index:10000; box-shadow:0 0 20px #00f2ff; cursor:pointer;
+    `;
+    toast.onclick = (e) => { if(!e.target.tagName==='BUTTON') window.location.href='notices.html'; };
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 8000);
+}
+
+function requestNoticePerm() {
+    if ('Notification' in window && Notification.permission !== 'granted') {
+        Notification.requestPermission();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    requestNoticePerm();
+    checkForNewNoticeNotification();
+    setInterval(checkForNewNoticeNotification, 3000);
+});
