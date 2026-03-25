@@ -23,12 +23,20 @@
             </div>
         </div>
         <div class="nav-links">
-            <a href="index.html" class="active">🏠 Home</a>
-            <a href="routine.html">📅 Routine</a>
-            <a href="courses.html">📚 Courses</a>
-            <a href="events.html">🎉 Events</a>
-            <a href="notices.html">📢 Notices</a>
-        </div>
+    <a href="index.html" class="active">🏠 Home</a>
+    <a href="routine.html">📅 Routine</a>
+    <a href="courses.html">📚 Courses</a>
+    <a href="events.html">🎉 Events</a>
+    <a href="notices.html">📢 Notices</a>
+    <!-- UMS Button -->
+    <a href="#" id="umsNavLink" class="external-link ums-link" target="_blank">
+        <i class="fas fa-graduation-cap"></i> UMS
+    </a>
+    <!-- Moodle Button -->
+    <a href="#" id="moodleNavLink" class="external-link moodle-link" target="_blank">
+        <i class="fas fa-chalkboard"></i> Moodle
+    </a>
+                </div>
     </div>
 
     <div class="hero">
@@ -70,5 +78,13 @@
 
 <script src="data.js"></script>
 <script src="script.js"></script>
+    <script>
+    // =============== SET YOUR LINKS HERE ===============
+    const UMS_URL = "https://ums.uftb.edu.bd";      // আপনার UMS লিংক দিন
+    const MOODLE_URL = "https://moodle.uftb.edu.bd"; // আপনার Moodle লিংক দিন
+    
+    document.getElementById('umsNavLink').href = UMS_URL;
+    document.getElementById('moodleNavLink').href = MOODLE_URL;
+    </script>
 </body>
 </html>
