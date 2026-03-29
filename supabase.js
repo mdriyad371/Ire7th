@@ -1,13 +1,8 @@
 // supabase.js
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-// For Vercel deployment, environment variables are automatically injected.
-// Use the variable names that Vercel provides (NEXT_PUBLIC_*) or your own.
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || import.meta.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    console.error('Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
-}
+// আপনার Supabase Project Settings > API থেকে এই দুটি তথ্য এখানে বসান
+const SUPABASE_URL = 'https://zskzznrvazcckaewzgzz.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpza3p6bnJ2YXpjY2thZXd6Z3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3ODI5MTcsImV4cCI6MjA5MDM1ODkxN30.VLPUEfD1HnaV8_M6e3SmXJCstuK0qgS5dr_qgPN1I88';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
