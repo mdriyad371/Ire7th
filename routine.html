@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Live Routine | IRE - IoT & Robotics Engineering</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Live routine styles (same as before) */
+        .live-header-simple { display: flex; justify-content: flex-end; margin-bottom: 1.2rem; border-bottom: 1px dashed rgba(76,201,255,0.3); padding-bottom: 0.5rem; }
+        .current-time-badge { background: #041e2c; padding: 0.4rem 1rem; border-radius: 40px; font-family: monospace; font-weight: 600; font-size: 0.85rem; }
+        .status-grid { display: flex; flex-direction: column; gap: 1.5rem; }
+        .status-item { background: rgba(0,0,0,0.35); border-radius: 1.5rem; padding: 1.2rem 1.5rem; border-left: 4px solid #4cc9ff; }
+        .status-label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; color: #8bb9fe; }
+        .status-value { font-size: 1.2rem; font-weight: 700; margin-top: 6px; display: flex; flex-direction: column; gap: 8px; }
+        .class-entry-simple { background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 20px; margin-bottom: 6px; }
+        .room-chip { background: #1f3a4b; padding: 0.2rem 0.8rem; border-radius: 30px; font-size: 0.85rem; font-weight: 500; display: inline-block; margin-top: 5px; }
+        .no-class { color: #ffb347; font-weight: 500; }
+        .next-class-day { font-size: 0.8rem; background: #0e2a36; display: inline-block; padding: 0.2rem 0.7rem; border-radius: 30px; margin-left: 8px; font-weight: normal; }
+        .timetable-wrapper { overflow-x: auto; }
+        .weekly-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .day-card { background: rgba(0,0,0,0.4); border-radius: 1.2rem; padding: 1rem; border: 1px solid rgba(76,201,255,0.2); }
+        .day-name { font-weight: 800; font-size: 1.2rem; padding-bottom: 8px; border-bottom: 2px solid #4cc9ff; display: inline-block; margin-bottom: 12px; }
+        .class-entry { margin-bottom: 12px; font-size: 0.8rem; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 14px; }
+        .class-time { font-family: monospace; font-weight: 600; color: #9acdff; }
+        .class-room { background: #122b38; display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; margin-top: 4px; }
+        .session-badge { background: #0f2a3b; padding: 0.5rem 1.2rem; border-radius: 40px; font-size: 0.85rem; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #2c7da0; }
+    </style>
+</head>
+<body>
+<div class="tech-bg"></div>
+<div class="container">
+    <div class="navbar">
+        <div class="logo-area"><div class="university-logo"><img src="images/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-microchip\'></i>';"></div><div class="univ-title"><h1>University of Frontier Technology, Bangladesh</h1><p><i class="fas fa-robot"></i> Internet of Things and Robotics Engineering (IRE)</p></div></div>
+        <div class="nav-links">
+            <a href="index.html">🏠 Home</a> <a href="routine.html" class="active">📅 Routine</a> <a href="courses.html">📚 Courses</a> <a href="events.html">🎉 Events</a> <a href="notices.html">📢 Notices</a> <a href="batchfund.html">💰 ব্যাচ ফান্ড</a>
+            <a href="#" id="umsNavLink" target="_blank"><i class="fas fa-graduation-cap"></i> UMS</a> <a href="#" id="moodleNavLink" target="_blank"><i class="fas fa-chalkboard"></i> Moodle</a>
+        </div>
+    </div>
+    <div class="section-container">
+        <div class="glass-card" style="border-left: 4px solid #4cc9ff;">
+            <div class="live-header-simple"><div class="current-time-badge" id="currentDateTimeDisplay"><i class="far fa-clock"></i> লোড হচ্ছে...</div></div>
+            <div class="status-grid">
+                <div class="status-item"><div class="status-label"><i class="fas fa-chalkboard-teacher"></i> এখন চলমান ক্লাস</div><div class="status-value" id="currentClassDisplay">—</div></div>
+                <div class="status-item"><div class="status-label"><i class="fas fa-forward-step"></i> পরবর্তী ক্লাস</div><div class="status-value" id="nextClassDisplay">—</div></div>
+            </div>
+        </div>
+        <div class="glass-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px;">
+                <span class="session-badge"><i class="fas fa-calendar-alt"></i> সেশন: ২০২৪-২৫ | L1T2 | IRE ৭ম ব্যাচ</span>
+                <span><i class="fas fa-door-open"></i> রুম নম্বরসহ সম্পূর্ণ রুটিন</span>
+            </div>
+            <div id="fullTimetableContainer"><div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-pulse"></i> রুটিন লোড হচ্ছে...</div></div>
+        </div>
+    </div>
+</div>
+<footer>...</footer>
+<script type="module">
+    import { supabase } from './supabase.js';
+    let CLASS_SCHEDULE = [];
+    function timeToMinutes(t) { let [h,m]=t.split(':').map(Number); return h*60+m; }
+    function formatToAmPm(t) { let [h,m]=t.split(':').map(Number); let p = h>=12?'PM':'AM'; let h12 = h%12||12; return `${h12}:${m.toString().padStart(2,'0')} ${p}`; }
+    function getCurrentDateTime() { let d=new Date(); let days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']; return { now:d, currentDayName:days[d.getDay()], currentMinutes:d.getHours()*60+d.getMinutes(), currentDayIndex:d.getDay() }; }
+    function getTodaySchedule(day) { return CLASS_SCHEDULE.filter(c=>c.day===day).sort((a,b)=>timeToMinutes(a.start_time)-timeToMinutes(b.start_time)); }
+    function getCurrentClasses(schedule, mins) { return schedule.filter(c=>mins>=timeToMinutes(c.start_time) && mins<timeToMinutes(c.end_time)); }
+    function getGlobalNextClass() {
+        let {currentDayName, currentMinutes, currentDayIndex} = getCurrentDateTime();
+        let all = CLASS_SCHEDULE.map(c=>{ let idx=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].indexOf(c.day); let offset=0; if(idx<currentDayIndex) offset=7; else if(idx===currentDayIndex && timeToMinutes(c.start_time)<=currentMinutes) offset=7; return {...c, clsTimestamp:(offset+idx)*1440+timeToMinutes(c.start_time)}; });
+        let nowAbs = currentDayIndex*1440+currentMinutes;
+        let future = all.filter(c=>c.clsTimestamp>nowAbs).sort((a,b)=>a.clsTimestamp-b.clsTimestamp);
+        if(!future.length) return null;
+        let next=future[0];
+        let days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        let targetDay=days[Math.floor(next.clsTimestamp/1440)%7];
+        let suffix = targetDay===currentDayName ? ' (আজ)' : ((Math.floor(next.clsTimestamp/1440)%7 === currentDayIndex+1) || (currentDayIndex===6 && targetDay==='Sunday')) ? ' (আগামীকাল)' : '';
+        return {...next, displayDay:targetDay+suffix};
+    }
+    function updateLiveStatus() {
+        let {currentDayName, currentMinutes, now} = getCurrentDateTime();
+        let today = getTodaySchedule(currentDayName);
+        let current = getCurrentClasses(today, currentMinutes);
+        let curDiv=document.getElementById('currentClassDisplay'), nextDiv=document.getElementById('nextClassDisplay');
+        if(currentDayName==='Thursday'||currentDayName==='Friday'||currentDayName==='Saturday') curDiv.innerHTML='<div class="no-class"><i class="fas fa-bed"></i> আজকে কোনো ক্লাস নেই (ছুটি)</div>';
+        else if(today.length===0) curDiv.innerHTML='<div class="no-class"><i class="fas fa-hourglass-end"></i> আজকের জন্য কোনো ক্লাস নেই</div>';
+        else if(current.length>0) curDiv.innerHTML=current.map(c=>`<div class="class-entry-simple"><strong>📖 ${c.course}</strong> (${formatToAmPm(c.start_time)} – ${formatToAmPm(c.end_time)})<div class="room-chip"><i class="fas fa-door-closed"></i> ${c.room}</div></div>`).join('');
+        else curDiv.innerHTML='<div class="no-class"><i class="fas fa-ban"></i> বর্তমানে কোনো ক্লাস চলছে না</div>';
+        let nextG=getGlobalNextClass();
+        if(nextG) nextDiv.innerHTML=`<div class="class-entry-simple"><strong>📌 ${nextG.course}</strong> (${formatToAmPm(nextG.start_time)} – ${formatToAmPm(nextG.end_time)}) <span class="next-class-day"><i class="far fa-calendar-alt"></i> ${nextG.displayDay}</span><div class="room-chip"><i class="fas fa-door-closed"></i> ${nextG.room}</div></div>`;
+        else nextDiv.innerHTML='<div class="no-class">✅ কোনো পরবর্তী ক্লাস নেই</div>';
+        let opt = { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' };
+        document.getElementById('currentDateTimeDisplay').innerHTML = `<i class="far fa-calendar-alt"></i> ${now.toLocaleDateString('bn-BD', opt)}`;
+    }
+    function renderFullTimetable() {
+        let days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        let bd={Sunday:'রবিবার',Monday:'সোমবার',Tuesday:'মঙ্গলবার',Wednesday:'বুধবার',Thursday:'বৃহস্পতিবার',Friday:'শুক্রবার',Saturday:'শনিবার'};
+        let html=`<div class="timetable-wrapper"><div class="weekly-grid">`;
+        for(let day of days){
+            let classes=CLASS_SCHEDULE.filter(c=>c.day===day).sort((a,b)=>timeToMinutes(a.start_time)-timeToMinutes(b.start_time));
+            html+=`<div class="day-card"><div class="day-name">${bd[day]}</div>`;
+            if(day==='Thursday'||day==='Friday'||day==='Saturday') html+=`<div style="padding:12px 0;text-align:center;opacity:0.7;"><i class="fas fa-coffee"></i> ছুটি / কোন ক্লাস নেই</div>`;
+            else if(classes.length===0) html+=`<div style="padding:12px 0;text-align:center;">📭 কোনো ক্লাস নেই</div>`;
+            else classes.forEach(c=>{ html+=`<div class="class-entry"><div class="class-time"><i class="far fa-clock"></i> ${formatToAmPm(c.start_time)} – ${formatToAmPm(c.end_time)}</div><div><strong>${c.course}</strong></div><div class="class-room"><i class="fas fa-door-open"></i> ${c.room}</div></div>`; });
+            html+=`</div>`;
+        }
+        html+=`</div></div><div style="margin-top:20px;font-size:0.75rem;text-align:center;border-top:1px dashed #2c7da0;padding-top:12px;"><i class="fas fa-info-circle"></i> রুটিন এডমিন প্যানেল থেকে পরিবর্তনযোগ্য</div>`;
+        document.getElementById('fullTimetableContainer').innerHTML=html;
+    }
+    async function loadRoutine() {
+        const { data, error } = await supabase.from('routine').select('*');
+        if (!error && data) { CLASS_SCHEDULE = data; renderFullTimetable(); updateLiveStatus(); }
+    }
+    loadRoutine();
+    setInterval(updateLiveStatus, 60000);
+    supabase.channel('routine_changes').on('postgres_changes', { event: '*', schema: 'public', table: 'routine' }, () => loadRoutine()).subscribe();
+    const UMS_URL = "https://ums.uftb.ac.bd/Login/Index";
+    const MOODLE_URL = "https://moodle.uftb.ac.bd/login/index.php";
+    document.getElementById('umsNavLink').href = UMS_URL;
+    document.getElementById('moodleNavLink').href = MOODLE_URL;
+</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Batch Fund | IRE - IoT & Robotics Engineering</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .fund-balance { text-align: center; padding: 1rem; }
+        .fund-amount { font-size: 3.5rem; font-weight: 800; background: linear-gradient(135deg, #ffe6b0, #ffb347); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .account-card { background: rgba(0,0,0,0.35); border-radius: 1.2rem; padding: 1rem; margin-bottom: 1rem; border-left: 3px solid #4cc9ff; }
+        .copy-btn { background: #1f3a4b; border: none; color: white; padding: 0.3rem 0.8rem; border-radius: 30px; cursor: pointer; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group input { width: 100%; padding: 0.8rem; background: rgba(0,0,0,0.5); border: 1px solid #2c7da0; border-radius: 1rem; color: white; }
+        .submit-btn { background: linear-gradient(135deg, #0f3b4f, #0a2a38); border: 1px solid #4cc9ff; padding: 0.8rem; border-radius: 2rem; font-weight: 700; color: white; cursor: pointer; width: 100%; }
+        .list-item { background: rgba(255,255,255,0.03); padding: 0.8rem; border-radius: 1rem; margin-bottom: 0.7rem; border-left: 2px solid #4cc9ff; }
+    </style>
+</head>
+<body>
+<div class="tech-bg"></div>
+<div class="container">
+    <div class="navbar">
+        <div class="logo-area"><div class="university-logo"><img src="images/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-microchip\'></i>';"></div><div class="univ-title"><h1>University of Frontier Technology, Bangladesh</h1><p><i class="fas fa-robot"></i> Internet of Things and Robotics Engineering (IRE)</p></div></div>
+        <div class="nav-links">
+            <a href="index.html">🏠 Home</a> <a href="routine.html">📅 Routine</a> <a href="courses.html">📚 Courses</a> <a href="events.html">🎉 Events</a> <a href="notices.html">📢 Notices</a> <a href="batchfund.html" class="active">💰 ব্যাচ ফান্ড</a>
+            <a href="#" id="umsNavLink" target="_blank"><i class="fas fa-graduation-cap"></i> UMS</a> <a href="#" id="moodleNavLink" target="_blank"><i class="fas fa-chalkboard"></i> Moodle</a>
+        </div>
+    </div>
+    <div class="glass-card"><div class="fund-balance"><div class="fund-label"><i class="fas fa-coins"></i> বর্তমান ব্যাচ ফান্ড</div><div class="fund-amount" id="fundAmountDisplay">০.০০ ৳</div><div style="margin-top:8px; font-size:0.7rem;"><i class="fas fa-history"></i> সর্বশেষ আপডেট: <span id="lastUpdateTime">--</span></div></div></div>
+    <div class="glass-card"><div class="section-title" style="margin-bottom:1rem;"><i class="fas fa-university"></i> <span>পেমেন্ট একাউন্ট (কপি করে টাকা পাঠান)</span></div><div id="accountsContainer"></div><div style="margin-top:1rem; font-size:0.75rem; background:#041e2c; padding:8px; border-radius:20px; text-align:center;"><i class="fas fa-info-circle"></i> উপরের যেকোনো একাউন্টে টাকা পাঠিয়ে নিচের ফর্ম জমা দিন। এডমিন অনুমোদন দিলে ফান্ড যুক্ত হবে।</div></div>
+    <div class="glass-card"><div class="section-title" style="margin-bottom:1rem;"><i class="fas fa-pen-alt"></i> <span>পেমেন্ট তথ্য জমা দিন</span></div><form id="paymentForm"><div class="form-group"><label><i class="fas fa-user"></i> আইডি / নাম</label><input type="text" id="userId" required></div><div class="form-group"><label><i class="fas fa-phone-alt"></i> ফোন নম্বর</label><input type="tel" id="phoneNumber" required></div><div class="form-group"><label><i class="fas fa-exchange-alt"></i> ট্রানজেকশন আইডি</label><input type="text" id="trxId" required></div><div class="form-group"><label><i class="fas fa-money-bill-wave"></i> জমা পরিমাণ (টাকা)</label><input type="number" id="amount" required min="1"></div><button type="submit" class="submit-btn"><i class="fas fa-check-circle"></i> জমা দিন (অনুমোদনের অপেক্ষায়)</button></form></div>
+    <div class="glass-card"><div class="section-title" style="margin-bottom:1rem;"><i class="fas fa-list-ul"></i> <span>অনুমোদিত জমার ইতিহাস</span></div><div id="historyList" class="list-container"><div style="text-align:center; padding:1rem;">লোড হচ্ছে...</div></div></div>
+</div>
+<footer>...</footer>
+<script type="module">
+    import { supabase } from './supabase.js';
+    let currentBalance = 0, fundAccounts = [];
+    async function loadBalance() {
+        const { data, error } = await supabase.from('fund_balance').select('amount').limit(1);
+        if (!error && data.length) { currentBalance = data[0].amount; document.getElementById('fundAmountDisplay').innerText = currentBalance.toFixed(2) + ' ৳'; document.getElementById('lastUpdateTime').innerText = new Date().toLocaleString('bn-BD'); }
+    }
+    async function loadAccounts() {
+        const { data, error } = await supabase.from('fund_accounts').select('*');
+        if (!error && data) { fundAccounts = data; renderAccounts(); }
+    }
+    function renderAccounts() {
+        const container = document.getElementById('accountsContainer');
+        container.innerHTML = fundAccounts.map(acc => `<div class="account-card"><div class="account-name"><i class="fas ${acc.type==='bkash'?'fa-mobile-alt':(acc.type==='nagad'?'fa-credit-card':'fa-rocket')}"></i> ${acc.name}</div><div class="account-number">${acc.number}</div><button class="copy-btn" data-number="${acc.number}"><i class="fas fa-copy"></i> কপি করুন</button></div>`).join('');
+        document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', () => { navigator.clipboard.writeText(btn.dataset.number); showToast('✅ নম্বর কপি হয়েছে'); }));
+    }
+    async function loadApprovedHistory() {
+        const { data, error } = await supabase.from('fund_transactions').select('*').eq('status', 'approved').order('approved_at', { ascending: false });
+        if (!error && data) {
+            const container = document.getElementById('historyList');
+            if (data.length === 0) { container.innerHTML = '<div style="text-align:center; padding:1rem;">📭 এখনো কোনো জমা অনুমোদিত হয়নি</div>'; return; }
+            container.innerHTML = data.map(tx => `<div class="list-item"><div><i class="fas fa-user"></i> ${tx.user_id} | <i class="fas fa-phone"></i> ${tx.phone}</div><div><i class="fas fa-exchange-alt"></i> TXID: ${tx.trx_id}</div><div><i class="fas fa-money-bill-wave"></i> ${tx.amount.toFixed(2)} ৳ | ${new Date(tx.approved_at).toLocaleString('bn-BD')}</div></div>`).join('');
+        }
+    }
+    function showToast(msg, isError = false) {
+        let toast = document.querySelector('.toast-msg'); if(toast) toast.remove();
+        const div = document.createElement('div'); div.className = 'toast-msg'; div.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
+        div.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#1f3a4b; padding:0.8rem 1.5rem; border-radius:40px; color:white; z-index:1000; backdrop-filter:blur(10px); border:1px solid #4cc9ff;';
+        document.body.appendChild(div); setTimeout(() => { div.style.opacity = '0'; setTimeout(() => div.remove(), 500); }, 3000);
+    }
+    document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userId = document.getElementById('userId').value.trim(), phone = document.getElementById('phoneNumber').value.trim(), trxId = document.getElementById('trxId').value.trim(), amount = parseFloat(document.getElementById('amount').value);
+        if (!userId || !phone || !trxId || isNaN(amount) || amount <= 0) return showToast('সব তথ্য সঠিকভাবে পূরণ করুন', true);
+        const { data: existing } = await supabase.from('fund_transactions').select('trx_id').eq('trx_id', trxId);
+        if (existing && existing.length) return showToast('এই ট্রানজেকশন আইডি আগেই জমা পড়েছে!', true);
+        const { error } = await supabase.from('fund_transactions').insert({ user_id: userId, phone, trx_id: trxId, amount, status: 'pending' });
+        if (error) showToast('জমা দিতে ব্যর্থ! আবার চেষ্টা করুন।', true);
+        else { showToast('📝 পেমেন্ট তথ্য জমা হয়েছে। অনুমোদনের পর ফান্ড যুক্ত হবে।'); document.getElementById('paymentForm').reset(); }
+    });
+    await loadBalance(); await loadAccounts(); await loadApprovedHistory();
+    supabase.channel('balance_change').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'fund_balance' }, () => loadBalance()).subscribe();
+    supabase.channel('transaction_approved').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'fund_transactions', filter: 'status=eq.approved' }, () => loadApprovedHistory()).subscribe();
+    supabase.channel('accounts_change').on('postgres_changes', { event: '*', schema: 'public', table: 'fund_accounts' }, () => loadAccounts()).subscribe();
+    const UMS_URL = "https://ums.uftb.ac.bd/Login/Index", MOODLE_URL = "https://moodle.uftb.ac.bd/login/index.php";
+    document.getElementById('umsNavLink').href = UMS_URL; document.getElementById('moodleNavLink').href = MOODLE_URL;
+</script>
+</body>
+</html>

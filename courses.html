@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Courses | IRE - IoT & Robotics Engineering</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="tech-bg"></div>
+<div class="container">
+    <div class="navbar">
+        <div class="logo-area"><div class="university-logo"><img src="images/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-university\'></i>';"></div><div class="univ-title"><h1>University of Frontier Technology, Bangladesh</h1><p><i class="fas fa-robot"></i> Internet of Things and Robotics Engineering (IRE)</p></div></div>
+        <div class="nav-links">
+            <a href="index.html">🏠 Home</a> <a href="routine.html">📅 Routine</a> <a href="courses.html" class="active">📚 Courses</a> <a href="events.html">🎉 Events</a> <a href="notices.html">📢 Notices</a> <a href="batchfund.html">💰 ব্যাচ ফান্ড</a>
+            <a href="#" id="umsNavLink" target="_blank"><i class="fas fa-graduation-cap"></i> UMS</a> <a href="#" id="moodleNavLink" target="_blank"><i class="fas fa-chalkboard"></i> Moodle</a>
+        </div>
+    </div>
+    <div class="section-container"><div class="section-title"><i class="fas fa-book"></i> Course Information</div><div class="courses-grid" id="coursesGrid"></div></div>
+</div>
+<footer>...</footer>
+<script type="module">
+    import { supabase } from './supabase.js';
+    async function loadCourses() {
+        const { data, error } = await supabase.from('courses').select('*');
+        if (!error && data) {
+            document.getElementById('coursesGrid').innerHTML = data.map(c => `
+                <div class="glass-card course-card">
+                    <span class="course-code-badge">${c.code}</span>
+                    <div class="course-title">${c.title}</div>
+                    <div class="credit"><i class="fas fa-clock"></i> Credit: ${c.credit}</div>
+                    <div class="course-teacher"><i class="fas fa-chalkboard-user"></i> ${c.teacher}</div>
+                </div>
+            `).join('');
+        }
+    }
+    loadCourses();
+    supabase.channel('courses_changes').on('postgres_changes', { event: '*', schema: 'public', table: 'courses' }, () => loadCourses()).subscribe();
+    const UMS_URL = "https://ums.uftb.ac.bd/Login/Index";
+    const MOODLE_URL = "https://moodle.uftb.ac.bd/login/index.php";
+    document.getElementById('umsNavLink').href = UMS_URL;
+    document.getElementById('moodleNavLink').href = MOODLE_URL;
+</script>
+</body>
+</html>
