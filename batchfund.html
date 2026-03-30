@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Batch Fund | IRE - IoT & Robotics Engineering</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Additional styles for batch fund page (password gate, form enhancements) */
+        .fund-balance {
+            text-align: center;
+            padding: 1rem;
+        }
+        .fund-amount {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffe6b0, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .account-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 1.2rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 3px solid #4cc9ff;
+        }
+        .copy-btn {
+            background: #1f3a4b;
+            border: none;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            background: #2c5a70;
+            transform: scale(0.97);
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #2c7da0;
+            border-radius: 1rem;
+            color: white;
+            outline: none;
+            transition: 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #4cc9ff;
+            box-shadow: 0 0 8px rgba(76,201,255,0.3);
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #0f3b4f, #0a2a38);
+            border: 1px solid #4cc9ff;
+            padding: 0.8rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #165e7a, #0e3e52);
+            letter-spacing: 0.5px;
+        }
+        .list-item {
+            background: rgba(255,255,255,0.03);
+            padding: 0.8rem;
+            border-radius: 1rem;
+            margin-bottom: 0.7rem;
+            border-left: 2px solid #4cc9ff;
+        }
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+        .search-bar input {
+            flex: 1;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #2c7da0;
+            padding: 0.7rem 1rem;
+            border-radius: 2rem;
+            color: white;
+            outline: none;
+        }
+        .search-bar button {
+            background: #1f3a4b;
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 2rem;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .search-bar button:hover {
+            background: #2c5a70;
+        }
+        .clear-search {
+            background: #2c3e42;
+        }
+        .toast-msg {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1f3a4b;
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            color: white;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border: 1px solid #4cc9ff;
+            font-size: 0.9rem;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            font-weight: 500;
+        }
+        .inline-hint {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Password gate styles */
+        .password-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(12px);
+            background: rgba(8, 20, 30, 0.85);
+            transition: all 0.3s ease;
+        }
+        .gate-card {
+            background: rgba(12, 35, 45, 0.85);
+            backdrop-filter: blur(16px);
+            border-radius: 2rem;
+            padding: 2rem 2rem 2.2rem;
+            width: 90%;
+            max-width: 440px;
+            text-align: center;
+            border: 1px solid rgba(76, 201, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(76,201,255,0.2);
+            animation: fadeInUp 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .gate-icon {
+            font-size: 3.8rem;
+            background: linear-gradient(145deg, #4cc9ff, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .gate-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #f0f9ff, #c0e0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .gate-sub {
+            font-size: 0.85rem;
+            color: #bbd4e9;
+            margin-bottom: 1.8rem;
+            border-bottom: 1px dashed #2c7da0;
+            display: inline-block;
+            padding-bottom: 6px;
+        }
+        .password-input-group {
+            background: rgba(0,0,0,0.4);
+            border-radius: 3rem;
+            border: 1px solid #2c7da0;
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0 1rem;
+            transition: all 0.2s;
+        }
+        .password-input-group:focus-within {
+            border-color: #4cc9ff;
+            box-shadow: 0 0 12px rgba(76,201,255,0.4);
+        }
+        .password-input-group i {
+            padding: 0 1rem;
+            color: #4cc9ff;
+            font-size: 1.2rem;
+        }
+        .password-input-group input {
+            background: transparent;
+            border: none;
+            padding: 0.9rem 0.5rem 0.9rem 0;
+            color: white;
+            font-size: 1rem;
+            width: 100%;
+            outline: none;
+            letter-spacing: 1px;
+        }
+        .gate-btn {
+            background: linear-gradient(95deg, #0f3b4f, #0a2a38);
+            border: 1px solid #4cc9ff;
+            padding: 0.8rem 1.2rem;
+            border-radius: 3rem;
+            font-weight: bold;
+            color: white;
+            width: 100%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+            margin-top: 0.8rem;
+        }
+        .gate-btn:hover {
+            background: linear-gradient(95deg, #1d5e7a, #124454);
+            box-shadow: 0 0 12px rgba(76,201,255,0.5);
+            letter-spacing: 0.8px;
+        }
+        .gate-secondary-btn {
+            background: rgba(30,50,60,0.7);
+            border: 1px solid #ffb347;
+            margin-top: 0.8rem;
+        }
+        .gate-secondary-btn:hover {
+            background: rgba(255,180,71,0.3);
+            border-color: #ffb347;
+        }
+        .error-msg {
+            color: #ffaa88;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            background: rgba(255,80,40,0.15);
+            padding: 6px 12px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+        .lock-nav-link {
+            margin-left: 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 30px;
+            padding: 5px 12px;
+            transition: 0.2s;
+        }
+        .lock-nav-link:hover {
+            background: rgba(76,201,255,0.2);
+        }
+        .container {
+            display: none;
+            animation: contentFade 0.4s ease;
+        }
+        @keyframes contentFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 600px) {
+            .gate-card { padding: 1.5rem; width: 92%; }
+            .gate-title { font-size: 1.5rem; }
+            .fund-amount { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="tech-bg"></div>
+
+<!-- PASSWORD GATE SECTION -->
+<div class="password-gate" id="passwordGate">
+    <div class="gate-card">
+        <div class="gate-icon"><i class="fas fa-shield-alt"></i></div>
+        <div class="gate-title">🔐 ব্যাচ ফান্ড পোর্টাল</div>
+        <div class="gate-sub">প্রবেশ করতে পাসওয়ার্ড দিন</div>
+        <div class="password-input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="accessPassword" placeholder="পাসওয়ার্ড লিখুন" autocomplete="off">
+        </div>
+        <button id="unlockBtn" class="gate-btn"><i class="fas fa-key"></i> আনলক করুন</button>
+        <div id="gateErrorMsg" class="error-msg" style="display: none;">❌ ভুল পাসওয়ার্ড, আবার চেষ্টা করুন।</div>
+        <a href="index.html" class="gate-btn gate-secondary-btn" style="display: inline-block; text-decoration: none; text-align: center;"><i class="fas fa-home"></i> হোমে যান</a>
+        <div style="font-size: 0.7rem; margin-top: 1rem; opacity: 0.7;"><i class="fas fa-microchip"></i> সপ্তরণন অ্যাক্সেস</div>
+    </div>
+</div>
+
+<!-- MAIN CONTENT (protected) -->
+<div class="container" id="mainContent">
+    <!-- Navbar exactly as in index.html -->
+    <div class="navbar">
+        <div class="logo-area">
+            <div class="university-logo">
+                <img src="images/logo.png" alt="University Logo" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-university\'></i>';">
+            </div>
+            <div class="univ-title">
+                <h1>University of Frontier Technology, Bangladesh</h1>
+                <p><i class="fas fa-robot"></i> Internet of Things and Robotics Engineering (IRE)</p>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">🏠 Home</a>
+            <a href="routine.html">📅 Routine</a>
+            <a href="courses.html">📚 Courses</a>
+            <a href="events.html">🎉 Events</a>
+            <a href="notices.html">📢 Notices</a>
+            <a href="batchfund.html" class="active">💰 ব্যাচ ফান্ড</a>
+            <a href="#" id="umsNavLink" target="_blank"><i class="fas fa-graduation-cap"></i> UMS</a>
+            <a href="#" id="moodleNavLink" target="_blank"><i class="fas fa-chalkboard"></i> Moodle</a>
+            <a href="#" id="lockNavLink" class="lock-nav-link" style="display: none;"><i class="fas fa-lock"></i> লক করুন</a>
+        </div>
+    </div>
+
+    <!-- Fund balance card -->
+    <div class="glass-card" style="margin-bottom: 1.5rem;">
+        <div class="fund-balance">
+            <div class="fund-label"><i class="fas fa-coins"></i> বর্তমান ব্যাচ ফান্ড</div>
+            <div class="fund-amount" id="fundAmountDisplay">০.০০ ৳</div>
+            <div style="margin-top:8px; font-size:0.7rem;"><i class="fas fa-history"></i> সর্বশেষ আপডেট: <span id="lastUpdateTime">--</span></div>
+        </div>
+    </div>
+
+    <!-- Payment accounts -->
+    <div class="glass-card">
+        <div class="section-title" style="margin-bottom:1rem;"><i class="fas fa-university"></i> <span>পেমেন্ট একাউন্ট (কপি করে টাকা পাঠান)</span></div>
+        <div id="accountsContainer"></div>
+        <div style="margin-top:1rem; font-size:0.75rem; background:#041e2c; padding:8px; border-radius:20px; text-align:center;"><i class="fas fa-info-circle"></i> উপরের যেকোনো একাউন্টে টাকা পাঠিয়ে নিচের ফর্ম জমা দিন। এডমিন অনুমোদন দিলে ফান্ড যুক্ত হবে।</div>
+    </div>
+
+    <!-- Payment form (only ID, no separate name) -->
+    <div class="glass-card">
+        <div class="section-title" style="margin-bottom:1rem;"><i class="fas fa-pen-alt"></i> <span>পেমেন্ট তথ্য জমা দিন</span></div>
+        <form id="paymentForm">
+            <div class="form-group">
+                <label><i class="fas fa-id-card"></i> আইডি *</label>
+                <input type="text" id="userId" required placeholder="যেমন: IRE-001">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-phone-alt"></i> মোবাইল নম্বর (ঐচ্ছিক)</label>
+                <input type="tel" id="phoneNumber" placeholder="০১*********">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-credit-card"></i> পেমেন্ট পদ্ধতি *</label>
+                <select id="paymentMethod" required>
+                    <option value="mobile">বিকাশ / নগদ (মোবাইল ব্যাংকিং)</option>
+                    <option value="cash">ক্যাশ (নগদ)</option>
+                </select>
+            </div>
+            <!-- Dynamic fields -->
+            <div id="mobileFields" class="dynamic-field-group">
+                <div class="form-group">
+                    <label><i class="fas fa-exchange-alt"></i> ট্রানজেকশন আইডি *</label>
+                    <input type="text" id="trxId" placeholder="TRX ID">
+                </div>
+            </div>
+            <div id="cashFields" class="dynamic-field-group" style="display:none;">
+                <div class="form-group">
+                    <label><i class="fas fa-user-check"></i> রিসিভারের নাম *</label>
+                    <input type="text" id="receiverName" placeholder="যার কাছে টাকা জমা দিয়েছেন">
+                </div>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-calendar-alt"></i> জমার তারিখ *</label>
+                <input type="date" id="transactionDate" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-money-bill-wave"></i> জমা পরিমাণ (টাকা) *</label>
+                <input type="number" id="amount" required min="1" step="1" placeholder="টাকার পরিমাণ">
+            </div>
+            <button type="submit" class="submit-btn"><i class="fas fa-check-circle"></i> জমা দিন (অনুমোদনের অপেক্ষায়)</button>
+        </form>
+    </div>
+
+    <!-- Transaction history with search -->
+    <div class="glass-card">
+        <div class="section-title" style="margin-bottom:1rem;"><i class="fas fa-list-ul"></i> <span>অনুমোদিত জমার ইতিহাস</span></div>
+        <div class="search-bar">
+            <input type="text" id="searchUserId" placeholder="আইডি দ্বারা সার্চ করুন (যেমন: IRE-001)" autocomplete="off">
+            <button id="searchBtn"><i class="fas fa-search"></i> সার্চ</button>
+            <button id="clearSearchBtn" class="clear-search"><i class="fas fa-times"></i> রিসেট</button>
+        </div>
+        <div id="historyList" class="list-container"><div style="text-align:center; padding:1rem;">লোড হচ্ছে...</div></div>
+    </div>
+</div>
+
+<footer>
+    <div class="container" style="max-width:1400px; margin:0 auto;">
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+        <div class="footer-info">
+            <span><i class="fas fa-map-marker-alt"></i> কালিয়াকৈর, গাজীপুর</span>
+            <span><i class="fas fa-envelope"></i> 2401043@uftb.ac.bd</span>
+            <span><i class="fas fa-phone-alt"></i> 01709130371</span>
+        </div>
+        <div class="developer">
+            <i class="fas fa-code"></i> Developed by <strong>Md Riyad Hossen</strong> (IRE 7th Batch)<br>
+            <span>© 2026 Department of Internet of Things and Robotics Engineering</span>
+        </div>
+    </div>
+</footer>
+
+<script type="importmap">
+    {
+        "imports": {
+            "supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+        }
+    }
+</script>
+<script type="module">
+    import { supabase } from './supabase.js';
+    let currentBalance = 0, fundAccounts = [];
+    let allApprovedTransactions = [];
+    let currentFilter = '';
+
+    async function loadBalance() {
+        const { data, error } = await supabase.from('fund_balance').select('amount').limit(1);
+        if (!error && data.length) {
+            currentBalance = data[0].amount;
+            document.getElementById('fundAmountDisplay').innerText = currentBalance.toFixed(2) + ' ৳';
+            document.getElementById('lastUpdateTime').innerText = new Date().toLocaleString('bn-BD');
+        }
+    }
+
+    async function loadAccounts() {
+        const { data, error } = await supabase.from('fund_accounts').select('*');
+        if (!error && data) {
+            fundAccounts = data;
+            renderAccounts();
+        }
+    }
+
+    function renderAccounts() {
+        const container = document.getElementById('accountsContainer');
+        if (!container) return;
+        container.innerHTML = fundAccounts.map(acc => `
+            <div class="account-card">
+                <div class="account-name"><i class="fas ${acc.type === 'bkash' ? 'fa-mobile-alt' : (acc.type === 'nagad' ? 'fa-credit-card' : 'fa-rocket')}"></i> ${acc.name}</div>
+                <div class="account-number">${acc.number}</div>
+                <button class="copy-btn" data-number="${acc.number}"><i class="fas fa-copy"></i> কপি করুন</button>
+            </div>
+        `).join('');
+        document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', () => {
+            navigator.clipboard.writeText(btn.dataset.number);
+            showToast('✅ নম্বর কপি হয়েছে');
+        }));
+    }
+
+    async function loadApprovedHistory() {
+        const { data, error } = await supabase.from('fund_transactions').select('*').eq('status', 'approved').order('approved_at', { ascending: false });
+        if (!error && data) {
+            allApprovedTransactions = data;
+            renderHistoryList(currentFilter);
+        }
+    }
+
+    function renderHistoryList(filterId = '') {
+        const container = document.getElementById('historyList');
+        let filtered = filterId.trim() === '' ? allApprovedTransactions : allApprovedTransactions.filter(tx => tx.user_id && tx.user_id.toLowerCase().includes(filterId.toLowerCase()));
+        if (filtered.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:1rem;">📭 কোনো জমা পাওয়া যায়নি বা আইডি মেলেনি</div>';
+            return;
+        }
+        container.innerHTML = filtered.map(tx => {
+            let methodDetail = '';
+            if (tx.payment_method === 'cash') {
+                methodDetail = `<i class="fas fa-money-bill"></i> নগদ | প্রাপক: ${tx.receiver_name || '—'}`;
+            } else {
+                methodDetail = `<i class="fas fa-mobile-alt"></i> মোবাইল ব্যাংকিং | TXID: ${tx.trx_id || '—'}`;
+            }
+            const txDate = tx.transaction_date ? new Date(tx.transaction_date).toLocaleDateString('bn-BD') : '—';
+            return `
+                <div class="list-item">
+                    <div><i class="fas fa-user"></i> <strong>${tx.user_id}</strong> | <i class="fas fa-phone"></i> ${tx.phone || 'N/A'}</div>
+                    <div>${methodDetail} | <i class="fas fa-calendar"></i> ${txDate}</div>
+                    <div><i class="fas fa-money-bill-wave"></i> ${tx.amount.toFixed(2)} ৳ | <i class="fas fa-check-circle"></i> অনুমোদিত: ${new Date(tx.approved_at).toLocaleString('bn-BD')}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function showToast(msg, isError = false) {
+        let toast = document.querySelector('.toast-msg');
+        if (toast) toast.remove();
+        const div = document.createElement('div');
+        div.className = 'toast-msg';
+        div.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
+        document.body.appendChild(div);
+        setTimeout(() => { div.style.opacity = '0'; setTimeout(() => div.remove(), 500); }, 3000);
+    }
+
+    // Toggle payment fields
+    function togglePaymentFields() {
+        const method = document.getElementById('paymentMethod').value;
+        const mobileDiv = document.getElementById('mobileFields');
+        const cashDiv = document.getElementById('cashFields');
+        if (method === 'mobile') {
+            mobileDiv.style.display = 'block';
+            cashDiv.style.display = 'none';
+            document.getElementById('trxId').required = true;
+            document.getElementById('receiverName').required = false;
+        } else {
+            mobileDiv.style.display = 'none';
+            cashDiv.style.display = 'block';
+            document.getElementById('trxId').required = false;
+            document.getElementById('receiverName').required = true;
+        }
+    }
+
+    // Payment form submission
+    const paymentForm = document.getElementById('paymentForm');
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userId = document.getElementById('userId').value.trim();
+            const phone = document.getElementById('phoneNumber').value.trim() || null;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            let trxId = null, receiverName = null;
+            if (paymentMethod === 'mobile') {
+                trxId = document.getElementById('trxId').value.trim();
+                if (!trxId) { showToast('ট্রানজেকশন আইডি প্রয়োজন', true); return; }
+            } else {
+                receiverName = document.getElementById('receiverName').value.trim();
+                if (!receiverName) { showToast('রিসিভারের নাম প্রয়োজন', true); return; }
+            }
+            const amount = parseFloat(document.getElementById('amount').value);
+            const transactionDate = document.getElementById('transactionDate').value;
+            if (!userId || isNaN(amount) || amount <= 0 || !transactionDate) {
+                showToast('আইডি, তারিখ এবং সঠিক পরিমাণ দিন', true);
+                return;
+            }
+            // Duplicate check for mobile trxId
+            if (paymentMethod === 'mobile' && trxId) {
+                const { data: existing } = await supabase.from('fund_transactions').select('trx_id').eq('trx_id', trxId);
+                if (existing && existing.length) {
+                    showToast('এই ট্রানজেকশন আইডি আগেই জমা পড়েছে!', true);
+                    return;
+                }
+            }
+            const insertObj = {
+                user_id: userId,
+                phone: phone,
+                amount: amount,
+                status: 'pending',
+                payment_method: paymentMethod === 'mobile' ? 'bkash_nagad' : 'cash',
+                transaction_date: transactionDate
+            };
+            if (paymentMethod === 'mobile') insertObj.trx_id = trxId;
+            else insertObj.receiver_name = receiverName;
+
+            const { error } = await supabase.from('fund_transactions').insert(insertObj);
+            if (error) {
+                console.error(error);
+                showToast('জমা দিতে ব্যর্থ! আবার চেষ্টা করুন।', true);
+            } else {
+                showToast('📝 পেমেন্ট তথ্য জমা হয়েছে। অনুমোদনের পর ফান্ড যুক্ত হবে।');
+                document.getElementById('paymentForm').reset();
+                document.getElementById('transactionDate').valueAsDate = new Date();
+                togglePaymentFields();
+                document.getElementById('trxId').value = '';
+                document.getElementById('receiverName').value = '';
+            }
+        });
+    }
+
+    async function initFundData() {
+        await loadBalance();
+        await loadAccounts();
+        await loadApprovedHistory();
+        const dateInput = document.getElementById('transactionDate');
+        if (dateInput && !dateInput.value) dateInput.valueAsDate = new Date();
+    }
+
+    // Real-time subscriptions
+    supabase.channel('balance_change').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'fund_balance' }, () => loadBalance()).subscribe();
+    supabase.channel('transaction_approved').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'fund_transactions', filter: 'status=eq.approved' }, () => loadApprovedHistory()).subscribe();
+    supabase.channel('accounts_change').on('postgres_changes', { event: '*', schema: 'public', table: 'fund_accounts' }, () => loadAccounts()).subscribe();
+
+    // Set UMS & Moodle links
+    const UMS_URL = "https://ums.uftb.ac.bd/Login/Index", MOODLE_URL = "https://moodle.uftb.ac.bd/login/index.php";
+    const umsLink = document.getElementById('umsNavLink');
+    const moodleLink = document.getElementById('moodleNavLink');
+    if (umsLink) umsLink.href = UMS_URL;
+    if (moodleLink) moodleLink.href = MOODLE_URL;
+
+    // Search handlers
+    document.getElementById('searchBtn').addEventListener('click', () => {
+        currentFilter = document.getElementById('searchUserId').value;
+        renderHistoryList(currentFilter);
+    });
+    document.getElementById('clearSearchBtn').addEventListener('click', () => {
+        document.getElementById('searchUserId').value = '';
+        currentFilter = '';
+        renderHistoryList('');
+    });
+    document.getElementById('searchUserId').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            currentFilter = e.target.value;
+            renderHistoryList(currentFilter);
+        }
+    });
+
+    // Expose for lock/unlock
+    window.initFundData = initFundData;
+    window.showToast = showToast;
+
+    // Toggle fields on load
+    const methodSelect = document.getElementById('paymentMethod');
+    if (methodSelect) methodSelect.addEventListener('change', togglePaymentFields);
+    togglePaymentFields();
+</script>
+
+<script type="text/javascript">
+    // Password gate logic
+    (function() {
+        const PASSWORD = "ire7th";
+        const gateDiv = document.getElementById('passwordGate');
+        const mainContainer = document.getElementById('mainContent');
+        const lockBtn = document.getElementById('lockNavLink');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const passwordInput = document.getElementById('accessPassword');
+        const errorMsgDiv = document.getElementById('gateErrorMsg');
+
+        function unlockSuccess() {
+            sessionStorage.setItem('batchfund_unlocked', 'true');
+            if (gateDiv) gateDiv.style.display = 'none';
+            if (mainContainer) mainContainer.style.display = 'block';
+            if (lockBtn) lockBtn.style.display = 'inline-block';
+            if (errorMsgDiv) errorMsgDiv.style.display = 'none';
+            if (window.initFundData && typeof window.initFundData === 'function') {
+                window.initFundData();
+            } else {
+                setTimeout(() => { if (window.initFundData) window.initFundData(); }, 100);
+            }
+            if (passwordInput) passwordInput.value = '';
+        }
+
+        function lockPage() {
+            sessionStorage.removeItem('batchfund_unlocked');
+            if (gateDiv) gateDiv.style.display = 'flex';
+            if (mainContainer) mainContainer.style.display = 'none';
+            if (lockBtn) lockBtn.style.display = 'none';
+            if (passwordInput) passwordInput.value = '';
+            if (errorMsgDiv) errorMsgDiv.style.display = 'none';
+        }
+
+        function verifyAndUnlock() {
+            const enteredPassword = passwordInput ? passwordInput.value : '';
+            if (enteredPassword === PASSWORD) {
+                unlockSuccess();
+            } else {
+                if (errorMsgDiv) {
+                    errorMsgDiv.style.display = 'block';
+                    errorMsgDiv.innerText = '❌ ভুল পাসওয়ার্ড! সঠিক পাসওয়ার্ড দিন।';
+                }
+                passwordInput.value = '';
+                passwordInput.focus();
+                const gateCard = document.querySelector('.gate-card');
+                if (gateCard) {
+                    gateCard.style.animation = 'none';
+                    gateCard.offsetHeight;
+                    gateCard.style.animation = 'fadeInUp 0.4s ease';
+                }
+            }
+        }
+
+        function checkSessionAndApply() {
+            const unlocked = sessionStorage.getItem('batchfund_unlocked');
+            if (unlocked === 'true') {
+                if (gateDiv) gateDiv.style.display = 'none';
+                if (mainContainer) mainContainer.style.display = 'block';
+                if (lockBtn) lockBtn.style.display = 'inline-block';
+                if (window.initFundData) setTimeout(() => window.initFundData(), 50);
+            } else {
+                if (gateDiv) gateDiv.style.display = 'flex';
+                if (mainContainer) mainContainer.style.display = 'none';
+                if (lockBtn) lockBtn.style.display = 'none';
+                if (passwordInput) passwordInput.value = '';
+            }
+        }
+
+        if (unlockBtn) unlockBtn.addEventListener('click', verifyAndUnlock);
+        if (passwordInput) passwordInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); verifyAndUnlock(); } });
+        if (lockBtn) lockBtn.addEventListener('click', function(e) { e.preventDefault(); lockPage(); });
+        window.relockBatchFund = lockPage;
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', checkSessionAndApply);
+        else checkSessionAndApply();
+
+        window.addEventListener('load', function() {
+            if (sessionStorage.getItem('batchfund_unlocked') === 'true') {
+                if (window.initFundData) window.initFundData();
+            }
+        });
+    })();
+</script>
+</body>
+</html>
