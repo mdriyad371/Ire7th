@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <!-- viewport ensures proper scaling and scrolling on mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Home | IRE - IoT & Robotics Engineering</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* preserve all original page styles (no conflict) */
+        
+        /* ----- ensure scrolling works on mobile ----- */
+        html, body {
+            overflow-x: hidden;
+            overflow-y: auto !important;  /* guarantee scrollable content */
+            height: auto;
+            min-height: 100%;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0f1f;
+        }
+        /* splash overlay will not block scrolling after removal */
+        .welcome-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 20%, #020617, #000000);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1), visibility 0.8s ease;
+            backdrop-filter: blur(10px);
+            font-family: 'Space Grotesk', 'Inter', 'Fira Code', monospace;
+            overflow: hidden;
+        }
+
+        .welcome-splash.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .splash-card {
+            background: rgba(5, 15, 30, 0.7);
+            backdrop-filter: blur(18px);
+            border-radius: 2rem;
+            padding: 2rem 2rem 2rem 2rem;
+            width: 90%;
+            max-width: 680px;
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 200, 255, 0.2);
+        }
+
+        .robot-coding-area {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            justify-content: center;
+        }
+
+        .robot-icon-animated {
+            font-size: 5rem;
+            color: #3cc7ff;
+            filter: drop-shadow(0 0 8px #00ccff);
+            animation: robotMove 1.8s infinite ease-in-out;
+            background: rgba(0, 30, 60, 0.5);
+            padding: 0.5rem;
+            border-radius: 2rem;
+            display: inline-flex;
+        }
+
+        @keyframes robotMove {
+            0% { transform: translateY(0px) rotate(0deg);}
+            50% { transform: translateY(-6px) rotate(2deg); text-shadow: 0 0 15px cyan;}
+            100% { transform: translateY(0px) rotate(0deg);}
+        }
+
+        .coding-terminal {
+            background: #0a0f1fcc;
+            border-radius: 1.2rem;
+            padding: 1rem 1.3rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            flex: 1;
+            min-width: 260px;
+            border-left: 3px solid #0ff;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+        }
+
+        .code-line {
+            color: #bbf0ff;
+            margin: 0.6rem 0;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid cyan;
+            width: fit-content;
+            max-width: 100%;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .terminal-footer {
+            font-size: 0.7rem;
+            color: #6a8cff;
+            margin-top: 8px;
+            text-align: right;
+            border-top: 1px dashed #2a4c7a;
+            padding-top: 6px;
+        }
+
+        /* responsive adjustments */
+        @media (max-width: 600px) {
+            .robot-coding-area { flex-direction: column; text-align: center; }
+            .coding-terminal { width: 100%; }
+            .robot-icon-animated { font-size: 3.8rem; }
+            .code-line { font-size: 0.7rem; white-space: normal; word-break: keep-all; border-right: none; }
+        }
+
+        /* ensure main container content is scrollable on any device */
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 2;
+        }
+        footer {
+            width: 100%;
+            clear: both;
+            position: relative;
+            z-index: 2;
+        }
+        .hero, .ire-table-container, .navbar {
+            overflow-x: auto;
+        }
+        /* table responsive on mobile */
+        .info-table {
+            width: 100%;
+            min-width: 280px;
+        }
+        body.splash-active {
+            overflow: hidden !important;
+        }
+        /* after splash removed, scroll is automatically enabled */
+    </style>
+</head>
+<body class="splash-active">
+<div class="tech-bg"></div>
+
+<!-- ========== ANIMATED WELCOME: ROBOT TYPING EXACT 3 LINES (FASTER) ========== -->
+<div class="welcome-splash" id="welcomeSplash">
+    <div class="splash-card">
+        <div class="robot-coding-area">
+            <div class="robot-icon-animated">
+                <i class="fas fa-robot"></i>
+                <i class="fas fa-code" style="font-size: 1.8rem; margin-left: 0.2rem;"></i>
+            </div>
+            <div class="coding-terminal">
+                <div id="codeContainer">
+                    <div id="line1" class="code-line"></div>
+                    <div id="line2" class="code-line"></div>
+                    <div id="line3" class="code-line"></div>
+                </div>
+                <div class="terminal-footer">
+                    <i class="fas fa-microchip"></i> IRE core::booting...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== ORIGINAL PAGE CONTENT (FULLY PRESERVED) ========== -->
+<div class="container">
+    <div class="navbar">
+        <div class="logo-area">
+            <div class="university-logo">
+                <img src="images/logo.png" alt="University Logo" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-university\'></i>';">
+            </div>
+            <div class="univ-title">
+                <h1>University of Frontier Technology, Bangladesh</h1>
+                <p><i class="fas fa-robot"></i> Internet of Things and Robotics Engineering (IRE)</p>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="active">🏠 Home</a>
+            <a href="routine.html">📅 Routine</a>
+            <a href="courses.html">📚 Courses</a>
+            <a href="events.html">🎉 Events</a>
+            <a href="notices.html">📢 Notices</a>
+            <a href="batchfund.html">💰 Batch Fund</a>
+            <a href="#" id="umsNavLink" target="_blank"><i class="fas fa-graduation-cap"></i> UMS</a>
+            <a href="#" id="moodleNavLink" target="_blank"><i class="fas fa-chalkboard"></i> Moodle</a>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="robot-icon"><i class="fas fa-robot"></i> <i class="fas fa-microchip"></i> <i class="fas fa-wifi"></i></div>
+        <h2>IoT & Robotics Engineering</h2>
+        <p>Welcome to the Department of Internet of Things and Robotics Engineering. We build future technology creators.</p>
+        
+        <div class="ire-table-container">
+            <table class="info-table glass-card">
+                <tr><th><i class="fas fa-tag"></i> Batch</th><td>সপ্তরণন (IRE 7th Batch)</td></tr>
+                <tr>
+                    <th><i class="fas fa-calendar"></i> Session</th>
+                    <td>2024-25</td>
+                </tr>
+                <tr>
+                    <th><i class="fas fa-graduation-cap"></i> Semester</th>
+                    <td>L1T2 (Level 1 Term 2)</td>
+                </tr>
+                <tr>
+                    <th><i class="fas fa-users"></i> Total Students</th>
+                    <td>41</td>
+                </tr>
+                <tr>
+                    <th><i class="fas fa-chalkboard-user"></i> Advisor</th>
+                    <td>Sadia Enam</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="social-links">
+            <a href="https://www.facebook.com/riyad371"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+        <div class="footer-info">
+            <span><i class="fas fa-map-marker-alt"></i> কালিয়াকৈর, গাজীপুর</span>
+            <span><i class="fas fa-envelope"></i> 2401043@uftb.ac.bd</span>
+            <span><i class="fas fa-phone-alt"></i> 01709130371</span>
+        </div>
+        <div class="developer">
+            <i class="fas fa-code"></i> Developed by <strong>Md Riyad Hossen</strong> (IRE 7th Batch)<br>
+            <span>© 2026 Department of Internet of Things and Robotics Engineering</span>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // UMS & Moodle links (original)
+    const UMS_URL = "https://ums.uftb.ac.bd/Login/Index";
+    const MOODLE_URL = "https://moodle.uftb.ac.bd/login/index.php";
+    const umsLink = document.getElementById('umsNavLink');
+    const moodleLink = document.getElementById('moodleNavLink');
+    if (umsLink) umsLink.href = UMS_URL;
+    if (moodleLink) moodleLink.href = MOODLE_URL;
+</script>
+
+<script>
+    (function() {
+        // ----- EXACT 3 LINES TO BE TYPED BY ROBOT (FASTER TYPING) -----
+        const linesToType = [
+            'Welcome to "সপ্তরণন"',
+            'Innovate Automate Elevate',
+            'Robotics: Where Imagination Meets Reality'
+        ];
+        
+        const lineElements = [
+            document.getElementById('line1'),
+            document.getElementById('line2'),
+            document.getElementById('line3')
+        ];
+        
+        const splash = document.getElementById('welcomeSplash');
+        let currentLineIndex = 0;
+        let typingSpeed = 35;     // faster typing (was 55)
+        let lineDelay = 280;      // delay before next line starts
+        
+        // Typewriter effect for a single line
+        function typeLine(element, text, callback) {
+            if (!element) return;
+            element.textContent = '';
+            element.style.borderRight = '2px solid cyan';
+            let i = 0;
+            function addChar() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(addChar, typingSpeed);
+                } else {
+                    element.style.borderRight = 'none';
+                    if (callback) callback();
+                }
+            }
+            addChar();
+        }
+        
+        // Helper: fully unlock scroll on body and html after splash removal
+        function unlockScrollCompletely() {
+            // reset any overflow restrictions to ensure scrolling works on mobile
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+            if (document.body.classList.contains('splash-active')) {
+                document.body.classList.remove('splash-active');
+            }
+            // force reflow to ensure scroll returns
+            document.body.style.display = 'none';
+            document.body.offsetHeight;
+            document.body.style.display = '';
+            window.scrollTo(0, 0); // optional, just ensures no stuck scroll
+        }
+        
+        // Dismiss overlay (fade out, remove, unlock scroll)
+        function dismissSplash() {
+            if (!splash) return;
+            if (splash.classList.contains('fade-out')) return;
+            splash.classList.add('fade-out');
+            
+            const onFinish = () => {
+                if (splash && splash.parentNode) splash.remove();
+                unlockScrollCompletely();
+            };
+            splash.addEventListener('transitionend', onFinish, { once: true });
+            // fallback: if transitionend not fired (rare), still cleanup
+            setTimeout(() => {
+                if (splash && splash.parentNode) {
+                    splash.remove();
+                    unlockScrollCompletely();
+                }
+            }, 900);
+        }
+        
+        // Start typing sequence
+        function startTypingSequence() {
+            if (currentLineIndex >= linesToType.length) {
+                // All lines typed -> auto dismiss after a short pause
+                setTimeout(() => {
+                    dismissSplash();
+                }, 1200);
+                return;
+            }
+            const lineElement = lineElements[currentLineIndex];
+            const lineText = linesToType[currentLineIndex];
+            if (lineElement) {
+                typeLine(lineElement, lineText, () => {
+                    currentLineIndex++;
+                    setTimeout(startTypingSequence, lineDelay);
+                });
+            } else {
+                currentLineIndex++;
+                setTimeout(startTypingSequence, lineDelay);
+            }
+        }
+        
+        // Ensure that initial body overflow hidden is set (for splash), but we will unlock later
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+        
+        // Start animation after short delay
+        setTimeout(() => {
+            startTypingSequence();
+        }, 300);
+        
+        // Safety: auto dismiss after maximum 7 seconds and ensure scrolling
+        setTimeout(() => {
+            if (splash && splash.parentNode && !splash.classList.contains('fade-out')) {
+                dismissSplash();
+            } else {
+                // if splash already removed but scroll might still be locked, force unlock
+                if (document.body.style.overflow === 'hidden' || document.documentElement.style.overflow === 'hidden') {
+                    unlockScrollCompletely();
+                }
+            }
+        }, 7000);
+        
+        // Additional safeguard: listen for any touch events that may be blocked (just in case)
+        window.addEventListener('load', function() {
+            // if splash still present after load? unlikely but just to be safe
+            setTimeout(() => {
+                if (splash && splash.parentNode && getComputedStyle(splash).opacity === '0') {
+                    // already faded but not removed? force removal
+                    if (splash.parentNode) splash.remove();
+                    unlockScrollCompletely();
+                }
+            }, 100);
+        });
+    })();
+</script>
+</body>
+</html>
