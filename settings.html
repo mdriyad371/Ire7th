@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>সেটিংস | IRE - IoT & Robotics Engineering</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0f1f; font-family: 'Inter', 'Space Grotesk', sans-serif; color: #f0f3ff; overflow-x: hidden; padding-bottom: 80px; }
+        .tech-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 10%, #01031a, #000000); z-index: -2; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 2; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,15,30,0.95); backdrop-filter: blur(12px); display: flex; justify-content: space-around; align-items: center; padding: 6px 12px 15px; border-top: 1px solid rgba(0,242,255,0.3); z-index: 100; }
+        .nav-item { background: none; border: none; color: #8e9aaf; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.6rem; cursor: pointer; padding: 4px 10px; border-radius: 40px; transition: 0.2s; }
+        .nav-item i { font-size: 1.1rem; }
+        .nav-item.active { color: #00f2ff; background: #00f2ff20; }
+        .glass-card { background: rgba(10,20,35,0.6); backdrop-filter: blur(10px); border-radius: 1.2rem; padding: 1rem; margin-bottom: 1rem; border: 1px solid rgba(0,242,255,0.15); }
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem; color: #00f2ff; display: flex; align-items: center; gap: 8px; }
+        .class-box { background: rgba(0,0,0,0.3); border-radius: 0.8rem; padding: 8px; margin-bottom: 8px; font-size: 0.75rem; }
+        .class-info { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+        button { background: #3b82f6; border: none; padding: 6px 12px; border-radius: 40px; font-weight: 600; color: white; cursor: pointer; font-size: 0.7rem; }
+        button.secondary { background: #1e2a3e; color: #e0e5f0; }
+        button.danger { background: #ef4444; }
+        button.success { background: #10b981; }
+        input, select { padding: 6px 10px; border-radius: 28px; border: 1px solid #2c4a6e; background: #1a2538; color: white; width: 100%; margin: 4px 0; font-size: 0.75rem; }
+        .form-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+        .form-row input, .form-row select { flex: 1; min-width: 80px; }
+        .goal-edit-item { background: rgba(0,0,0,0.3); border-radius: 0.8rem; padding: 8px; margin-bottom: 10px; }
+        .goal-title { font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 0.8rem; }
+        .subtask-row { display: flex; justify-content: space-between; align-items: center; padding: 4px; margin: 3px 0; background: rgba(0,0,0,0.2); border-radius: 8px; flex-wrap: wrap; gap: 4px; font-size: 0.7rem; }
+        footer { background: rgba(3,8,20,0.85); border-radius: 1rem; padding: 0.8rem; text-align: center; margin-top: 1.5rem; font-size: 0.6rem; }
+        @media (max-width: 600px) { .container { padding: 12px; } }
+    </style>
+</head>
+<body>
+<div class="tech-bg"></div>
+<div class="container">
+    <!-- Routine Edit Section -->
+    <div class="glass-card">
+        <div class="section-title"><i class="fas fa-edit"></i> রুটিন এডিট</div>
+        <div id="routineList"></div>
+        <div class="add-class-form" style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(0,242,255,0.2);">
+            <h3 style="margin-bottom:6px; font-size:0.85rem;">➕ নতুন ক্লাস</h3>
+            <div class="form-row">
+                <select id="newDay"><option value="Saturday">শনিবার</option><option value="Sunday">রবিবার</option><option value="Monday">সোমবার</option><option value="Tuesday">মঙ্গলবার</option><option value="Wednesday">বুধবার</option><option value="Thursday">বৃহস্পতিবার</option><option value="Friday">শুক্রবার</option></select>
+                <input type="text" id="newCourse" placeholder="কোর্স নাম">
+                <input type="text" id="newStartTime" placeholder="শুরু (10:00)">
+                <input type="text" id="newEndTime" placeholder="শেষ (12:00)">
+                <input type="text" id="newRoom" placeholder="রুম">
+            </div>
+            <button id="addClassBtn" class="success">+ যোগ</button>
+            <button id="resetRoutineBtn" class="danger" style="margin-left:6px;">ডিফল্ট রিসেট</button>
+        </div>
+    </div>
+    <!-- Tracker Edit Section -->
+    <div class="glass-card">
+        <div class="section-title"><i class="fas fa-tasks"></i> টাইম ট্র্যাকার এডিট</div>
+        <div id="trackerEditList"></div>
+        <div style="margin-top:10px;">
+            <input type="text" id="newGoalName" placeholder="নতুন বিভাগ নাম" style="width:calc(100% - 80px); display:inline-block; margin-right:6px;">
+            <button id="addGoalBtn" class="success" style="width:70px;">যোগ</button>
+        </div>
+        <button id="resetTrackerBtn" class="danger" style="margin-top:10px;">সমস্ত ট্র্যাকার রিসেট</button>
+    </div>
+    <footer><i class="fas fa-code"></i> Developed by <strong>Md Riyad Hossen</strong> (IRE 7th Batch)<br>© 2026 Department of IoT & Robotics Engineering | UFTB</footer>
+</div>
+<div class="bottom-nav">
+    <button class="nav-item" data-page="index.html"><i class="fas fa-home"></i><span>হোম</span></button>
+    <button class="nav-item" data-page="routine.html"><i class="fas fa-calendar-alt"></i><span>রুটিন</span></button>
+    <button class="nav-item" data-page="tracker.html"><i class="fas fa-stopwatch"></i><span>টাইম ট্র্যাকার</span></button>
+    <button class="nav-item active" data-page="settings.html"><i class="fas fa-cog"></i><span>সেটিংস</span></button>
+</div>
+<script>
+    const DEFAULT_ROUTINE = [{ day:"Sunday", dayBn:"রবিবার", course:"Internet of Things (IoT)", start_time:"10:00", end_time:"12:00", room:"Lab 401" },{ day:"Sunday", dayBn:"রবিবার", course:"Robotics Engineering", start_time:"12:30", end_time:"14:30", room:"Room 302" },{ day:"Monday", dayBn:"সোমবার", course:"Programming for IoT", start_time:"09:00", end_time:"11:00", room:"Lab 405" },{ day:"Monday", dayBn:"সোমবার", course:"Embedded Systems", start_time:"11:30", end_time:"13:30", room:"Lab 401" },{ day:"Tuesday", dayBn:"মঙ্গলবার", course:"Wireless Communication", start_time:"10:00", end_time:"12:00", room:"Room 201" },{ day:"Tuesday", dayBn:"মঙ্গলবার", course:"Sensor Technology", start_time:"12:30", end_time:"14:30", room:"Lab 403" },{ day:"Wednesday", dayBn:"বুধবার", course:"Data Structures", start_time:"09:00", end_time:"11:00", room:"Lab 405" },{ day:"Wednesday", dayBn:"বুধবার", course:"Machine Learning Basics", start_time:"11:30", end_time:"13:30", room:"Room 305" },{ day:"Thursday", dayBn:"বৃহস্পতিবার", course:"Research Methodology", start_time:"14:00", end_time:"16:00", room:"Room 201" },{ day:"Thursday", dayBn:"বৃহস্পতিবার", course:"Cloud Computing", start_time:"16:00", end_time:"18:00", room:"Lab 401" }];
+    let currentRoutine = [], trackerGoals = [];
+    const daysBn = { Saturday:"শনিবার", Sunday:"রবিবার", Monday:"সোমবার", Tuesday:"মঙ্গলবার", Wednesday:"বুধবার", Thursday:"বৃহস্পতিবার", Friday:"শুক্রবার" };
+    function loadRoutine(){ let saved=localStorage.getItem('custom_routine'); currentRoutine=saved?JSON.parse(saved):JSON.parse(JSON.stringify(DEFAULT_ROUTINE)); renderRoutineList(); }
+    function saveRoutine(){ localStorage.setItem('custom_routine',JSON.stringify(currentRoutine)); renderRoutineList(); }
+    function renderRoutineList(){ let html=''; currentRoutine.forEach((item,idx)=>{ html+=`<div class="class-box"><div class="class-info"><div><strong>${daysBn[item.day]}</strong> - ${item.course}</div><div>⏰ ${item.start_time}-${item.end_time} | 📍 ${item.room}</div></div><div class="edit-buttons"><button class="secondary" onclick="editClass(${idx})">✏️</button><button class="danger" onclick="deleteClass(${idx})">🗑️</button></div></div>`; }); document.getElementById('routineList').innerHTML=html||'<p style="text-align:center;padding:10px;">কোনো ক্লাস নেই</p>'; }
+    window.editClass=function(idx){ let item=currentRoutine[idx]; let nc=prompt("কোর্স নাম:",item.course), ns=prompt("শুরু:",item.start_time), ne=prompt("শেষ:",item.end_time), nr=prompt("রুম:",item.room); if(nc) item.course=nc; if(ns) item.start_time=ns; if(ne) item.end_time=ne; if(nr) item.room=nr; saveRoutine(); };
+    window.deleteClass=function(idx){ if(confirm("মুছবেন?")){ currentRoutine.splice(idx,1); saveRoutine(); } };
+    function addClass(){ let day=document.getElementById('newDay').value, course=document.getElementById('newCourse').value, st=document.getElementById('newStartTime').value, et=document.getElementById('newEndTime').value, rm=document.getElementById('newRoom').value; if(!course||!st||!et) return alert("সব ফিল্ড পূরণ করুন"); currentRoutine.push({day,dayBn:daysBn[day],course,start_time:st,end_time:et,room:rm||"TBA"}); saveRoutine(); document.getElementById('newCourse').value=''; document.getElementById('newStartTime').value=''; document.getElementById('newEndTime').value=''; document.getElementById('newRoom').value=''; }
+    function resetRoutine(){ if(confirm("ডিফল্ট রুটিনে রিসেট করবেন?")){ currentRoutine=JSON.parse(JSON.stringify(DEFAULT_ROUTINE)); saveRoutine(); } }
+    function initDefaultTracker(){ return [{ id:101, name:"📚 পড়া", pinned:true, subtasks:[{ id:1011, name:"বাংলা", loggedSeconds:0, targetMinutes:120 },{ id:1012, name:"ইংরেজি", loggedSeconds:0, targetMinutes:120 },{ id:1013, name:"গণিত", loggedSeconds:0, targetMinutes:120 }] },{ id:102, name:"💻 প্রোগ্রামিং", pinned:false, subtasks:[{ id:1021, name:"HTML/CSS", loggedSeconds:0, targetMinutes:90 },{ id:1022, name:"JavaScript", loggedSeconds:0, targetMinutes:120 },{ id:1023, name:"React", loggedSeconds:0, targetMinutes:150 }] },{ id:103, name:"🤖 রোবোটিক্স", pinned:false, subtasks:[{ id:1031, name:"Arduino", loggedSeconds:0, targetMinutes:90 },{ id:1032, name:"ROS", loggedSeconds:0, targetMinutes:120 }] }]; }
+    function loadTracker(){ let saved=localStorage.getItem('subtask_tracker'); trackerGoals=saved?JSON.parse(saved):initDefaultTracker(); renderTrackerList(); }
+    function saveTracker(){ localStorage.setItem('subtask_tracker',JSON.stringify(trackerGoals)); renderTrackerList(); }
+    function renderTrackerList(){ let html=''; trackerGoals.forEach((g,gIdx)=>{ html+=`<div class="goal-edit-item"><div class="goal-title"><span><strong>${g.name}</strong> ${g.pinned?'📌':''}</span><div><button class="secondary" onclick="editGoal(${gIdx})">✏️</button><button class="danger" onclick="deleteGoal(${gIdx})">🗑️</button></div></div><div style="margin-left:8px;">`; g.subtasks.forEach((s,sIdx)=>{ html+=`<div class="subtask-row"><span>📌 ${s.name} (${s.targetMinutes} মিনিট)</span><div><button class="secondary" onclick="editSubtask(${gIdx},${sIdx})">✏️</button><button class="danger" onclick="deleteSubtask(${gIdx},${sIdx})">🗑️</button></div></div>`; }); html+=`<div class="form-row" style="margin-top:6px;"><input type="text" id="newSubName-${gIdx}" placeholder="নতুন সাবটাস্ক" style="flex:2;"><input type="number" id="newSubTarget-${gIdx}" placeholder="লক্ষ্য মিনিট" style="width:80px;"><button class="success" onclick="addSubtask(${gIdx})">+</button></div></div></div>`; }); document.getElementById('trackerEditList').innerHTML=html||'<p>কোনো বিভাগ নেই</p>'; }
+    window.editGoal=function(idx){ let n=prompt("নতুন নাম:",trackerGoals[idx].name); if(n){ trackerGoals[idx].name=n; saveTracker(); } };
+    window.deleteGoal=function(idx){ if(confirm(`"${trackerGoals[idx].name}" মুছবেন?`)){ trackerGoals.splice(idx,1); saveTracker(); } };
+    window.editSubtask=function(gIdx,sIdx){ let s=trackerGoals[gIdx].subtasks[sIdx]; let nn=prompt("নতুন নাম:",s.name); let nt=parseInt(prompt("লক্ষ্য মিনিট:",s.targetMinutes)); if(nn) s.name=nn; if(nt>0) s.targetMinutes=nt; saveTracker(); };
+    window.deleteSubtask=function(gIdx,sIdx){ if(confirm("সাবটাস্ক মুছবেন?")){ trackerGoals[gIdx].subtasks.splice(sIdx,1); saveTracker(); } };
+    window.addSubtask=function(gIdx){ let name=document.getElementById(`newSubName-${gIdx}`)?.value; let target=parseInt(document.getElementById(`newSubTarget-${gIdx}`)?.value); if(name&&target>0){ trackerGoals[gIdx].subtasks.push({id:Date.now(),name,loggedSeconds:0,targetMinutes:target}); saveTracker(); document.getElementById(`newSubName-${gIdx}`).value=''; document.getElementById(`newSubTarget-${gIdx}`).value=''; }else alert("সঠিক নাম ও লক্ষ্য দিন"); };
+    function addNewGoal(){ let name=document.getElementById('newGoalName').value; if(name){ trackerGoals.push({id:Date.now(),name,pinned:false,subtasks:[]}); saveTracker(); document.getElementById('newGoalName').value=''; }else alert("বিভাগের নাম দিন"); }
+    function resetAllTracker(){ if(confirm("সমস্ত ট্র্যাকার ডাটা রিসেট করবেন?")){ localStorage.removeItem('subtask_tracker'); localStorage.removeItem('subtask_logs'); localStorage.removeItem('selected_subtask'); trackerGoals=initDefaultTracker(); saveTracker(); } }
+    document.getElementById('addClassBtn')?.addEventListener('click',addClass);
+    document.getElementById('resetRoutineBtn')?.addEventListener('click',resetRoutine);
+    document.getElementById('addGoalBtn')?.addEventListener('click',addNewGoal);
+    document.getElementById('resetTrackerBtn')?.addEventListener('click',resetAllTracker);
+    document.querySelectorAll('.nav-item').forEach(btn=>{ btn.addEventListener('click',()=>{ let page=btn.getAttribute('data-page'); if(page&&page!=='settings.html') window.location.href=page; }); });
+    loadRoutine(); loadTracker();
+</script>
+</body>
+</html>
