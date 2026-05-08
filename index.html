@@ -18,7 +18,8 @@
             font-family: 'Inter', 'Space Grotesk', sans-serif;
             color: #f0f3ff;
             overflow-x: hidden;
-            padding-bottom: 80px;
+            padding-bottom: 75px;
+            min-height: 100vh;
         }
 
         .tech-bg {
@@ -44,7 +45,7 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px 25px 50px;
+            padding: 20px 25px 20px;
             position: relative;
             z-index: 2;
         }
@@ -80,10 +81,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+        }
+        .uni-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .uni-logo i {
             font-size: 2.2rem;
             color: cyan;
-            border: 2px solid #0ff;
-            box-shadow: 0 0 15px rgba(0,255,255,0.5);
         }
         .uni-text h1 {
             font-size: 1.3rem;
@@ -484,7 +491,7 @@
             color: #e0e5f0;
         }
 
-        /* bottom navigation */
+        /* ========== বটম নেভিগেশন বার ========== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -495,7 +502,7 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 6px 12px 15px;
+            padding: 8px 12px 18px;
             border-top: 1px solid rgba(0, 242, 255, 0.3);
             z-index: 100;
         }
@@ -531,9 +538,10 @@
         }
 
         @media (max-width: 600px) {
-            .container { padding: 12px; }
+            .container { padding: 12px 12px 20px; }
             .hero-header { padding: 1rem; }
-            .uni-logo { width: 50px; height: 50px; font-size: 1.5rem; }
+            .uni-logo { width: 50px; height: 50px; }
+            .uni-logo i { font-size: 1.5rem; }
             .uni-text h1 { font-size: 0.9rem; }
             .dept-name h2 { font-size: 0.7rem; }
             .dept-name { padding: 4px 10px; }
@@ -541,6 +549,17 @@
             .profile-avatar { width: 55px; height: 55px; }
             .profile-name { font-size: 0.75rem; }
             .links-grid { grid-template-columns: repeat(2, 1fr); }
+            .bottom-nav { padding: 6px 12px 15px; }
+            .nav-item { padding: 3px 8px; }
+            .nav-item i { font-size: 1rem; }
+            .nav-item span { font-size: 0.55rem; }
+        }
+        
+        @media (max-width: 380px) {
+            .bottom-nav { padding: 5px 8px 12px; }
+            .nav-item { padding: 2px 6px; }
+            .nav-item i { font-size: 0.9rem; }
+            .nav-item span { font-size: 0.5rem; }
         }
     </style>
 </head>
@@ -552,7 +571,9 @@
     <div class="hero-header">
         <div class="univ-brand">
             <div class="logo-badge">
-                <div class="uni-logo"><i class="fas fa-university"></i></div>
+                <div class="uni-logo">
+                    <img src="images/logo.png" alt="University Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-university\'></i>';">
+                </div>
                 <div class="uni-text">
                     <h1>University of Frontier Technology, Bangladesh</h1>
                     <p><i class="fas fa-map-marker-alt"></i> কালিয়াকৈর, গাজীপুর</p>
@@ -620,10 +641,9 @@
             <div class="profiles-track" id="profilesTrack"></div>
             <button class="slider-btn btn-right" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
         </div>
-        <p style="text-align: center; font-size: 0.55rem; margin-top: 8px; color: #7bc5ff;"><i class="fas fa-hand-pointer"></i> ক্লিক করুন — কার্ড বড় হবে | <i class="fas fa-image"></i> ইমেজ যোগ করতে images/আইডি.jpg</p>
     </div>
 
-    <!-- Important Links (Courses যোগ করা হয়েছে) -->
+    <!-- Important Links -->
     <div class="links-section">
         <div class="section-title"><i class="fas fa-link"></i> ✦ Important Links ✦</div>
         <div class="links-grid">
@@ -664,12 +684,12 @@
 <div class="bottom-nav">
     <button class="nav-item active" data-page="index.html"><i class="fas fa-home"></i><span>হোম</span></button>
     <button class="nav-item" data-page="routine.html"><i class="fas fa-calendar-alt"></i><span>রুটিন</span></button>
-    <button class="nav-item" data-page="tracker.html"><i class="fas fa-stopwatch"></i><span>টাইম ট্র্যাকার</span></button>
+    <button class="nav-item" data-page="tracker.html"><i class="fas fa-stopwatch</i><span>টাইম ট্র্যাকার</span></button>
     <button class="nav-item" data-page="settings.html"><i class="fas fa-cog"></i><span>সেটিংস</span></button>
 </div>
 
 <script>
-    // Student Data
+    // Student Data - 46 students
     const students = [
         { name: "Aninda Biswas Argho", id: "2401002", email: "2401002@uftb.ac.bd" },
         { name: "Md Safin Ahmed", id: "2401003", email: "2401003@uftb.ac.bd" },
@@ -718,24 +738,40 @@
     document.getElementById('totalStudentsCount').innerText = students.length + " জন";
     const track = document.getElementById('profilesTrack');
 
-    function getProfileImageUrl(studentId) { return `images/${studentId}.jpg`; }
+    function getProfileImageUrl(studentId) { 
+        return `images/${studentId}.jpg`; 
+    }
 
     function createAvatarElement(student) {
         const avatarDiv = document.createElement('div');
         avatarDiv.className = 'profile-avatar';
+        
         const img = document.createElement('img');
         img.src = getProfileImageUrl(student.id);
         img.alt = student.name;
         img.style.display = 'none';
+        
         const icon = document.createElement('i');
         icon.className = 'fas fa-user-circle';
         icon.style.fontSize = '2.5rem';
         icon.style.color = '#3cc7ff';
-        img.onload = function() { img.style.display = 'block'; icon.style.display = 'none'; };
-        img.onerror = function() { img.style.display = 'none'; icon.style.display = 'block'; };
+        
+        img.onload = function() { 
+            img.style.display = 'block'; 
+            icon.style.display = 'none'; 
+        };
+        
+        img.onerror = function() { 
+            img.style.display = 'none'; 
+            icon.style.display = 'block'; 
+        };
+        
         avatarDiv.appendChild(img);
         avatarDiv.appendChild(icon);
+        
+        // Force image load check
         img.src = getProfileImageUrl(student.id);
+        
         return avatarDiv;
     }
 
@@ -746,25 +782,37 @@
             const card = document.createElement('div');
             card.className = 'profile-card';
             card.setAttribute('data-index', idx);
-            card.appendChild(createAvatarElement(student));
-            const nameDiv = document.createElement('div'); nameDiv.className = 'profile-name'; nameDiv.textContent = student.name;
-            const idDiv = document.createElement('div'); idDiv.className = 'profile-id'; idDiv.innerHTML = `<i class="fas fa-id-badge"></i> ${student.id}`;
-            const emailDiv = document.createElement('div'); emailDiv.className = 'profile-email'; emailDiv.innerHTML = `<i class="fas fa-envelope"></i> ${student.email}`;
-            card.appendChild(nameDiv); card.appendChild(idDiv); card.appendChild(emailDiv);
+            
+            const avatarDiv = createAvatarElement(student);
+            card.appendChild(avatarDiv);
+            
+            const nameDiv = document.createElement('div'); 
+            nameDiv.className = 'profile-name'; 
+            nameDiv.textContent = student.name;
+            
+            const idDiv = document.createElement('div'); 
+            idDiv.className = 'profile-id'; 
+            idDiv.innerHTML = `<i class="fas fa-id-badge"></i> ${student.id}`;
+            
+            const emailDiv = document.createElement('div'); 
+            emailDiv.className = 'profile-email'; 
+            emailDiv.innerHTML = `<i class="fas fa-envelope"></i> ${student.email}`;
+            
+            card.appendChild(nameDiv);
+            card.appendChild(idDiv);
+            card.appendChild(emailDiv);
+            
             card.addEventListener('click', () => {
                 document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('active-card'));
                 card.classList.add('active-card');
             });
+            
             track.appendChild(card);
         });
-        if(track.children.length) track.children[0].classList.add('active-card');
-    }
-
-    function scrollToCard(index) {
-        const cards = document.querySelectorAll('.profile-card');
-        if (!cards.length) return;
-        index = Math.max(0, Math.min(index, cards.length - 1));
-        cards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        
+        if(track.children.length) {
+            track.children[0].classList.add('active-card');
+        }
     }
 
     function getActiveIndex() {
@@ -773,6 +821,13 @@
             if (cards[i].classList.contains('active-card')) return i;
         }
         return 0;
+    }
+
+    function scrollToCard(index) {
+        const cards = document.querySelectorAll('.profile-card');
+        if (!cards.length) return;
+        index = Math.max(0, Math.min(index, cards.length - 1));
+        cards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
 
     function nextProfile() {
@@ -793,8 +848,11 @@
         scrollToCard(prev);
     }
 
+    // Slider buttons
     document.getElementById('prevBtn')?.addEventListener('click', prevProfile);
     document.getElementById('nextBtn')?.addEventListener('click', nextProfile);
+    
+    // Bottom navigation
     document.querySelectorAll('.nav-item').forEach(btn => {
         btn.addEventListener('click', () => {
             const page = btn.getAttribute('data-page');
@@ -802,13 +860,12 @@
         });
     });
 
-    buildProfiles();
-
     // Typing Animation
     const textToType = 'Welcome to "সপ্তরণন"';
     let charIndex = 0;
     const typeLine = document.getElementById('dynamicLine');
     const cursor = document.getElementById('typingCursor');
+    
     function typeWriter() {
         if (charIndex < textToType.length) {
             typeLine.textContent += textToType.charAt(charIndex);
@@ -816,6 +873,9 @@
             setTimeout(typeWriter, 60);
         }
     }
+    
+    // Initialize everything
+    buildProfiles();
     setTimeout(typeWriter, 500);
 </script>
 </body>
