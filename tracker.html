@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>টাইম ট্র্যাকার | IRE - IoT & Robotics Engineering</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0f1f; font-family: 'Inter', 'Space Grotesk', sans-serif; color: #f0f3ff; overflow-x: hidden; padding-bottom: 80px; }
+        .tech-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 10%, #01031a, #000000); z-index: -2; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 2; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,15,30,0.95); backdrop-filter: blur(12px); display: flex; justify-content: space-around; align-items: center; padding: 6px 12px 15px; border-top: 1px solid rgba(0,242,255,0.3); z-index: 100; }
+        .nav-item { background: none; border: none; color: #8e9aaf; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.6rem; cursor: pointer; padding: 4px 10px; border-radius: 40px; transition: 0.2s; }
+        .nav-item i { font-size: 1.1rem; }
+        .nav-item.active { color: #00f2ff; background: #00f2ff20; }
+        .glass-card { background: rgba(10,20,35,0.6); backdrop-filter: blur(10px); border-radius: 1.2rem; padding: 1rem; margin-bottom: 1rem; border: 1px solid rgba(0,242,255,0.15); }
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem; color: #00f2ff; display: flex; align-items: center; gap: 8px; }
+        .stats-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+        .stat-box { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 12px; flex: 1; text-align: center; }
+        .stat-number { font-size: 1.2rem; font-weight: bold; color: #00f2ff; }
+        .stat-label { font-size: 0.6rem; color: #94a3b8; }
+        canvas { max-height: 150px; width: 100% !important; margin: 8px 0; }
+        .timer-display { font-size: 2.5rem; font-weight: 700; font-family: monospace; text-align: center; background: #0f172a; color: white; padding: 12px; border-radius: 40px; letter-spacing: 2px; }
+        .btn-group { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+        button { background: #3b82f6; border: none; padding: 6px 14px; border-radius: 40px; font-weight: 600; color: white; cursor: pointer; font-size: 0.75rem; }
+        button.secondary { background: #1e2a3e; color: #e0e5f0; }
+        .goal-item { background: rgba(0,0,0,0.3); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+        .goal-header { padding: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); font-size: 0.85rem; }
+        .goal-name { font-weight: 600; }
+        .subtask-list { padding: 6px 10px; border-top: 1px solid rgba(0,242,255,0.2); }
+        .subtask-item { display: flex; justify-content: space-between; align-items: center; padding: 6px; margin: 3px 0; border-radius: 10px; cursor: pointer; gap: 6px; flex-wrap: wrap; font-size: 0.75rem; }
+        .subtask-item.selected { background: #00f2ff30; border: 1px solid #00f2ff; }
+        .subtask-name { flex: 1; }
+        .progress-bar-bg { background: #1e2a3e; border-radius: 10px; height: 4px; overflow: hidden; width: 60px; }
+        .progress-fill { background: #00f2ff; height: 100%; width: 0%; border-radius: 10px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .note-box { background: rgba(0,242,255,0.08); border-radius: 10px; padding: 6px; text-align: center; margin-top: 8px; font-size: 0.65rem; color: #7bc5ff; }
+        footer { background: rgba(3,8,20,0.85); border-radius: 1rem; padding: 0.8rem; text-align: center; margin-top: 1.5rem; font-size: 0.6rem; }
+        @media (max-width: 600px) { .container { padding: 12px; } .timer-display { font-size: 1.8rem; } }
+    </style>
+</head>
+<body>
+<div class="tech-bg"></div>
+<div class="container">
+    <div id="trackerContent"></div>
+    <footer><i class="fas fa-code"></i> Developed by <strong>Md Riyad Hossen</strong> (IRE 7th Batch)<br>© 2026 Department of IoT & Robotics Engineering | UFTB</footer>
+</div>
+<div class="bottom-nav">
+    <button class="nav-item" data-page="index.html"><i class="fas fa-home"></i><span>হোম</span></button>
+    <button class="nav-item" data-page="routine.html"><i class="fas fa-calendar-alt"></i><span>রুটিন</span></button>
+    <button class="nav-item active" data-page="tracker.html"><i class="fas fa-stopwatch"></i><span>টাইম ট্র্যাকার</span></button>
+    <button class="nav-item" data-page="settings.html"><i class="fas fa-cog"></i><span>সেটিংস</span></button>
+</div>
+<script>
+    let goals = [], taskLogs = [], selectedSubtask = null, progressChart = null;
+    let timerState = { isRunning: false, remainingSeconds: 0, currentGoalId: null, currentSubtaskId: null, currentSubtaskName: "", intervalId: null, elapsedThisSession: 0 };
+    
+    function initDefaultTrackerData() {
+        return [{ id: 101, name: "📚 পড়া", pinned: true, subtasks: [{ id: 1011, name: "বাংলা", loggedSeconds: 0, targetMinutes: 120 }, { id: 1012, name: "ইংরেজি", loggedSeconds: 0, targetMinutes: 120 }, { id: 1013, name: "গণিত", loggedSeconds: 0, targetMinutes: 120 }] },
+                { id: 102, name: "💻 প্রোগ্রামিং", pinned: false, subtasks: [{ id: 1021, name: "HTML/CSS", loggedSeconds: 0, targetMinutes: 90 }, { id: 1022, name: "JavaScript", loggedSeconds: 0, targetMinutes: 120 }, { id: 1023, name: "React", loggedSeconds: 0, targetMinutes: 150 }] },
+                { id: 103, name: "🤖 রোবোটিক্স", pinned: false, subtasks: [{ id: 1031, name: "Arduino", loggedSeconds: 0, targetMinutes: 90 }, { id: 1032, name: "ROS", loggedSeconds: 0, targetMinutes: 120 }] }];
+    }
+    function loadData() {
+        const saved = localStorage.getItem('subtask_tracker'); goals = saved ? JSON.parse(saved) : initDefaultTrackerData();
+        const savedLogs = localStorage.getItem('subtask_logs'); taskLogs = savedLogs ? JSON.parse(savedLogs) : [];
+        const savedSelected = localStorage.getItem('selected_subtask'); if(savedSelected) selectedSubtask = JSON.parse(savedSelected);
+        rebuildLoggedSeconds();
+    }
+    function rebuildLoggedSeconds() { goals.forEach(g=>g.subtasks.forEach(s=>s.loggedSeconds=0)); taskLogs.forEach(log=>{ let g=goals.find(g=>g.id==log.goalId); if(g){ let s=g.subtasks.find(s=>s.id==log.subtaskId); if(s) s.loggedSeconds+=log.durationSec; } }); }
+    function saveAll() { localStorage.setItem('subtask_tracker',JSON.stringify(goals)); localStorage.setItem('subtask_logs',JSON.stringify(taskLogs)); if(selectedSubtask) localStorage.setItem('selected_subtask',JSON.stringify(selectedSubtask)); else localStorage.removeItem('selected_subtask'); }
+    function saveLog(goalId,subtaskId,subtaskName,durationSec){ if(durationSec<=0) return; taskLogs.push({goalId,subtaskId,subtaskName,durationSec,timestamp:new Date().toISOString()}); let g=goals.find(g=>g.id==goalId); if(g){ let s=g.subtasks.find(s=>s.id==subtaskId); if(s) s.loggedSeconds+=durationSec; } saveAll(); showToast(`✅ ${Math.floor(durationSec/60)} মিনিট "${subtaskName}" সেভ হয়েছে`); }
+    function getRemainingSeconds(goalId,subtaskId){ let g=goals.find(g=>g.id==goalId); if(g){ let s=g.subtasks.find(s=>s.id==subtaskId); if(s) return Math.max(0,(s.targetMinutes*60)-s.loggedSeconds); } return 0; }
+    function getTodayTotalSec(){ let today=new Date().toDateString(); return taskLogs.filter(log=>new Date(log.timestamp).toDateString()===today).reduce((s,l)=>s+l.durationSec,0); }
+    function formatSec(sec){ if(sec<0) sec=0; let h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60; return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }
+    function formatDuration(sec){ let hrs=Math.floor(sec/3600),mins=Math.floor((sec%3600)/60); return hrs>0?`${hrs}ঘ ${mins}মি`:`${mins} মিনিট`; }
+    function showToast(msg){ let t=document.createElement('div'); t.style.cssText='position:fixed; bottom:90px; left:20px; right:20px; background:#10b981; color:white; padding:8px; border-radius:60px; text-align:center; z-index:1000; animation:fadeOut 2s forwards'; t.innerText=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2000); }
+    function saveCurrentSession(){ if(timerState.elapsedThisSession>0 && timerState.currentSubtaskId){ saveLog(timerState.currentGoalId,timerState.currentSubtaskId,timerState.currentSubtaskName,timerState.elapsedThisSession); timerState.remainingSeconds=getRemainingSeconds(timerState.currentGoalId,timerState.currentSubtaskId); timerState.elapsedThisSession=0; } }
+    function startCountdown(){ if(!selectedSubtask){ showToast("প্রথমে একটি সাবটাস্ক নির্বাচন করুন"); return; } if(timerState.isRunning) return; const {goalId,subtaskId,subtaskName}=selectedSubtask; const remaining=getRemainingSeconds(goalId,subtaskId); if(timerState.currentSubtaskId!==subtaskId){ saveCurrentSession(); timerState.remainingSeconds=remaining; timerState.currentGoalId=goalId; timerState.currentSubtaskId=subtaskId; timerState.currentSubtaskName=subtaskName; timerState.elapsedThisSession=0; updateTimerDisplay(); } timerState.isRunning=true; timerState.intervalId=setInterval(()=>{ if(timerState.isRunning){ timerState.elapsedThisSession++; timerState.remainingSeconds--; updateTimerDisplay(); if(timerState.remainingSeconds<=0 && timerState.elapsedThisSession>0){ clearInterval(timerState.intervalId); timerState.isRunning=false; saveCurrentSession(); showToast(`🎉 "${timerState.currentSubtaskName}" লক্ষ্য পূর্ণ!`); renderContent(); } } },1000); }
+    function pauseCountdown(){ if(timerState.intervalId){ clearInterval(timerState.intervalId); timerState.intervalId=null; } if(timerState.isRunning){ timerState.isRunning=false; saveCurrentSession(); renderContent(); } }
+    function resetCountdown(){ if(timerState.intervalId){ clearInterval(timerState.intervalId); timerState.intervalId=null; } timerState.isRunning=false; if(selectedSubtask){ timerState.remainingSeconds=getRemainingSeconds(selectedSubtask.goalId,selectedSubtask.subtaskId); timerState.currentSubtaskId=selectedSubtask.subtaskId; timerState.currentGoalId=selectedSubtask.goalId; timerState.currentSubtaskName=selectedSubtask.subtaskName; timerState.elapsedThisSession=0; updateTimerDisplay(); } renderContent(); }
+    function updateTimerDisplay(){ let d=document.getElementById('countdownDisplay'); if(d) d.innerText=formatSec(timerState.remainingSeconds); }
+    function renderContent(){
+        let todaySec=getTodayTotalSec(), completedSubs=goals.reduce((s,g)=>s+g.subtasks.filter(st=>st.loggedSeconds>=st.targetMinutes*60).length,0), totalSubs=goals.reduce((s,g)=>s+g.subtasks.length,0);
+        let subData={}; taskLogs.forEach(l=>{ subData[l.subtaskName]=(subData[l.subtaskName]||0)+l.durationSec/60; });
+        let goalsHtml='', sorted=[...goals].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
+        sorted.forEach(g=>{ let totalSec=g.subtasks.reduce((s,st)=>s+st.loggedSeconds,0), totalTarget=g.subtasks.reduce((s,st)=>s+(st.targetMinutes*60),0), percent=totalTarget?(totalSec/totalTarget)*100:0;
+            goalsHtml+=`<div class="goal-item"><div class="goal-header" onclick="toggleGoal(${g.id})"><div><span class="goal-name">${g.name}</span> ${g.pinned?'📌':''}</div><div>${Math.floor(totalSec/60)}/${Math.floor(totalTarget/60)} মিনিট <span id="arrow-${g.id}">▼</span></div></div><div class="progress-bar-bg"><div class="progress-fill" style="width:${Math.min(100,percent)}%"></div></div><div class="subtask-list" id="subtasks-${g.id}" style="display:block;">`;
+            g.subtasks.forEach(s=>{ let subPercent=(s.loggedSeconds/(s.targetMinutes*60))*100, isSelected=selectedSubtask&&selectedSubtask.subtaskId===s.id;
+                goalsHtml+=`<div class="subtask-item ${isSelected?'selected':''}" onclick="selectSubtask(${g.id},${s.id},'${s.name}')"><div class="subtask-name">📌 ${s.name}</div><div class="subtask-time" style="font-size:0.7rem;">${Math.floor(s.loggedSeconds/60)}/${s.targetMinutes} মিনিট</div><div style="width:50px;"><div class="progress-bar-bg"><div class="progress-fill" style="width:${Math.min(100,subPercent)}%"></div></div></div></div>`;
+            });
+            goalsHtml+=`</div></div>`;
+        });
+        let selectedInfo=selectedSubtask?`✅ নির্বাচিত: ${selectedSubtask.subtaskName} | বাকি: ${formatSec(getRemainingSeconds(selectedSubtask.goalId,selectedSubtask.subtaskId))}`:`👆 একটি সাবটাস্ক নির্বাচন করুন`;
+        let html=`<div class="glass-card"><div class="section-title"><i class="fas fa-chart-line"></i> পরিসংখ্যান</div><div class="stats-row"><div class="stat-box"><div class="stat-number">${formatDuration(todaySec)}</div><div class="stat-label">আজকের মোট</div></div><div class="stat-box"><div class="stat-number">${goals.length}</div><div class="stat-label">মোট বিভাগ</div></div><div class="stat-box"><div class="stat-number">${completedSubs}/${totalSubs}</div><div class="stat-label">পূর্ণ সাবটাস্ক</div></div></div><canvas id="categoryChart"></canvas><div class="flex-between"><span style="font-size:10px;">📈 সাবটাস্ক ভিত্তিক সময়</span><button id="exportBtn" class="secondary" style="padding:4px 10px;font-size:10px;">📎 CSV</button></div></div>
+        <div class="glass-card"><div class="flex-between"><div class="section-title"><i class="fas fa-bullseye"></i> আমার কাজ</div></div><div id="goalsList">${goalsHtml}</div><div class="note-box"><i class="fas fa-info-circle"></i> সাবটাস্ক এডিট করতে সেটিংসে যান</div></div>
+        <div class="glass-card"><div class="section-title"><i class="fas fa-stopwatch"></i> টাইমার</div><div style="margin-bottom:8px;font-size:0.75rem;">${selectedInfo}</div><div class="timer-display" id="countdownDisplay">${formatSec(timerState.remainingSeconds)}</div><div class="btn-group"><button id="startBtn">▶ শুরু</button><button id="pauseBtn" class="secondary">⏸ বিরতি</button><button id="resetBtn" class="secondary">🔄 রিসেট</button></div></div>`;
+        document.getElementById('trackerContent').innerHTML=html;
+        let ctx=document.getElementById('categoryChart')?.getContext('2d'); if(ctx){ if(progressChart) progressChart.destroy(); progressChart=new Chart(ctx,{type:'pie',data:{labels:Object.keys(subData).length?Object.keys(subData):['কোনো ডাটা নেই'],datasets:[{data:Object.keys(subData).length?Object.values(subData):[1],backgroundColor:['#00f2ff','#10b981','#f59e0b','#ef4444']}]},options:{responsive:true}}); }
+        document.getElementById('startBtn')?.addEventListener('click',startCountdown); document.getElementById('pauseBtn')?.addEventListener('click',pauseCountdown); document.getElementById('resetBtn')?.addEventListener('click',resetCountdown);
+        document.getElementById('exportBtn')?.addEventListener('click',()=>{ let csv="বিভাগ,সাবটাস্ক,সময়(মিনিট),তারিখ\n"; taskLogs.forEach(l=>{ csv+=`"${l.subtaskName}",${Math.floor(l.durationSec/60)},${new Date(l.timestamp).toLocaleString()}\n`; }); let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv])); a.download=`stats_${new Date().toISOString().slice(0,10)}.csv`; a.click(); showToast("CSV ডাউনলোড হয়েছে"); });
+    }
+    window.toggleGoal=function(id){ let el=document.getElementById(`subtasks-${id}`),arrow=document.getElementById(`arrow-${id}`); if(el&&arrow){ if(el.style.display==='none'){ el.style.display='block'; arrow.innerText='▼'; }else{ el.style.display='none'; arrow.innerText='▶'; } } };
+    window.selectSubtask=function(goalId,subtaskId,subtaskName){ if(timerState.isRunning) pauseCountdown(); selectedSubtask={goalId,subtaskId,subtaskName}; saveAll(); timerState.remainingSeconds=getRemainingSeconds(goalId,subtaskId); timerState.currentSubtaskId=subtaskId; timerState.currentGoalId=goalId; timerState.currentSubtaskName=subtaskName; timerState.elapsedThisSession=0; renderContent(); showToast(`"${subtaskName}" নির্বাচিত`); };
+    document.querySelectorAll('.nav-item').forEach(btn=>{ btn.addEventListener('click',()=>{ let page=btn.getAttribute('data-page'); if(page&&page!=='tracker.html') window.location.href=page; }); });
+    loadData(); renderContent();
+</script>
+</body>
+</html>
