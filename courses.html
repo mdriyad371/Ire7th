@@ -1,47 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Courses | IRE - IoT & Robotics Engineering</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>কোর্স | IRE - IoT & Robotics Engineering</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0f1f; font-family: 'Inter', 'Space Grotesk', sans-serif; color: #f0f3ff; overflow-x: hidden; padding-bottom: 80px; }
+        .tech-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 10%, #01031a, #000000); z-index: -2; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 2; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,15,30,0.95); backdrop-filter: blur(12px); display: flex; justify-content: space-around; align-items: center; padding: 6px 12px 15px; border-top: 1px solid rgba(0,242,255,0.3); z-index: 100; }
+        .nav-item { background: none; border: none; color: #8e9aaf; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.6rem; cursor: pointer; padding: 4px 10px; border-radius: 40px; transition: 0.2s; }
+        .nav-item i { font-size: 1.1rem; }
+        .nav-item.active { color: #00f2ff; background: #00f2ff20; }
+        .home-btn { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,30,55,0.8); border: 1px solid rgba(0,242,255,0.3); border-radius: 40px; padding: 6px 14px; color: white; text-decoration: none; font-size: 0.75rem; margin-bottom: 15px; }
+        .section-container { background: rgba(5,10,25,0.5); backdrop-filter: blur(10px); border-radius: 1.2rem; padding: 1rem; border: 1px solid rgba(0,242,255,0.2); }
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: #00f2ff; display: flex; align-items: center; gap: 8px; }
+        .semester-dropdown { width: 100%; max-width: 250px; padding: 8px 15px; background: rgba(0,30,55,0.8); border: 1px solid rgba(0,242,255,0.3); border-radius: 40px; color: white; font-size: 0.8rem; cursor: pointer; margin-bottom: 15px; }
+        .blocks-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1rem 0; }
+        .block-card { background: rgba(10,20,35,0.6); backdrop-filter: blur(10px); border-radius: 1rem; border: 1px solid rgba(0,242,255,0.2); overflow: hidden; cursor: pointer; transition: 0.3s; }
+        .block-card:hover { transform: translateY(-3px); border-color: cyan; }
+        .block-header { background: linear-gradient(135deg, rgba(0,242,255,0.1), rgba(0,100,200,0.05)); padding: 0.8rem; text-align: center; border-bottom: 1px solid rgba(0,242,255,0.2); }
+        .block-header i { font-size: 1.5rem; color: cyan; margin-bottom: 5px; display: block; }
+        .block-header h3 { font-size: 0.9rem; font-weight: 600; color: white; }
+        .block-content { padding: 0.8rem; min-height: 120px; }
+        .courses-grid { display: grid; grid-template-columns: 1fr; gap: 0.6rem; max-height: 250px; overflow-y: auto; }
+        .course-card { background: rgba(0,0,0,0.3); border-radius: 0.8rem; padding: 0.6rem; border: 1px solid rgba(0,242,255,0.1); }
+        .course-code-badge { display: inline-block; background: rgba(0,242,255,0.2); padding: 2px 8px; border-radius: 20px; font-size: 0.6rem; color: cyan; margin-bottom: 5px; }
+        .course-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 3px; }
+        .credit, .course-teacher { font-size: 0.65rem; color: #94a3b8; display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+        .empty-state { text-align: center; padding: 1rem; color: #94a3b8; font-size: 0.7rem; }
+        .drive-info { text-align: center; }
+        .drive-info i { font-size: 1.8rem; color: cyan; margin-bottom: 8px; display: block; }
+        .drive-info p { font-size: 0.7rem; color: #94a3b8; }
+        footer { background: rgba(3,8,20,0.85); border-radius: 1rem; padding: 0.8rem; text-align: center; margin-top: 1.5rem; font-size: 0.6rem; }
+        @media (max-width: 600px) { .blocks-container { grid-template-columns: 1fr; } .container { padding: 12px; } }
+    </style>
 </head>
 <body>
 <div class="tech-bg"></div>
 <div class="container">
-    <div class="navbar">
-        <div class="logo-area"><div class="university-logo"><img src="images/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-university\'></i>';"></div><div class="univ-title"><h1>University of Frontier Technology, Bangladesh</h1><p><i class="fas fa-robot"></i> Internet of Things and Robotics Engineering (IRE)</p></div></div>
-        <div class="nav-links">
-            <a href="index.html">🏠 Home</a> <a href="routine.html">📅 Routine</a> <a href="courses.html" class="active">📚 Courses</a> <a href="events.html">🎉 Events</a> <a href="notices.html">📢 Notices</a> <a href="batchfund.html">💰 Batch Fund</a>
-            <a href="#" id="umsNavLink" target="_blank"><i class="fas fa-graduation-cap"></i> UMS</a> <a href="#" id="moodleNavLink" target="_blank"><i class="fas fa-chalkboard"></i> Moodle</a>
+    <a href="index.html" class="home-btn"><i class="fas fa-arrow-left"></i> হোমে ফিরে যান</a>
+    <div class="section-container">
+        <div class="section-title"><i class="fas fa-book"></i> কোর্স তথ্য</div>
+        <select id="semesterSelect" class="semester-dropdown">
+            <option value="">-- সেমিস্টার নির্বাচন করুন --</option>
+            <option value="L1T1">Level 1 Term 1 (L1T1)</option><option value="L1T2">Level 1 Term 2 (L1T2)</option>
+            <option value="L2T1">Level 2 Term 1 (L2T1)</option><option value="L2T2">Level 2 Term 2 (L2T2)</option>
+            <option value="L3T1">Level 3 Term 1 (L3T1)</option><option value="L3T2">Level 3 Term 2 (L3T2)</option>
+            <option value="L4T1">Level 4 Term 1 (L4T1)</option><option value="L4T2">Level 4 Term 2 (L4T2)</option>
+        </select>
+        <div id="blocksContainer" class="blocks-container" style="display: none;">
+            <div id="materialBlock" class="block-card"><div class="block-header"><i class="fas fa-folder-open"></i><h3>Course Material</h3></div><div class="block-content" id="materialContent"><div class="drive-info"><i class="fab fa-google-drive"></i><p>সেমিস্টার সিলেক্ট করুন</p></div></div></div>
+            <div id="infoBlock" class="block-card"><div class="block-header"><i class="fas fa-info-circle"></i><h3>Course Information</h3></div><div class="block-content" id="infoContent"><div class="empty-state"><i class="fas fa-info-circle"></i> সেমিস্টার সিলেক্ট করুন</div></div></div>
         </div>
     </div>
-    <div class="section-container"><div class="section-title"><i class="fas fa-book"></i> Course Information</div><div class="courses-grid" id="coursesGrid"></div></div>
+    <footer><i class="fas fa-code"></i> Developed by <strong>Md Riyad Hossen</strong> (IRE 7th Batch)<br>© 2026 Department of IoT & Robotics Engineering | UFTB</footer>
 </div>
-<footer>...</footer>
+<div class="bottom-nav">
+    <button class="nav-item" data-page="index.html"><i class="fas fa-home"></i><span>হোম</span></button>
+    <button class="nav-item" data-page="routine.html"><i class="fas fa-calendar-alt"></i><span>রুটিন</span></button>
+    <button class="nav-item active" data-page="courses.html"><i class="fas fa-book"></i><span>কোর্স</span></button>
+    <button class="nav-item" data-page="settings.html"><i class="fas fa-cog"></i><span>সেটিংস</span></button>
+</div>
 <script type="module">
     import { supabase } from './supabase.js';
-    async function loadCourses() {
-        const { data, error } = await supabase.from('courses').select('*');
-        if (!error && data) {
-            document.getElementById('coursesGrid').innerHTML = data.map(c => `
-                <div class="glass-card course-card">
-                    <span class="course-code-badge">${c.code}</span>
-                    <div class="course-title">${c.title}</div>
-                    <div class="credit"><i class="fas fa-clock"></i> Credit: ${c.credit}</div>
-                    <div class="course-teacher"><i class="fas fa-chalkboard-user"></i> ${c.teacher}</div>
-                </div>
-            `).join('');
-        }
-    }
+    let currentSemester = '', allCourses = [];
+    const driveLinks = { 'L1T1':'https://drive.google.com/drive/folders/L1T1_MATERIALS', 'L1T2':'https://drive.google.com/drive/folders/L1T2_MATERIALS', 'L2T1':'https://drive.google.com/drive/folders/L2T1_MATERIALS', 'L2T2':'https://drive.google.com/drive/folders/L2T2_MATERIALS', 'L3T1':'https://drive.google.com/drive/folders/L3T1_MATERIALS', 'L3T2':'https://drive.google.com/drive/folders/L3T2_MATERIALS', 'L4T1':'https://drive.google.com/drive/folders/L4T1_MATERIALS', 'L4T2':'https://drive.google.com/drive/folders/L4T2_MATERIALS' };
+    async function loadCourses(){ let {data}=await supabase.from('courses').select('*'); if(data) allCourses=data; if(currentSemester) updateInfoBlock(currentSemester); }
+    function updateInfoBlock(semester){ let filtered=allCourses.filter(c=>c.semester===semester); let container=document.getElementById('infoContent'); if(filtered.length>0){ container.innerHTML=`<div class="courses-grid">${filtered.map(c=>`<div class="course-card"><span class="course-code-badge">${c.code}</span><div class="course-title">${c.title}</div><div class="credit"><i class="fas fa-clock"></i> Credit: ${c.credit}</div><div class="course-teacher"><i class="fas fa-chalkboard-user"></i> ${c.teacher}</div></div>`).join('')}</div>`; }else{ container.innerHTML='<div class="empty-state">কোনো কোর্স তথ্য নেই</div>'; } }
+    function updateMaterialBlock(semester){ let container=document.getElementById('materialContent'); let link=driveLinks[semester]||'#'; container.innerHTML=`<div class="drive-info" onclick="window.open('${link}','_blank')" style="cursor:pointer;"><i class="fab fa-google-drive"></i><p>${semester} কোর্স ম্যাটেরিয়াল</p><p style="color:cyan; margin-top:5px;">📎 ক্লিক করে খুলুন</p></div>`; }
+    document.getElementById('semesterSelect').addEventListener('change',async(e)=>{ currentSemester=e.target.value; if(currentSemester){ document.getElementById('blocksContainer').style.display='grid'; updateMaterialBlock(currentSemester); await loadCourses(); updateInfoBlock(currentSemester); }else{ document.getElementById('blocksContainer').style.display='none'; } });
+    document.querySelectorAll('.nav-item').forEach(btn=>{ btn.addEventListener('click',()=>{ let page=btn.getAttribute('data-page'); if(page&&page!=='courses.html') window.location.href=page; }); });
     loadCourses();
-    supabase.channel('courses_changes').on('postgres_changes', { event: '*', schema: 'public', table: 'courses' }, () => loadCourses()).subscribe();
-    const UMS_URL = "https://ums.uftb.ac.bd/Login/Index";
-    const MOODLE_URL = "https://moodle.uftb.ac.bd/login/index.php";
-    document.getElementById('umsNavLink').href = UMS_URL;
-    document.getElementById('moodleNavLink').href = MOODLE_URL;
 </script>
 </body>
 </html>
