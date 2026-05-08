@@ -2,400 +2,817 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <!-- viewport ensures proper scaling and scrolling on mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Home | IRE - IoT & Robotics Engineering</title>
+    <title>IRE | IoT & Robotics Engineering - Student Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <style>
-        /* preserve all original page styles (no conflict) */
-        
-        /* ----- ensure scrolling works on mobile ----- */
-        html, body {
-            overflow-x: hidden;
-            overflow-y: auto !important;  /* guarantee scrollable content */
-            height: auto;
-            min-height: 100%;
-        }
-        body {
+        * {
             margin: 0;
             padding: 0;
-            background: #0a0f1f;
+            box-sizing: border-box;
         }
-        /* splash overlay will not block scrolling after removal */
-        .welcome-splash {
+
+        body {
+            background: #0a0f1f;
+            font-family: 'Inter', 'Space Grotesk', sans-serif;
+            color: #f0f3ff;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        .tech-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 30% 20%, #020617, #000000);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1), visibility 0.8s ease;
-            backdrop-filter: blur(10px);
-            font-family: 'Space Grotesk', 'Inter', 'Fira Code', monospace;
-            overflow: hidden;
+            background: radial-gradient(circle at 20% 10%, #01031a, #000000);
+            z-index: -2;
         }
-
-        .welcome-splash.fade-out {
-            opacity: 0;
-            visibility: hidden;
+        .tech-bg::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" opacity="0.06"><path fill="none" stroke="%2300ccff" stroke-width="1" d="M100 200 L700 200 M100 400 L700 400 M100 600 L700 600 M200 100 L200 700 M400 100 L400 700 M600 100 L600 700"/><circle cx="400" cy="400" r="100" stroke="%2300aaff" fill="none" stroke-width="1"/><polygon points="400,300 450,400 400,500 350,400" stroke="%2300ccff" fill="none"/></svg>');
+            background-repeat: repeat;
+            opacity: 0.2;
             pointer-events: none;
         }
 
-        .splash-card {
-            background: rgba(5, 15, 30, 0.7);
-            backdrop-filter: blur(18px);
-            border-radius: 2rem;
-            padding: 2rem 2rem 2rem 2rem;
-            width: 90%;
-            max-width: 680px;
-            border: 1px solid rgba(0, 255, 255, 0.4);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 200, 255, 0.2);
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 25px 50px;
+            position: relative;
+            z-index: 2;
         }
 
-        .robot-coding-area {
+        /* ========== HEADER SECTION ========== */
+        .hero-header {
+            background: rgba(5, 15, 30, 0.6);
+            backdrop-filter: blur(14px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(0, 255, 255, 0.35);
+            box-shadow: 0 25px 40px rgba(0,0,0,0.5);
+        }
+
+        .univ-brand {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+        .logo-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .uni-logo {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #0b2338, #010a18);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: cyan;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 15px rgba(0,255,255,0.5);
+        }
+        .uni-text h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #aaffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .uni-text p {
+            font-size: 0.75rem;
+            color: #b0d4ff;
+        }
+        .dept-name {
+            background: linear-gradient(120deg, rgba(0,200,255,0.15), rgba(0,100,200,0.1));
+            padding: 6px 18px;
+            border-radius: 60px;
+            border-left: 4px solid cyan;
+        }
+        .dept-name h2 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .dept-name h2 i {
+            margin-right: 6px;
+            color: cyan;
+        }
+
+        /* animation zone */
+        .animation-zone {
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.45);
+            border-radius: 1.2rem;
+            padding: 0.8rem 1.2rem;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-            justify-content: center;
+            gap: 0.8rem;
+            justify-content: flex-start;
         }
-
-        .robot-icon-animated {
-            font-size: 5rem;
+        .robot-animation {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .robot-icon {
+            font-size: 2rem;
             color: #3cc7ff;
-            filter: drop-shadow(0 0 8px #00ccff);
-            animation: robotMove 1.8s infinite ease-in-out;
-            background: rgba(0, 30, 60, 0.5);
-            padding: 0.5rem;
-            border-radius: 2rem;
-            display: inline-flex;
+            filter: drop-shadow(0 0 6px cyan);
+            animation: floatRobot 1.8s infinite ease;
         }
-
-        @keyframes robotMove {
-            0% { transform: translateY(0px) rotate(0deg);}
-            50% { transform: translateY(-6px) rotate(2deg); text-shadow: 0 0 15px cyan;}
-            100% { transform: translateY(0px) rotate(0deg);}
+        @keyframes floatRobot {
+            0% { transform: translateY(0px);}
+            50% { transform: translateY(-5px) scale(1.02); text-shadow: 0 0 12px cyan;}
+            100% { transform: translateY(0px);}
         }
-
-        .coding-terminal {
-            background: #0a0f1fcc;
-            border-radius: 1.2rem;
-            padding: 1rem 1.3rem;
+        .typing-terminal {
+            background: #030b1799;
+            padding: 0.5rem 0.8rem;
+            border-radius: 1rem;
             font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
             flex: 1;
-            min-width: 260px;
-            border-left: 3px solid #0ff;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
-            backdrop-filter: blur(4px);
-        }
-
-        .code-line {
-            color: #bbf0ff;
-            margin: 0.6rem 0;
+            min-width: 0;
+            border-left: 3px solid cyan;
             overflow: hidden;
-            white-space: nowrap;
-            border-right: 2px solid cyan;
-            width: fit-content;
-            max-width: 100%;
         }
-
+        .type-wrapper {
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+        }
+        .type-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+        .type-line {
+            color: #d6f0ff;
+            font-size: 0.8rem;
+            display: inline-block;
+            font-weight: 500;
+        }
+        .type-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1rem;
+            background-color: cyan;
+            margin-left: 2px;
+            animation: blink 0.8s step-end infinite;
+            vertical-align: middle;
+        }
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
         }
 
-        .terminal-footer {
-            font-size: 0.7rem;
-            color: #6a8cff;
-            margin-top: 8px;
-            text-align: right;
-            border-top: 1px dashed #2a4c7a;
-            padding-top: 6px;
+        /* ========== BATCH INFO ========== */
+        .batch-info {
+            background: linear-gradient(135deg, rgba(5, 20, 40, 0.8), rgba(10, 25, 45, 0.7));
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            margin: 20px 0;
+            border: 1px solid rgba(0, 255, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .batch-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.05), transparent);
+            transform: rotate(15deg);
+            animation: shine 8s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(15deg); }
+            100% { transform: translateX(100%) rotate(15deg); }
+        }
+        .batch-header {
+            text-align: center;
+            margin-bottom: 0.8rem;
+            position: relative;
+            z-index: 1;
+        }
+        .batch-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00f2ff, #aaffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .batch-header p {
+            font-size: 0.65rem;
+            color: #7aaaff;
+            margin-top: 3px;
+        }
+        
+        .batch-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            position: relative;
+            z-index: 1;
+        }
+        .batch-main {
+            background: rgba(0, 242, 255, 0.08);
+            border-radius: 1rem;
+            padding: 0.8rem;
+            text-align: center;
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .batch-main i {
+            font-size: 1.5rem;
+            color: cyan;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .batch-main .label {
+            font-weight: 600;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8e9aaf;
+        }
+        .batch-main .value {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-top: 4px;
+            background: linear-gradient(135deg, #fff, #aaffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .batch-main .badge {
+            background: rgba(0, 242, 255, 0.2);
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 30px;
+            font-size: 0.6rem;
+            margin-top: 4px;
+            color: #00f2ff;
+        }
+        
+        .batch-sub-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+        }
+        .info-card {
+            background: rgba(0, 20, 40, 0.6);
+            backdrop-filter: blur(8px);
+            padding: 0.6rem 0.3rem;
+            border-radius: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+        }
+        .info-card i {
+            font-size: 1.2rem;
+            color: cyan;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .info-card .label {
+            font-weight: 500;
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8e9aaf;
+        }
+        .info-card .value {
+            font-weight: 700;
+            font-size: 0.75rem;
+            margin-top: 3px;
+            color: #eef5ff;
         }
 
-        /* responsive adjustments */
-        @media (max-width: 600px) {
-            .robot-coding-area { flex-direction: column; text-align: center; }
-            .coding-terminal { width: 100%; }
-            .robot-icon-animated { font-size: 3.8rem; }
-            .code-line { font-size: 0.7rem; white-space: normal; word-break: keep-all; border-right: none; }
+        /* ========== STUDENT PROFILES SLIDER ========== */
+        .students-section {
+            background: rgba(5, 10, 25, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            padding: 1rem;
+            margin: 20px 0;
+            border: 1px solid rgba(0, 255, 255, 0.35);
+        }
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.8rem;
+        }
+        .section-title i {
+            color: cyan;
+            margin-right: 6px;
         }
 
-        /* ensure main container content is scrollable on any device */
-        .container {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-            box-sizing: border-box;
+        .slider-container {
             position: relative;
-            z-index: 2;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
         }
-        footer {
+        .profiles-track {
             width: 100%;
-            clear: both;
-            position: relative;
-            z-index: 2;
-        }
-        .hero, .ire-table-container, .navbar {
             overflow-x: auto;
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+            display: flex;
+            gap: 15px;
+            padding: 10px 5px 25px 5px;
+            scrollbar-width: thin;
+            scrollbar-color: cyan #1f2a4a;
         }
-        /* table responsive on mobile */
-        .info-table {
+        .profiles-track::-webkit-scrollbar {
+            height: 3px;
+        }
+        .profiles-track::-webkit-scrollbar-track {
+            background: #1f2a4a;
+            border-radius: 10px;
+        }
+        .profiles-track::-webkit-scrollbar-thumb {
+            background: cyan;
+            border-radius: 10px;
+        }
+        .profile-card {
+            flex: 0 0 200px;
+            background: rgba(18, 28, 48, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 0.8rem 0.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 200, 255, 0.5);
+            scroll-snap-align: start;
+            cursor: pointer;
+        }
+        .profile-card.active-card {
+            transform: scale(1.03);
+            background: linear-gradient(145deg, #142b48, #0a1a30);
+            border: 2px solid cyan;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+        }
+        .profile-avatar {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .profile-avatar img {
             width: 100%;
-            min-width: 280px;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid cyan;
+            box-shadow: 0 0 8px cyan;
         }
-        body.splash-active {
-            overflow: hidden !important;
+        .profile-avatar i {
+            font-size: 2.5rem;
+            color: cyan;
+            filter: drop-shadow(0 0 6px cyan);
         }
-        /* after splash removed, scroll is automatically enabled */
+        .profile-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .profile-id {
+            font-family: 'Fira Code', monospace;
+            background: #031c33;
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 30px;
+            font-size: 0.55rem;
+            margin: 4px 0;
+        }
+        .profile-email {
+            font-size: 0.55rem;
+            margin: 2px 0;
+            word-break: break-word;
+            color: #7aaaff;
+        }
+        .slider-btn {
+            background: rgba(0, 30, 50, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid cyan;
+            color: cyan;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            cursor: pointer;
+            position: absolute;
+            z-index: 25;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slider-btn:hover {
+            background: cyan;
+            color: #0a0f1f;
+        }
+        .btn-left { left: -5px; }
+        .btn-right { right: -5px; }
+
+        /* Important Links */
+        .links-section {
+            background: rgba(5, 10, 25, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            padding: 1rem;
+            margin: 20px 0;
+            border: 1px solid rgba(0, 255, 255, 0.35);
+        }
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.6rem;
+            margin-top: 0.6rem;
+        }
+        .link-card {
+            background: rgba(0, 30, 55, 0.5);
+            border-radius: 0.8rem;
+            padding: 0.6rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+        .link-card:hover {
+            transform: translateY(-2px);
+            border-color: cyan;
+            background: rgba(0, 242, 255, 0.1);
+        }
+        .link-card i {
+            font-size: 1.2rem;
+            color: cyan;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .link-card span {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #e0e5f0;
+        }
+
+        /* bottom navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(5, 15, 30, 0.95);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 6px 12px 15px;
+            border-top: 1px solid rgba(0, 242, 255, 0.3);
+            z-index: 100;
+        }
+        .nav-item {
+            background: none;
+            border: none;
+            color: #8e9aaf;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.6rem;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 40px;
+            transition: 0.2s;
+        }
+        .nav-item i {
+            font-size: 1.1rem;
+        }
+        .nav-item.active {
+            color: #00f2ff;
+            background: #00f2ff20;
+        }
+
+        footer {
+            background: rgba(3, 8, 20, 0.85);
+            border-radius: 1rem;
+            padding: 0.8rem;
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.6rem;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 12px; }
+            .hero-header { padding: 1rem; }
+            .uni-logo { width: 50px; height: 50px; font-size: 1.5rem; }
+            .uni-text h1 { font-size: 0.9rem; }
+            .dept-name h2 { font-size: 0.7rem; }
+            .dept-name { padding: 4px 10px; }
+            .profile-card { flex: 0 0 170px; }
+            .profile-avatar { width: 55px; height: 55px; }
+            .profile-name { font-size: 0.75rem; }
+            .links-grid { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
 </head>
-<body class="splash-active">
+<body>
 <div class="tech-bg"></div>
 
-<!-- ========== ANIMATED WELCOME: ROBOT TYPING EXACT 3 LINES (FASTER) ========== -->
-<div class="welcome-splash" id="welcomeSplash">
-    <div class="splash-card">
-        <div class="robot-coding-area">
-            <div class="robot-icon-animated">
-                <i class="fas fa-robot"></i>
-                <i class="fas fa-code" style="font-size: 1.8rem; margin-left: 0.2rem;"></i>
-            </div>
-            <div class="coding-terminal">
-                <div id="codeContainer">
-                    <div id="line1" class="code-line"></div>
-                    <div id="line2" class="code-line"></div>
-                    <div id="line3" class="code-line"></div>
-                </div>
-                <div class="terminal-footer">
-                    <i class="fas fa-microchip"></i> IRE core::booting...
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ========== ORIGINAL PAGE CONTENT (FULLY PRESERVED) ========== -->
 <div class="container">
-    <div class="navbar">
-        <div class="logo-area">
-            <div class="university-logo">
-                <img src="images/logo.png" alt="University Logo" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-university\'></i>';">
+    <!-- Header -->
+    <div class="hero-header">
+        <div class="univ-brand">
+            <div class="logo-badge">
+                <div class="uni-logo"><i class="fas fa-university"></i></div>
+                <div class="uni-text">
+                    <h1>University of Frontier Technology, Bangladesh</h1>
+                    <p><i class="fas fa-map-marker-alt"></i> কালিয়াকৈর, গাজীপুর</p>
+                </div>
             </div>
-            <div class="univ-title">
-                <h1>University of Frontier Technology, Bangladesh</h1>
-                <p><i class="fas fa-robot"></i> Internet of Things and Robotics Engineering (IRE)</p>
+            <div class="dept-name">
+                <h2><i class="fas fa-robot"></i> IoT & Robotics Engineering (IRE)</h2>
             </div>
         </div>
-        <div class="nav-links">
-            <a href="index.html" class="active">🏠 Home</a>
-            <a href="routine.html">📅 Routine</a>
-            <a href="courses.html">📚 Courses</a>
-            <a href="events.html">🎉 Events</a>
-            <a href="notices.html">📢 Notices</a>
-            <a href="batchfund.html">💰 Batch Fund</a>
-            <a href="#" id="umsNavLink" target="_blank"><i class="fas fa-graduation-cap"></i> UMS</a>
-            <a href="#" id="moodleNavLink" target="_blank"><i class="fas fa-chalkboard"></i> Moodle</a>
+
+        <div class="animation-zone">
+            <div class="robot-animation">
+                <i class="fas fa-robot robot-icon"></i>
+                <i class="fas fa-microchip" style="font-size: 1.2rem; color:#0ff;"></i>
+            </div>
+            <div class="typing-terminal">
+                <div class="type-wrapper">
+                    <span id="dynamicLine" class="type-line"></span>
+                    <span id="typingCursor" class="type-cursor"></span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="hero">
-        <div class="robot-icon"><i class="fas fa-robot"></i> <i class="fas fa-microchip"></i> <i class="fas fa-wifi"></i></div>
-        <h2>IoT & Robotics Engineering</h2>
-        <p>Welcome to the Department of Internet of Things and Robotics Engineering. We build future technology creators.</p>
-        
-        <div class="ire-table-container">
-            <table class="info-table glass-card">
-                <tr><th><i class="fas fa-tag"></i> Batch</th><td>সপ্তরণন (IRE 7th Batch)</td></tr>
-                <tr>
-                    <th><i class="fas fa-calendar"></i> Session</th>
-                    <td>2024-25</td>
-                </tr>
-                <tr>
-                    <th><i class="fas fa-graduation-cap"></i> Semester</th>
-                    <td>L1T2 (Level 1 Term 2)</td>
-                </tr>
-                <tr>
-                    <th><i class="fas fa-users"></i> Total Students</th>
-                    <td>41</td>
-                </tr>
-                <tr>
-                    <th><i class="fas fa-chalkboard-user"></i> Advisor</th>
-                    <td>Sadia Enam</td>
-                </tr>
-            </table>
+    <!-- Batch Information -->
+    <div class="batch-info">
+        <div class="batch-header">
+            <h3><i class="fas fa-chalkboard-user"></i> ব্যাচ তথ্য</h3>
+            <p><i class="fas fa-calendar-week"></i> ২০২৪-২৫ শিক্ষাবর্ষ | সপ্তরণন ব্যাচ</p>
+        </div>
+        <div class="batch-grid">
+            <div class="batch-main">
+                <i class="fas fa-tag"></i>
+                <div class="label">BATCH</div>
+                <div class="value">সপ্তরণন</div>
+                <div class="badge">IRE 7th Batch</div>
+            </div>
+            <div class="batch-sub-grid">
+                <div class="info-card">
+                    <i class="fas fa-calendar-alt"></i>
+                    <div class="label">SESSION</div>
+                    <div class="value">2024-25</div>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-users"></i>
+                    <div class="label">TOTAL STUDENTS</div>
+                    <div class="value" id="totalStudentsCount">৪৬ জন</div>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-chalkboard-user"></i>
+                    <div class="label">ADVISOR</div>
+                    <div class="value">Sadia Enam</div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Student Profiles -->
+    <div class="students-section">
+        <div class="section-title">
+            <i class="fas fa-id-card"></i> ✦ IRE Future Engineers ✦
+        </div>
+        <div class="slider-container">
+            <button class="slider-btn btn-left" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+            <div class="profiles-track" id="profilesTrack"></div>
+            <button class="slider-btn btn-right" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <p style="text-align: center; font-size: 0.55rem; margin-top: 8px; color: #7bc5ff;"><i class="fas fa-hand-pointer"></i> ক্লিক করুন — কার্ড বড় হবে | <i class="fas fa-image"></i> ইমেজ যোগ করতে images/আইডি.jpg</p>
+    </div>
+
+    <!-- Important Links -->
+    <div class="links-section">
+        <div class="section-title"><i class="fas fa-link"></i> ✦ Important Links ✦</div>
+        <div class="links-grid">
+            <a href="https://ums.uftb.ac.bd/Login/Index" target="_blank" class="link-card">
+                <i class="fas fa-graduation-cap"></i>
+                <span>UMS</span>
+            </a>
+            <a href="https://moodle.uftb.ac.bd/login/index.php" target="_blank" class="link-card">
+                <i class="fas fa-chalkboard"></i>
+                <span>Moodle</span>
+            </a>
+            <a href="batchfund.html" class="link-card">
+                <i class="fas fa-money-bill-wave"></i>
+                <span>Batch Fund</span>
+            </a>
+            <a href="notices.html" class="link-card">
+                <i class="fas fa-bell"></i>
+                <span>Notices</span>
+            </a>
+            <a href="events.html" class="link-card">
+                <i class="fas fa-calendar-check"></i>
+                <span>Events</span>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <i class="fas fa-code"></i> Developed by <strong>Md Riyad Hossen</strong> (IRE 7th Batch)<br>
+        © 2026 Department of IoT & Robotics Engineering | UFTB
+    </footer>
 </div>
 
-<footer>
-    <div class="container">
-        <div class="social-links">
-            <a href="https://www.facebook.com/riyad371"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-github"></i></a>
-        </div>
-        <div class="footer-info">
-            <span><i class="fas fa-map-marker-alt"></i> কালিয়াকৈর, গাজীপুর</span>
-            <span><i class="fas fa-envelope"></i> 2401043@uftb.ac.bd</span>
-            <span><i class="fas fa-phone-alt"></i> 01709130371</span>
-        </div>
-        <div class="developer">
-            <i class="fas fa-code"></i> Developed by <strong>Md Riyad Hossen</strong> (IRE 7th Batch)<br>
-            <span>© 2026 Department of Internet of Things and Robotics Engineering</span>
-        </div>
-    </div>
-</footer>
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+    <button class="nav-item active" data-page="index.html"><i class="fas fa-home"></i><span>হোম</span></button>
+    <button class="nav-item" data-page="routine.html"><i class="fas fa-calendar-alt"></i><span>রুটিন</span></button>
+    <button class="nav-item" data-page="tracker.html"><i class="fas fa-stopwatch"></i><span>টাইম ট্র্যাকার</span></button>
+    <button class="nav-item" data-page="settings.html"><i class="fas fa-cog"></i><span>সেটিংস</span></button>
+</div>
 
 <script>
-    // UMS & Moodle links (original)
-    const UMS_URL = "https://ums.uftb.ac.bd/Login/Index";
-    const MOODLE_URL = "https://moodle.uftb.ac.bd/login/index.php";
-    const umsLink = document.getElementById('umsNavLink');
-    const moodleLink = document.getElementById('moodleNavLink');
-    if (umsLink) umsLink.href = UMS_URL;
-    if (moodleLink) moodleLink.href = MOODLE_URL;
-</script>
+    // Student Data
+    const students = [
+        { name: "Aninda Biswas Argho", id: "2401002", email: "2401002@uftb.ac.bd" },
+        { name: "Md Safin Ahmed", id: "2401003", email: "2401003@uftb.ac.bd" },
+        { name: "Md. Jillur Rahman", id: "2401005", email: "2401005@uftb.ac.bd" },
+        { name: "Taspia Kabir Tanha", id: "2401007", email: "2401007@uftb.ac.bd" },
+        { name: "Abu Tayob Amanullah", id: "2401008", email: "2401008@uftb.ac.bd" },
+        { name: "Habeba Tasnim Labone", id: "2401009", email: "2401009@uftb.ac.bd" },
+        { name: "Airin Akter Minu", id: "2401010", email: "2401010@uftb.ac.bd" },
+        { name: "Nadia", id: "2401011", email: "2401011@uftb.ac.bd" },
+        { name: "Muntasir Fahim", id: "2401012", email: "2401012@uftb.ac.bd" },
+        { name: "Mst. Rawnak Jahan Suchy", id: "2401013", email: "2401013@uftb.ac.bd" },
+        { name: "Nafisa Akter Mou", id: "2401014", email: "2401014@uftb.ac.bd" },
+        { name: "Forhad Ahamed Nirob", id: "2401015", email: "2401015@uftb.ac.bd" },
+        { name: "Md. Fahim Hossain Sarkar", id: "2401016", email: "2401016@uftb.ac.bd" },
+        { name: "Sk. Ishmam Mahmud", id: "2401017", email: "2401017@uftb.ac.bd" },
+        { name: "Avijit Das", id: "2401018", email: "2401018@uftb.ac.bd" },
+        { name: "Azmir Islam", id: "2401019", email: "2401019@uftb.ac.bd" },
+        { name: "Abdullah Al Mamun", id: "2401020", email: "2401020@uftb.ac.bd" },
+        { name: "Shara Moni", id: "2401021", email: "2401021@uftb.ac.bd" },
+        { name: "Shaharia", id: "2401023", email: "2401023@uftb.ac.bd" },
+        { name: "Mohuya Roy", id: "2401024", email: "2401024@uftb.ac.bd" },
+        { name: "Md. Shahin Alam", id: "2401025", email: "2401025@uftb.ac.bd" },
+        { name: "Mst. Fatematuj Johra Ema", id: "2401026", email: "2401026@uftb.ac.bd" },
+        { name: "Sumya Rahman", id: "2401027", email: "2401027@uftb.ac.bd" },
+        { name: "Rabiur Rahman Rafi", id: "2401028", email: "2401028@uftb.ac.bd" },
+        { name: "K. M. Akib Azmain", id: "2401029", email: "2401029@uftb.ac.bd" },
+        { name: "Aryan Ahamad", id: "2401031", email: "2401031@uftb.ac.bd" },
+        { name: "Md. Kowsur Ahmed", id: "2401033", email: "2401033@uftb.ac.bd" },
+        { name: "Vaskor Chondro Roy", id: "2401035", email: "2401035@uftb.ac.bd" },
+        { name: "Shahariar Islam Tamim", id: "2401036", email: "2401036@uftb.ac.bd" },
+        { name: "Md. Habibur Rahman", id: "2401037", email: "2401037@uftb.ac.bd" },
+        { name: "Md. Tanvir Hossain", id: "2401038", email: "2401038@uftb.ac.bd" },
+        { name: "Mst. Nisat Roza", id: "2401039", email: "2401039@uftb.ac.bd" },
+        { name: "Nazia Mahsan", id: "2401040", email: "2401040@uftb.ac.bd" },
+        { name: "Badrith Tamam", id: "2401041", email: "2401041@uftb.ac.bd" },
+        { name: "Mostafizur Rahman", id: "2401042", email: "2401042@uftb.ac.bd" },
+        { name: "Md. Riyad Hossen", id: "2401043", email: "2401043@uftb.ac.bd" },
+        { name: "Konika Sarkar", id: "2401044", email: "2401044@uftb.ac.bd" },
+        { name: "Md. Shihabun Sakib Tamim", id: "2401045", email: "2401045@uftb.ac.bd" },
+        { name: "Pritom Debnath", id: "2401046", email: "2401046@uftb.ac.bd" },
+        { name: "Uchwas Dey Kabya", id: "2401048", email: "2401048@uftb.ac.bd" },
+        { name: "Udoy Acharjee", id: "2401049", email: "2401049@uftb.ac.bd" },
+        { name: "Sojib Ahmmad Shakib", id: "2401050", email: "2401050@uftb.ac.bd" }
+    ];
 
-<script>
-    (function() {
-        // ----- EXACT 3 LINES TO BE TYPED BY ROBOT (FASTER TYPING) -----
-        const linesToType = [
-            'Welcome to "সপ্তরণন"',
-            'Innovate Automate Elevate',
-            'Robotics: Where Imagination Meets Reality'
-        ];
-        
-        const lineElements = [
-            document.getElementById('line1'),
-            document.getElementById('line2'),
-            document.getElementById('line3')
-        ];
-        
-        const splash = document.getElementById('welcomeSplash');
-        let currentLineIndex = 0;
-        let typingSpeed = 35;     // faster typing (was 55)
-        let lineDelay = 280;      // delay before next line starts
-        
-        // Typewriter effect for a single line
-        function typeLine(element, text, callback) {
-            if (!element) return;
-            element.textContent = '';
-            element.style.borderRight = '2px solid cyan';
-            let i = 0;
-            function addChar() {
-                if (i < text.length) {
-                    element.textContent += text.charAt(i);
-                    i++;
-                    setTimeout(addChar, typingSpeed);
-                } else {
-                    element.style.borderRight = 'none';
-                    if (callback) callback();
-                }
-            }
-            addChar();
-        }
-        
-        // Helper: fully unlock scroll on body and html after splash removal
-        function unlockScrollCompletely() {
-            // reset any overflow restrictions to ensure scrolling works on mobile
-            document.body.style.overflow = '';
-            document.documentElement.style.overflow = '';
-            if (document.body.classList.contains('splash-active')) {
-                document.body.classList.remove('splash-active');
-            }
-            // force reflow to ensure scroll returns
-            document.body.style.display = 'none';
-            document.body.offsetHeight;
-            document.body.style.display = '';
-            window.scrollTo(0, 0); // optional, just ensures no stuck scroll
-        }
-        
-        // Dismiss overlay (fade out, remove, unlock scroll)
-        function dismissSplash() {
-            if (!splash) return;
-            if (splash.classList.contains('fade-out')) return;
-            splash.classList.add('fade-out');
-            
-            const onFinish = () => {
-                if (splash && splash.parentNode) splash.remove();
-                unlockScrollCompletely();
-            };
-            splash.addEventListener('transitionend', onFinish, { once: true });
-            // fallback: if transitionend not fired (rare), still cleanup
-            setTimeout(() => {
-                if (splash && splash.parentNode) {
-                    splash.remove();
-                    unlockScrollCompletely();
-                }
-            }, 900);
-        }
-        
-        // Start typing sequence
-        function startTypingSequence() {
-            if (currentLineIndex >= linesToType.length) {
-                // All lines typed -> auto dismiss after a short pause
-                setTimeout(() => {
-                    dismissSplash();
-                }, 1200);
-                return;
-            }
-            const lineElement = lineElements[currentLineIndex];
-            const lineText = linesToType[currentLineIndex];
-            if (lineElement) {
-                typeLine(lineElement, lineText, () => {
-                    currentLineIndex++;
-                    setTimeout(startTypingSequence, lineDelay);
-                });
-            } else {
-                currentLineIndex++;
-                setTimeout(startTypingSequence, lineDelay);
-            }
-        }
-        
-        // Ensure that initial body overflow hidden is set (for splash), but we will unlock later
-        document.body.style.overflow = 'hidden';
-        document.documentElement.style.overflow = 'hidden';
-        
-        // Start animation after short delay
-        setTimeout(() => {
-            startTypingSequence();
-        }, 300);
-        
-        // Safety: auto dismiss after maximum 7 seconds and ensure scrolling
-        setTimeout(() => {
-            if (splash && splash.parentNode && !splash.classList.contains('fade-out')) {
-                dismissSplash();
-            } else {
-                // if splash already removed but scroll might still be locked, force unlock
-                if (document.body.style.overflow === 'hidden' || document.documentElement.style.overflow === 'hidden') {
-                    unlockScrollCompletely();
-                }
-            }
-        }, 7000);
-        
-        // Additional safeguard: listen for any touch events that may be blocked (just in case)
-        window.addEventListener('load', function() {
-            // if splash still present after load? unlikely but just to be safe
-            setTimeout(() => {
-                if (splash && splash.parentNode && getComputedStyle(splash).opacity === '0') {
-                    // already faded but not removed? force removal
-                    if (splash.parentNode) splash.remove();
-                    unlockScrollCompletely();
-                }
-            }, 100);
+    document.getElementById('totalStudentsCount').innerText = students.length + " জন";
+    const track = document.getElementById('profilesTrack');
+
+    function getProfileImageUrl(studentId) { return `images/${studentId}.jpg`; }
+
+    function createAvatarElement(student) {
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'profile-avatar';
+        const img = document.createElement('img');
+        img.src = getProfileImageUrl(student.id);
+        img.alt = student.name;
+        img.style.display = 'none';
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-user-circle';
+        icon.style.fontSize = '2.5rem';
+        icon.style.color = '#3cc7ff';
+        img.onload = function() { img.style.display = 'block'; icon.style.display = 'none'; };
+        img.onerror = function() { img.style.display = 'none'; icon.style.display = 'block'; };
+        avatarDiv.appendChild(img);
+        avatarDiv.appendChild(icon);
+        img.src = getProfileImageUrl(student.id);
+        return avatarDiv;
+    }
+
+    function buildProfiles() {
+        if(!track) return;
+        track.innerHTML = '';
+        students.forEach((student, idx) => {
+            const card = document.createElement('div');
+            card.className = 'profile-card';
+            card.setAttribute('data-index', idx);
+            card.appendChild(createAvatarElement(student));
+            const nameDiv = document.createElement('div'); nameDiv.className = 'profile-name'; nameDiv.textContent = student.name;
+            const idDiv = document.createElement('div'); idDiv.className = 'profile-id'; idDiv.innerHTML = `<i class="fas fa-id-badge"></i> ${student.id}`;
+            const emailDiv = document.createElement('div'); emailDiv.className = 'profile-email'; emailDiv.innerHTML = `<i class="fas fa-envelope"></i> ${student.email}`;
+            card.appendChild(nameDiv); card.appendChild(idDiv); card.appendChild(emailDiv);
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('active-card'));
+                card.classList.add('active-card');
+            });
+            track.appendChild(card);
         });
-    })();
+        if(track.children.length) track.children[0].classList.add('active-card');
+    }
+
+    function scrollToCard(index) {
+        const cards = document.querySelectorAll('.profile-card');
+        if (!cards.length) return;
+        index = Math.max(0, Math.min(index, cards.length - 1));
+        cards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    function getActiveIndex() {
+        const cards = document.querySelectorAll('.profile-card');
+        for (let i = 0; i < cards.length; i++) {
+            if (cards[i].classList.contains('active-card')) return i;
+        }
+        return 0;
+    }
+
+    function nextProfile() {
+        const total = document.querySelectorAll('.profile-card').length;
+        let curr = getActiveIndex();
+        let next = (curr + 1) % total;
+        document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('active-card'));
+        document.querySelectorAll('.profile-card')[next].classList.add('active-card');
+        scrollToCard(next);
+    }
+
+    function prevProfile() {
+        const total = document.querySelectorAll('.profile-card').length;
+        let curr = getActiveIndex();
+        let prev = (curr - 1 + total) % total;
+        document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('active-card'));
+        document.querySelectorAll('.profile-card')[prev].classList.add('active-card');
+        scrollToCard(prev);
+    }
+
+    document.getElementById('prevBtn')?.addEventListener('click', prevProfile);
+    document.getElementById('nextBtn')?.addEventListener('click', nextProfile);
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const page = btn.getAttribute('data-page');
+            if(page && page !== 'index.html') window.location.href = page;
+        });
+    });
+
+    buildProfiles();
+
+    // Typing Animation
+    const textToType = 'Welcome to "সপ্তরণন"';
+    let charIndex = 0;
+    const typeLine = document.getElementById('dynamicLine');
+    const cursor = document.getElementById('typingCursor');
+    function typeWriter() {
+        if (charIndex < textToType.length) {
+            typeLine.textContent += textToType.charAt(charIndex);
+            charIndex++;
+            setTimeout(typeWriter, 60);
+        }
+    }
+    setTimeout(typeWriter, 500);
 </script>
 </body>
 </html>
