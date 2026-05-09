@@ -12,10 +12,12 @@
         body { background: #0a0f1f; font-family: 'Inter', 'Space Grotesk', sans-serif; color: #f0f3ff; overflow-x: hidden; padding-bottom: 80px; }
         .tech-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 10%, #01031a, #000000); z-index: -2; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 2; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,15,30,0.95); backdrop-filter: blur(12px); display: flex; justify-content: space-around; align-items: center; padding: 6px 12px 15px; border-top: 1px solid rgba(0,242,255,0.3); z-index: 100; }
+        
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,15,30,0.95); backdrop-filter: blur(12px); display: flex; justify-content: space-around; align-items: center; padding: 8px 12px 18px; border-top: 1px solid rgba(0,242,255,0.3); z-index: 100; }
         .nav-item { background: none; border: none; color: #8e9aaf; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.6rem; cursor: pointer; padding: 4px 10px; border-radius: 40px; transition: 0.2s; }
         .nav-item i { font-size: 1.1rem; }
         .nav-item.active { color: #00f2ff; background: #00f2ff20; }
+        
         .glass-card { background: rgba(10,20,35,0.6); backdrop-filter: blur(10px); border-radius: 1.2rem; padding: 1rem; margin-bottom: 1rem; border: 1px solid rgba(0,242,255,0.15); }
         .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem; color: #00f2ff; display: flex; align-items: center; gap: 8px; }
         .stats-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -24,14 +26,17 @@
         .stat-label { font-size: 0.6rem; color: #94a3b8; }
         canvas { max-height: 150px; width: 100% !important; margin: 8px 0; }
         .timer-display { font-size: 2.5rem; font-weight: 700; font-family: monospace; text-align: center; background: #0f172a; color: white; padding: 12px; border-radius: 40px; letter-spacing: 2px; }
-        .btn-group { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-        button { background: #3b82f6; border: none; padding: 6px 14px; border-radius: 40px; font-weight: 600; color: white; cursor: pointer; font-size: 0.75rem; }
+        .btn-group { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
+        button { background: #3b82f6; border: none; padding: 10px 20px; border-radius: 40px; font-weight: 600; color: white; cursor: pointer; font-size: 0.85rem; }
         button.secondary { background: #1e2a3e; color: #e0e5f0; }
+        button.danger { background: #ef4444; }
+        button.success { background: #10b981; }
+        
         .goal-item { background: rgba(0,0,0,0.3); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
         .goal-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); font-size: 0.85rem; }
         .goal-name { font-weight: 600; }
         .subtask-list { padding: 6px 10px; }
-        .subtask-item { display: flex; justify-content: space-between; align-items: center; padding: 6px; margin: 3px 0; border-radius: 10px; cursor: pointer; gap: 6px; flex-wrap: wrap; font-size: 0.75rem; transition: 0.2s; }
+        .subtask-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; margin: 4px 0; border-radius: 10px; cursor: pointer; gap: 8px; flex-wrap: wrap; font-size: 0.75rem; transition: 0.2s; }
         .subtask-item:hover { background: rgba(0,242,255,0.1); }
         .subtask-item.selected { background: #00f2ff30; border: 1px solid #00f2ff; }
         .subtask-name { flex: 1; font-weight: 500; }
@@ -39,9 +44,12 @@
         .progress-bar-bg { background: #1e2a3e; border-radius: 10px; height: 4px; overflow: hidden; width: 70px; }
         .progress-fill { background: #00f2ff; height: 100%; width: 0%; border-radius: 10px; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .note-box { background: rgba(0,242,255,0.08); border-radius: 10px; padding: 6px; text-align: center; margin-top: 8px; font-size: 0.65rem; color: #7bc5ff; }
+        .note-box { background: rgba(0,242,255,0.08); border-radius: 10px; padding: 8px; text-align: center; margin-top: 10px; font-size: 0.7rem; color: #7bc5ff; }
+        .running-status { background: #10b98120; border: 1px solid #10b981; border-radius: 30px; padding: 4px 12px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px; }
+        .paused-status { background: #f59e0b20; border: 1px solid #f59e0b; border-radius: 30px; padding: 4px 12px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px; }
+        .daily-reset-badge { background: #3b82f620; border: 1px solid #3b82f6; border-radius: 30px; padding: 4px 12px; font-size: 0.65rem; display: inline-flex; align-items: center; gap: 6px; }
         footer { background: rgba(3,8,20,0.85); border-radius: 1rem; padding: 0.8rem; text-align: center; margin-top: 1.5rem; font-size: 0.6rem; }
-        @media (max-width: 600px) { .container { padding: 12px; } .timer-display { font-size: 1.8rem; } }
+        @media (max-width: 600px) { .container { padding: 12px; } .timer-display { font-size: 1.8rem; } button { padding: 6px 14px; font-size: 0.7rem; } }
     </style>
 </head>
 <body>
@@ -57,11 +65,22 @@
     <button class="nav-item" data-page="settings.html"><i class="fas fa-cog"></i><span>সেটিংস</span></button>
 </div>
 <script>
-    // ==================== ডেমো ডাটা (Study শুধু, সাবটাস্ক = কোর্স) ====================
+    // ==================== ডেমো ডাটা ====================
     let goals = [], taskLogs = [], selectedSubtask = null, progressChart = null;
-    let timerState = { isRunning: false, remainingSeconds: 0, currentGoalId: null, currentSubtaskId: null, currentSubtaskName: "", intervalId: null, elapsedThisSession: 0 };
     
-    // ডিফল্ট ডাটা - শুধু Study কাজ, সাবটাস্ক গুলো আপনার দেওয়া কোর্স
+    // টাইমার স্টেট
+    let timerState = {
+        isRunning: false,
+        startTime: null,
+        pausedDuration: 0,
+        currentGoalId: null,
+        currentSubtaskId: null,
+        currentSubtaskName: "",
+        totalElapsed: 0,
+        lastDate: null          // শেষ রিসেটের তারিখ
+    };
+    
+    // ডিফল্ট ডাটা
     function initDefaultTrackerData() {
         return [{
             id: 101,
@@ -79,6 +98,37 @@
         }];
     }
     
+    // ==================== ডেইলি রিসেট ফাংশন ====================
+    function checkAndResetDaily() {
+        const today = new Date().toDateString();
+        const lastReset = localStorage.getItem('last_reset_date');
+        
+        if (lastReset !== today) {
+            console.log("ডেইলি রিসেট চলছে...");
+            
+            // গতকালের totalElapsed সেভ করে রাখা (যদি কোনো টাইমার চলমান থাকে)
+            if (timerState.totalElapsed > 0 && timerState.currentSubtaskId) {
+                saveLog(timerState.currentGoalId, timerState.currentSubtaskId, timerState.currentSubtaskName, timerState.totalElapsed);
+            }
+            
+            // টাইমার স্টেট রিসেট
+            if (timerState.isRunning) {
+                timerState.isRunning = false;
+                timerState.startTime = null;
+            }
+            timerState.totalElapsed = 0;
+            timerState.pausedDuration = 0;
+            
+            // নতুন তারিখ সেভ
+            localStorage.setItem('last_reset_date', today);
+            
+            // UI আপডেট
+            renderContent();
+            showToast("📅 নতুন দিন শুরু! টাইমার রিসেট হয়েছে");
+        }
+    }
+    
+    // ==================== ডাটা লোড/সেভ ====================
     function loadData() {
         const saved = localStorage.getItem('subtask_tracker');
         goals = saved ? JSON.parse(saved) : initDefaultTrackerData();
@@ -86,6 +136,24 @@
         taskLogs = savedLogs ? JSON.parse(savedLogs) : [];
         const savedSelected = localStorage.getItem('selected_subtask');
         if(savedSelected) selectedSubtask = JSON.parse(savedSelected);
+        
+        // টাইমার স্টেট লোড
+        const savedTimer = localStorage.getItem('timer_state');
+        if(savedTimer) {
+            const parsed = JSON.parse(savedTimer);
+            timerState.isRunning = parsed.isRunning || false;
+            timerState.startTime = parsed.startTime;
+            timerState.pausedDuration = parsed.pausedDuration || 0;
+            timerState.currentGoalId = parsed.currentGoalId;
+            timerState.currentSubtaskId = parsed.currentSubtaskId;
+            timerState.currentSubtaskName = parsed.currentSubtaskName || "";
+            timerState.totalElapsed = parsed.totalElapsed || 0;
+            timerState.lastDate = parsed.lastDate;
+        }
+        
+        // ডেইলি রিসেট চেক
+        checkAndResetDaily();
+        
         rebuildLoggedSeconds();
     }
     
@@ -104,7 +172,18 @@
         localStorage.setItem('subtask_tracker',JSON.stringify(goals)); 
         localStorage.setItem('subtask_logs',JSON.stringify(taskLogs)); 
         if(selectedSubtask) localStorage.setItem('selected_subtask',JSON.stringify(selectedSubtask)); 
-        else localStorage.removeItem('selected_subtask'); 
+        else localStorage.removeItem('selected_subtask');
+        
+        localStorage.setItem('timer_state', JSON.stringify({
+            isRunning: timerState.isRunning,
+            startTime: timerState.startTime,
+            pausedDuration: timerState.pausedDuration,
+            currentGoalId: timerState.currentGoalId,
+            currentSubtaskId: timerState.currentSubtaskId,
+            currentSubtaskName: timerState.currentSubtaskName,
+            totalElapsed: timerState.totalElapsed,
+            lastDate: new Date().toDateString()
+        }));
     }
     
     function saveLog(goalId,subtaskId,subtaskName,durationSec){ 
@@ -146,77 +225,131 @@
     
     function showToast(msg){ 
         let t=document.createElement('div'); 
-        t.style.cssText='position:fixed; bottom:90px; left:20px; right:20px; background:#10b981; color:white; padding:8px; border-radius:60px; text-align:center; z-index:1000; animation:fadeOut 2s forwards'; 
+        t.style.cssText='position:fixed; bottom:90px; left:20px; right:20px; background:#10b981; color:white; padding:10px; border-radius:60px; text-align:center; z-index:1000; animation:fadeOut 2s forwards'; 
         t.innerText=msg; 
         document.body.appendChild(t); 
         setTimeout(()=>t.remove(),2000); 
     }
     
-    function saveCurrentSession(){ 
-        if(timerState.elapsedThisSession>0 && timerState.currentSubtaskId){ 
-            saveLog(timerState.currentGoalId,timerState.currentSubtaskId,timerState.currentSubtaskName,timerState.elapsedThisSession); 
-            timerState.remainingSeconds=getRemainingSeconds(timerState.currentGoalId,timerState.currentSubtaskId); 
-            timerState.elapsedThisSession=0; 
-        } 
+    function saveCurrentSession() {
+        if(timerState.totalElapsed > 0 && timerState.currentSubtaskId) {
+            saveLog(timerState.currentGoalId, timerState.currentSubtaskId, timerState.currentSubtaskName, timerState.totalElapsed);
+            timerState.totalElapsed = 0;
+            saveAll();
+        }
     }
     
-    function startCountdown(){ 
-        if(!selectedSubtask){ showToast("প্রথমে একটি সাবটাস্ক নির্বাচন করুন"); return; } 
-        if(timerState.isRunning) return; 
-        const {goalId,subtaskId,subtaskName}=selectedSubtask; 
-        const remaining=getRemainingSeconds(goalId,subtaskId); 
-        if(timerState.currentSubtaskId!==subtaskId){ 
-            saveCurrentSession(); 
-            timerState.remainingSeconds=remaining; 
-            timerState.currentGoalId=goalId; 
-            timerState.currentSubtaskId=subtaskId; 
-            timerState.currentSubtaskName=subtaskName; 
-            timerState.elapsedThisSession=0; 
-            updateTimerDisplay(); 
-        } 
-        timerState.isRunning=true; 
-        timerState.intervalId=setInterval(()=>{ 
-            if(timerState.isRunning){ 
-                timerState.elapsedThisSession++; 
-                timerState.remainingSeconds--; 
-                updateTimerDisplay(); 
-                if(timerState.remainingSeconds<=0 && timerState.elapsedThisSession>0){ 
-                    clearInterval(timerState.intervalId); 
-                    timerState.isRunning=false; 
-                    saveCurrentSession(); 
-                    showToast(`🎉 "${timerState.currentSubtaskName}" লক্ষ্য পূর্ণ!`); 
-                    renderContent(); 
-                } 
-            } 
-        },1000); 
+    function getCurrentElapsedSeconds() {
+        if(!timerState.isRunning || !timerState.startTime) return timerState.totalElapsed;
+        const now = Date.now();
+        const runningSeconds = Math.floor((now - timerState.startTime) / 1000);
+        return timerState.totalElapsed + runningSeconds;
     }
     
-    function pauseCountdown(){ 
-        if(timerState.intervalId){ clearInterval(timerState.intervalId); timerState.intervalId=null; } 
-        if(timerState.isRunning){ 
-            timerState.isRunning=false; 
-            saveCurrentSession(); 
-            renderContent(); 
-        } 
+    function startCountdown() { 
+        if(!selectedSubtask){ 
+            showToast("প্রথমে একটি সাবটাস্ক নির্বাচন করুন"); 
+            return; 
+        }
+        
+        const {goalId,subtaskId,subtaskName}=selectedSubtask;
+        
+        if(timerState.currentSubtaskId !== subtaskId) {
+            saveCurrentSession();
+            timerState.currentGoalId = goalId;
+            timerState.currentSubtaskId = subtaskId;
+            timerState.currentSubtaskName = subtaskName;
+            timerState.totalElapsed = 0;
+            timerState.pausedDuration = 0;
+        }
+        
+        if(!timerState.isRunning) {
+            timerState.isRunning = true;
+            timerState.startTime = Date.now();
+            saveAll();
+            showToast(`⏵ "${subtaskName}" টাইমার শুরু হয়েছে`);
+            renderContent();
+        } else {
+            showToast(`"${subtaskName}" ইতিমধ্যে চলছে`);
+        }
     }
     
-    function resetCountdown(){ 
-        if(timerState.intervalId){ clearInterval(timerState.intervalId); timerState.intervalId=null; } 
-        timerState.isRunning=false; 
-        if(selectedSubtask){ 
-            timerState.remainingSeconds=getRemainingSeconds(selectedSubtask.goalId,selectedSubtask.subtaskId); 
-            timerState.currentSubtaskId=selectedSubtask.subtaskId; 
-            timerState.currentGoalId=selectedSubtask.goalId; 
-            timerState.currentSubtaskName=selectedSubtask.subtaskName; 
-            timerState.elapsedThisSession=0; 
-            updateTimerDisplay(); 
-        } 
-        renderContent(); 
+    function pauseCountdown() { 
+        if(!timerState.isRunning) {
+            showToast("টাইমার চলছে না");
+            return;
+        }
+        
+        const elapsed = getCurrentElapsedSeconds();
+        timerState.totalElapsed = elapsed;
+        timerState.isRunning = false;
+        timerState.startTime = null;
+        
+        saveAll();
+        showToast(`⏸ টাইমার পaused, ${Math.floor(elapsed/60)} মিনিট সেভ হয়েছে`);
+        renderContent();
     }
     
-    function updateTimerDisplay(){ 
-        let d=document.getElementById('countdownDisplay'); 
-        if(d) d.innerText=formatSec(timerState.remainingSeconds); 
+    function resetCountdown() { 
+        if(timerState.isRunning) {
+            const elapsed = getCurrentElapsedSeconds();
+            timerState.totalElapsed = elapsed;
+            timerState.isRunning = false;
+            timerState.startTime = null;
+            saveCurrentSession();
+        } else if(timerState.totalElapsed > 0) {
+            saveCurrentSession();
+        }
+        
+        timerState.totalElapsed = 0;
+        timerState.pausedDuration = 0;
+        
+        saveAll();
+        showToast(`🔄 টাইমার রিসেট করা হয়েছে`);
+        renderContent();
+    }
+    
+    function getDisplayRemainingSeconds() {
+        if(!selectedSubtask) return 0;
+        const remaining = getRemainingSeconds(selectedSubtask.goalId, selectedSubtask.subtaskId);
+        const currentElapsed = getCurrentElapsedSeconds();
+        let displayRemaining = remaining - currentElapsed;
+        return displayRemaining < 0 ? 0 : displayRemaining;
+    }
+    
+    function updateTimerDisplay() {
+        const disp = document.getElementById('countdownDisplay');
+        if(disp) {
+            if(selectedSubtask && timerState.isRunning) {
+                const remaining = getDisplayRemainingSeconds();
+                disp.innerText = formatSec(remaining);
+            } else if(selectedSubtask && !timerState.isRunning) {
+                const remaining = getRemainingSeconds(selectedSubtask.goalId, selectedSubtask.subtaskId);
+                disp.innerText = formatSec(remaining);
+            } else {
+                disp.innerText = formatSec(0);
+            }
+        }
+    }
+    
+    let updateInterval = null;
+    function startUILoop() {
+        if(updateInterval) clearInterval(updateInterval);
+        updateInterval = setInterval(() => {
+            updateTimerDisplay();
+            if(timerState.isRunning && selectedSubtask) {
+                const statusDiv = document.getElementById('timerStatus');
+                if(statusDiv) {
+                    const elapsed = getCurrentElapsedSeconds();
+                    statusDiv.innerHTML = `<span class="running-status"><i class="fas fa-play-circle"></i> চলমান: ${formatSec(elapsed)}</span>`;
+                }
+            } else if(selectedSubtask && !timerState.isRunning && timerState.totalElapsed > 0) {
+                const statusDiv = document.getElementById('timerStatus');
+                if(statusDiv) {
+                    statusDiv.innerHTML = `<span class="paused-status"><i class="fas fa-pause-circle"></i> থামানো: ${formatSec(timerState.totalElapsed)}</span>`;
+                }
+            }
+        }, 1000);
     }
     
     function renderContent(){
@@ -234,10 +367,35 @@
             goalsHtml+=`</div></div>`;
         });
         
-        let selectedInfo=selectedSubtask?`✅ নির্বাচিত: ${selectedSubtask.subtaskName} | বাকি: ${formatSec(getRemainingSeconds(selectedSubtask.goalId,selectedSubtask.subtaskId))}`:`👆 একটি সাবটাস্ক নির্বাচন করুন`;
+        let selectedInfo = "";
+        let timerDisplaySec = 0;
+        let statusHtml = `<div class="daily-reset-badge" style="margin-bottom: 8px;"><i class="fas fa-sync-alt"></i> প্রতিদিন রাত ১২টায় অটো রিসেট</div>`;
+        
+        if(selectedSubtask) {
+            const savedRemaining = getRemainingSeconds(selectedSubtask.goalId, selectedSubtask.subtaskId);
+            const currentElapsed = getCurrentElapsedSeconds();
+            const displayRemaining = Math.max(0, savedRemaining - currentElapsed);
+            timerDisplaySec = displayRemaining;
+            
+            if(timerState.isRunning) {
+                statusHtml += `<div id="timerStatus" style="margin-bottom: 8px;"><span class="running-status"><i class="fas fa-play-circle"></i> চলমান: ${formatSec(currentElapsed)}</span></div>`;
+                selectedInfo = `✅ নির্বাচিত: ${selectedSubtask.subtaskName} | বাকি: ${formatSec(displayRemaining)} | 🟢 চলছে`;
+            } else if(timerState.totalElapsed > 0) {
+                statusHtml += `<div id="timerStatus" style="margin-bottom: 8px;"><span class="paused-status"><i class="fas fa-pause-circle"></i> বিরতি: ${formatSec(timerState.totalElapsed)} সেভ হয়েছে</span></div>`;
+                selectedInfo = `✅ নির্বাচিত: ${selectedSubtask.subtaskName} | বাকি: ${formatSec(savedRemaining)} | ⏸ বিরতি দেওয়া`;
+            } else {
+                statusHtml += `<div id="timerStatus" style="margin-bottom: 8px;"></div>`;
+                selectedInfo = `✅ নির্বাচিত: ${selectedSubtask.subtaskName} | বাকি: ${formatSec(savedRemaining)}`;
+            }
+        } else {
+            selectedInfo = `👆 একটি সাবটাস্ক নির্বাচন করুন`;
+            statusHtml += `<div id="timerStatus" style="margin-bottom: 8px;"></div>`;
+        }
+        
         let html=`<div class="glass-card"><div class="section-title"><i class="fas fa-chart-line"></i> পরিসংখ্যান</div><div class="stats-row"><div class="stat-box"><div class="stat-number">${formatDuration(todaySec)}</div><div class="stat-label">আজকের মোট</div></div><div class="stat-box"><div class="stat-number">${goals.length}</div><div class="stat-label">মোট বিভাগ</div></div><div class="stat-box"><div class="stat-number">${completedSubs}/${totalSubs}</div><div class="stat-label">পূর্ণ সাবটাস্ক</div></div></div><canvas id="categoryChart"></canvas><div class="flex-between"><span style="font-size:10px;">📈 সাবটাস্ক ভিত্তিক সময়</span><button id="exportBtn" class="secondary" style="padding:4px 10px;font-size:10px;">📎 CSV</button></div></div>
         <div class="glass-card"><div class="flex-between"><div class="section-title"><i class="fas fa-bullseye"></i> আমার পড়ার সূচি</div></div><div id="goalsList">${goalsHtml}</div><div class="note-box"><i class="fas fa-info-circle"></i> সাবটাস্ক এডিট করতে সেটিংসে যান</div></div>
-        <div class="glass-card"><div class="section-title"><i class="fas fa-stopwatch"></i> টাইমার</div><div style="margin-bottom:8px;font-size:0.75rem;">${selectedInfo}</div><div class="timer-display" id="countdownDisplay">${formatSec(timerState.remainingSeconds)}</div><div class="btn-group"><button id="startBtn">▶ শুরু</button><button id="pauseBtn" class="secondary">⏸ বিরতি</button><button id="resetBtn" class="secondary">🔄 রিসেট</button></div></div>`;
+        <div class="glass-card"><div class="section-title"><i class="fas fa-stopwatch"></i> টাইমার</div>${statusHtml}<div style="margin-bottom:8px;font-size:0.75rem;">${selectedInfo}</div><div class="timer-display" id="countdownDisplay">${formatSec(timerDisplaySec)}</div><div class="btn-group"><button id="startBtn" class="success"><i class="fas fa-play"></i> শুরু</button><button id="pauseBtn" class="secondary"><i class="fas fa-pause"></i> বিরতি</button><button id="resetBtn" class="danger"><i class="fas fa-undo-alt"></i> রিসেট</button></div><p style="font-size:0.65rem; text-align:center; margin-top:10px; color:#7aaaff;"><i class="fas fa-info-circle"></i> শুরু করলে ব্যাকগ্রাউন্ডেও চলবে, ম্যানুয়ালি বন্ধ না করা পর্যন্ত থামবে না | প্রতিদিন রাত ১২টায় অটো রিসেট</p></div>`;
+        
         document.getElementById('trackerContent').innerHTML=html;
         
         let ctx=document.getElementById('categoryChart')?.getContext('2d'); 
@@ -261,15 +419,30 @@
     }
     
     window.selectSubtask=function(goalId,subtaskId,subtaskName){ 
-        if(timerState.isRunning) pauseCountdown(); 
-        selectedSubtask={goalId,subtaskId,subtaskName}; 
-        saveAll(); 
-        timerState.remainingSeconds=getRemainingSeconds(goalId,subtaskId); 
-        timerState.currentSubtaskId=subtaskId; 
-        timerState.currentGoalId=goalId; 
-        timerState.currentSubtaskName=subtaskName; 
-        timerState.elapsedThisSession=0; 
-        renderContent(); 
+        if(timerState.isRunning) {
+            const elapsed = getCurrentElapsedSeconds();
+            timerState.totalElapsed = elapsed;
+            timerState.isRunning = false;
+            timerState.startTime = null;
+            if(timerState.totalElapsed > 0 && timerState.currentSubtaskId) {
+                saveLog(timerState.currentGoalId, timerState.currentSubtaskId, timerState.currentSubtaskName, timerState.totalElapsed);
+                timerState.totalElapsed = 0;
+            }
+        } else if(timerState.totalElapsed > 0 && timerState.currentSubtaskId) {
+            saveLog(timerState.currentGoalId, timerState.currentSubtaskId, timerState.currentSubtaskName, timerState.totalElapsed);
+            timerState.totalElapsed = 0;
+        }
+        
+        selectedSubtask = {goalId,subtaskId,subtaskName};
+        timerState.currentGoalId = goalId;
+        timerState.currentSubtaskId = subtaskId;
+        timerState.currentSubtaskName = subtaskName;
+        timerState.totalElapsed = 0;
+        timerState.isRunning = false;
+        timerState.startTime = null;
+        
+        saveAll();
+        renderContent();
         showToast(`"${subtaskName}" নির্বাচিত`); 
     };
     
@@ -280,8 +453,14 @@
         }); 
     });
     
+    // মিনিটে মিনিটে ডেইলি রিসেট চেক করা
+    setInterval(() => {
+        checkAndResetDaily();
+    }, 60000); // প্রতি 1 মিনিটে চেক
+    
     loadData(); 
     renderContent();
+    startUILoop();
 </script>
 </body>
 </html>
