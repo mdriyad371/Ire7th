@@ -103,8 +103,8 @@
         currentGoalId: null,
         currentSubtaskId: null,
         currentSubtaskName: "",
-        sessionElapsed: 0,
-        savedElapsed: 0,
+        sessionElapsed: 0,      // আজকের এই সেশনে যে সময় হয়েছে (সেভ হয়নি)
+        savedElapsed: 0,        // আজকের ইতিমধ্যে সেভ করা সময়
         lastResetDate: null
     };
     
@@ -156,10 +156,12 @@
     }
     
     function performMidnightReset() {
+        // আজকের সেশন সেভ করে রাখো (যদি কিছু থাকে)
         if (timerState.sessionElapsed > 0 && timerState.currentSubtaskId) {
             saveCurrentSessionLog();
         }
         
+        // টাইমার স্টেট রিসেট (শুধু আজকের সময় রিসেট হবে)
         timerState.isRunning = false;
         timerState.startTime = null;
         timerState.sessionElapsed = 0;
@@ -168,25 +170,29 @@
         localStorage.setItem('last_reset_date', new Date().toDateString());
         saveAll();
         renderContent();
-        showToast("🕛 Midnight auto reset completed!");
+        showToast("🕛 Midnight auto reset completed! Today's timer reset.");
     }
     
-    // ==================== Manual Reset Function ====================
+    // ==================== Manual Reset Function (Corrected) ====================
     function manualDailyReset() {
-        if (confirm("⚠️ Are you sure you want to reset today's timer?\n\nThis will save your current session and reset the timer for the day. Your study history will be preserved.")) {
+        if (confirm("⚠️ Are you sure you want to reset today's timer?\n\nThis will reset the timer for today. Your study history will be preserved.\n\nNote: Only today's timer will be reset, not the historical data.")) {
+            
+            // আজকের চলমান সেশন সেভ করে দাও
             if (timerState.sessionElapsed > 0 && timerState.currentSubtaskId) {
                 saveCurrentSessionLog();
             }
             
+            // টাইমার স্টেট রিসেট - শুধু আজকের সময় রিসেট হবে
             timerState.isRunning = false;
             timerState.startTime = null;
             timerState.sessionElapsed = 0;
             timerState.savedElapsed = 0;
             
+            // রিসেটের তারিখ আপডেট
             localStorage.setItem('last_reset_date', new Date().toDateString());
             saveAll();
             renderContent();
-            showToast("✅ Timer manually reset! New day started.");
+            showToast("✅ Today's timer manually reset! Start fresh.");
         }
     }
     
@@ -450,12 +456,14 @@
         timerState.startTime = null;
         
         saveAll();
-        showToast(`⏸ Timer paused, ${formatSec(timerState.sessionElapsed)} saved`);
+        showToast(`⏸ Timer paused, ${formatSec(timerState.sessionElapsed)} saved for today`);
         renderContent();
     }
     
     function resetCountdown() { 
         if(timerState.isRunning) {
+            const elapsed = Math.floor((Date.now() - timerState.startTime) / 1000);
+            timerState.sessionElapsed = elapsed;
             timerState.isRunning = false;
             timerState.startTime = null;
         }
@@ -468,7 +476,7 @@
         timerState.savedElapsed = 0;
         
         saveAll();
-        showToast(`🔄 Timer reset`);
+        showToast(`🔄 Current task timer reset`);
         renderContent();
     }
     
@@ -503,11 +511,11 @@
         const statusDiv = document.getElementById('timerStatus');
         if(statusDiv) {
             if(timerState.isRunning) {
-                statusDiv.innerHTML = `<span class="running-status"><i class="fas fa-play-circle"></i> Running: ${formatSec(currentTotal)} | Total: ${formatSec(total)}</span>`;
+                statusDiv.innerHTML = `<span class="running-status"><i class="fas fa-play-circle"></i> Running: ${formatSec(currentTotal)} today | Total completed: ${formatSec(total)}</span>`;
             } else if(currentTotal > 0) {
-                statusDiv.innerHTML = `<span class="paused-status"><i class="fas fa-pause-circle"></i> Paused: ${formatSec(currentTotal)} today | Total: ${formatSec(total)}</span>`;
+                statusDiv.innerHTML = `<span class="paused-status"><i class="fas fa-pause-circle"></i> Paused: ${formatSec(currentTotal)} today | Total completed: ${formatSec(total)}</span>`;
             } else {
-                statusDiv.innerHTML = `<span class="paused-status"><i class="fas fa-stop-circle"></i> Stopped: Total ${formatSec(total)}</span>`;
+                statusDiv.innerHTML = `<span class="paused-status"><i class="fas fa-stop-circle"></i> Stopped | Total completed: ${formatSec(total)}</span>`;
             }
         }
         
@@ -617,7 +625,7 @@
         
         let html=`<div class="glass-card"><div class="section-title"><i class="fas fa-chart-line"></i> Statistics</div><div class="stats-row"><div class="stat-box"><div class="stat-number">${formatDuration(todaySec)}</div><div class="stat-label">Today's Total</div></div><div class="stat-box"><div class="stat-number">${goals.length}</div><div class="stat-label">Total Categories</div></div><div class="stat-box"><div class="stat-number">${completedSubs}/${totalSubs}</div><div class="stat-label">Completed Subtasks</div></div></div><canvas id="categoryChart"></canvas><div class="flex-between"><span style="font-size:10px;">📈 Category wise time</span><button id="exportBtn" class="secondary" style="padding:4px 10px;font-size:10px;">📎 Export CSV</button></div></div>
         <div class="glass-card"><div class="flex-between"><div class="section-title"><i class="fas fa-bullseye"></i> My Study Schedule</div></div><div id="goalsList">${goalsHtml}</div><div class="note-box"><i class="fas fa-info-circle"></i> Edit subtasks in Settings page</div></div>
-        <div class="glass-card"><div class="section-title"><i class="fas fa-stopwatch"></i> Timer</div>${statusHtml}${selectedInfoHtml}<div class="timer-display" id="countdownDisplay">${selectedSubtask ? formatSec(getDisplayRemainingSeconds()) : formatSec(0)}</div><div class="btn-group"><button id="startBtn" class="success"><i class="fas fa-play"></i> Start</button><button id="pauseBtn" class="secondary"><i class="fas fa-pause"></i> Pause</button><button id="resetBtn" class="danger"><i class="fas fa-undo-alt"></i> Reset</button></div>${renderHistory()}${renderRanking()}<p style="font-size:0.65rem; text-align:center; margin-top:10px; color:#7aaaff;"><i class="fas fa-info-circle"></i> Timer runs in background | Auto reset at 11:59:59 PM daily | Manual reset also available</p></div>`;
+        <div class="glass-card"><div class="section-title"><i class="fas fa-stopwatch"></i> Timer</div>${statusHtml}${selectedInfoHtml}<div class="timer-display" id="countdownDisplay">${selectedSubtask ? formatSec(getDisplayRemainingSeconds()) : formatSec(0)}</div><div class="btn-group"><button id="startBtn" class="success"><i class="fas fa-play"></i> Start</button><button id="pauseBtn" class="secondary"><i class="fas fa-pause"></i> Pause</button><button id="resetBtn" class="danger"><i class="fas fa-undo-alt"></i> Reset</button></div>${renderHistory()}${renderRanking()}<p style="font-size:0.65rem; text-align:center; margin-top:10px; color:#7aaaff;"><i class="fas fa-info-circle"></i> Timer runs in background | Auto reset at 11:59:59 PM daily | Manual reset resets today's timer only</p></div>`;
         
         document.getElementById('trackerContent').innerHTML=html;
         
