@@ -31,6 +31,7 @@
         button.secondary { background: #1e2a3e; color: #e0e5f0; }
         button.danger { background: #ef4444; }
         button.success { background: #10b981; }
+        button.warning { background: #f59e0b; color: #1e293b; }
         
         .goal-item { background: rgba(0,0,0,0.3); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
         .goal-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); font-size: 0.85rem; cursor: pointer; }
@@ -71,6 +72,10 @@
         
         .arrow-icon { transition: transform 0.3s ease; }
         .arrow-icon.rotated { transform: rotate(180deg); }
+        
+        .reset-option { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+        .reset-btn-small { background: #f59e0b20; border: 1px solid #f59e0b; color: #f59e0b; padding: 4px 12px; border-radius: 30px; font-size: 0.65rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+        .reset-btn-small:hover { background: #f59e0b; color: #1e293b; }
         
         footer { background: rgba(3,8,20,0.85); border-radius: 1rem; padding: 0.8rem; text-align: center; margin-top: 1.5rem; font-size: 0.6rem; }
         @media (max-width: 600px) { .container { padding: 12px; } .timer-display { font-size: 1.5rem; } button { padding: 5px 12px; font-size: 0.65rem; } .history-grid { gap: 4px; } }
@@ -163,6 +168,26 @@
         localStorage.setItem('last_reset_date', new Date().toDateString());
         saveAll();
         renderContent();
+        showToast("🕛 Midnight auto reset completed!");
+    }
+    
+    // ==================== Manual Reset Function ====================
+    function manualDailyReset() {
+        if (confirm("⚠️ Are you sure you want to reset today's timer?\n\nThis will save your current session and reset the timer for the day. Your study history will be preserved.")) {
+            if (timerState.sessionElapsed > 0 && timerState.currentSubtaskId) {
+                saveCurrentSessionLog();
+            }
+            
+            timerState.isRunning = false;
+            timerState.startTime = null;
+            timerState.sessionElapsed = 0;
+            timerState.savedElapsed = 0;
+            
+            localStorage.setItem('last_reset_date', new Date().toDateString());
+            saveAll();
+            renderContent();
+            showToast("✅ Timer manually reset! New day started.");
+        }
     }
     
     function checkAndResetDaily() {
@@ -574,7 +599,8 @@
             goalsHtml+=`</div></div>`;
         });
         
-        let statusHtml = `<div style="margin-bottom: 8px;"><span class="running-status" style="background:#3b82f620; border-color:#3b82f6;"><i class="fas fa-sync-alt"></i> Auto reset at 11:59:59 PM daily</span></div>
+        let statusHtml = `<div class="reset-option"><div class="reset-btn-small" onclick="manualDailyReset()"><i class="fas fa-calendar-day"></i> Manual Daily Reset</div></div>
+                         <div style="margin-bottom: 8px;"><span class="running-status" style="background:#3b82f620; border-color:#3b82f6;"><i class="fas fa-sync-alt"></i> Auto reset at 11:59:59 PM daily</span></div>
                          <div id="timerStatus" style="margin-bottom: 8px;"></div>`;
         
         let selectedInfoHtml = `<div id="selectedInfo" style="margin-bottom:8px; font-size:0.75rem;">👆 Select a subtask to start</div>`;
@@ -591,7 +617,7 @@
         
         let html=`<div class="glass-card"><div class="section-title"><i class="fas fa-chart-line"></i> Statistics</div><div class="stats-row"><div class="stat-box"><div class="stat-number">${formatDuration(todaySec)}</div><div class="stat-label">Today's Total</div></div><div class="stat-box"><div class="stat-number">${goals.length}</div><div class="stat-label">Total Categories</div></div><div class="stat-box"><div class="stat-number">${completedSubs}/${totalSubs}</div><div class="stat-label">Completed Subtasks</div></div></div><canvas id="categoryChart"></canvas><div class="flex-between"><span style="font-size:10px;">📈 Category wise time</span><button id="exportBtn" class="secondary" style="padding:4px 10px;font-size:10px;">📎 Export CSV</button></div></div>
         <div class="glass-card"><div class="flex-between"><div class="section-title"><i class="fas fa-bullseye"></i> My Study Schedule</div></div><div id="goalsList">${goalsHtml}</div><div class="note-box"><i class="fas fa-info-circle"></i> Edit subtasks in Settings page</div></div>
-        <div class="glass-card"><div class="section-title"><i class="fas fa-stopwatch"></i> Timer</div>${statusHtml}${selectedInfoHtml}<div class="timer-display" id="countdownDisplay">${selectedSubtask ? formatSec(getDisplayRemainingSeconds()) : formatSec(0)}</div><div class="btn-group"><button id="startBtn" class="success"><i class="fas fa-play"></i> Start</button><button id="pauseBtn" class="secondary"><i class="fas fa-pause"></i> Pause</button><button id="resetBtn" class="danger"><i class="fas fa-undo-alt"></i> Reset</button></div>${renderHistory()}${renderRanking()}<p style="font-size:0.65rem; text-align:center; margin-top:10px; color:#7aaaff;"><i class="fas fa-info-circle"></i> Timer runs in background | Auto reset at 11:59:59 PM daily</p></div>`;
+        <div class="glass-card"><div class="section-title"><i class="fas fa-stopwatch"></i> Timer</div>${statusHtml}${selectedInfoHtml}<div class="timer-display" id="countdownDisplay">${selectedSubtask ? formatSec(getDisplayRemainingSeconds()) : formatSec(0)}</div><div class="btn-group"><button id="startBtn" class="success"><i class="fas fa-play"></i> Start</button><button id="pauseBtn" class="secondary"><i class="fas fa-pause"></i> Pause</button><button id="resetBtn" class="danger"><i class="fas fa-undo-alt"></i> Reset</button></div>${renderHistory()}${renderRanking()}<p style="font-size:0.65rem; text-align:center; margin-top:10px; color:#7aaaff;"><i class="fas fa-info-circle"></i> Timer runs in background | Auto reset at 11:59:59 PM daily | Manual reset also available</p></div>`;
         
         document.getElementById('trackerContent').innerHTML=html;
         
@@ -617,6 +643,7 @@
     
     // ==================== Global Functions ====================
     window.toggleCategory = toggleCategory;
+    window.manualDailyReset = manualDailyReset;
     
     window.selectSubtask=function(goalId,subtaskId,subtaskName,targetMinutes){ 
         if(timerState.isRunning) {
