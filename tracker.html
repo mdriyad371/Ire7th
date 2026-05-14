@@ -3,99 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Time Tracker | IRE - IoT & Robotics Engineering</title>
+    <title>Pro Time Tracker | IRE</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
+        :root {
+            --bg-primary: #0a0f1f;
+            --card-bg: rgba(10,20,35,0.6);
+            --text-primary: #f0f3ff;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(0,242,255,0.15);
+            --accent-cyan: #00f2ff;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0a0f1f; font-family: 'Inter', 'Space Grotesk', sans-serif; color: #f0f3ff; overflow-x: hidden; padding-bottom: 80px; }
-        .tech-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 10%, #01031a, #000000); z-index: -2; }
+        body { background: var(--bg-primary); font-family: 'Inter', sans-serif; color: var(--text-primary); overflow-x: hidden; padding-bottom: 80px; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 2; }
         
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,15,30,0.95); backdrop-filter: blur(12px); display: flex; justify-content: space-around; align-items: center; padding: 8px 12px 18px; border-top: 1px solid rgba(0,242,255,0.3); z-index: 100; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,15,30,0.95); backdrop-filter: blur(12px); display: flex; justify-content: space-around; padding: 8px 12px 18px; border-top: 1px solid var(--border-color); z-index: 100; }
         .nav-item { background: none; border: none; color: #8e9aaf; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.6rem; cursor: pointer; padding: 4px 10px; border-radius: 40px; transition: 0.2s; }
         .nav-item i { font-size: 1.1rem; }
-        .nav-item.active { color: #00f2ff; background: #00f2ff20; }
+        .nav-item.active { color: var(--accent-cyan); background: rgba(0,242,255,0.2); }
         
-        .glass-card { background: rgba(10,20,35,0.6); backdrop-filter: blur(10px); border-radius: 1.2rem; padding: 1rem; margin-bottom: 1rem; border: 1px solid rgba(0,242,255,0.15); }
-        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem; color: #00f2ff; display: flex; align-items: center; gap: 8px; }
+        .glass-card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: 1.2rem; padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--border-color); }
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px; }
         .stats-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-        .stat-box { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 12px; flex: 1; text-align: center; }
-        .stat-number { font-size: 1.2rem; font-weight: bold; color: #00f2ff; }
-        .stat-label { font-size: 0.6rem; color: #94a3b8; }
+        .stat-box { background: rgba(0,0,0,0.2); padding: 8px; border-radius: 12px; flex: 1; text-align: center; }
+        .stat-number { font-size: 1.2rem; font-weight: bold; color: var(--accent-cyan); }
+        .stat-label { font-size: 0.6rem; color: var(--text-secondary); }
         canvas { max-height: 150px; width: 100% !important; margin: 8px 0; }
         .timer-display { font-size: 2rem; font-weight: 700; font-family: monospace; text-align: center; background: #0f172a; color: white; padding: 12px; border-radius: 40px; letter-spacing: 2px; }
         .btn-group { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
-        button { background: #3b82f6; border: none; padding: 8px 16px; border-radius: 40px; font-weight: 600; color: white; cursor: pointer; font-size: 0.75rem; }
+        button { background: var(--accent-blue); border: none; padding: 8px 16px; border-radius: 40px; font-weight: 600; color: white; cursor: pointer; font-size: 0.75rem; transition: 0.2s; }
+        button:hover { transform: translateY(-2px); filter: brightness(1.05); }
         button.secondary { background: #1e2a3e; color: #e0e5f0; }
-        button.danger { background: #ef4444; }
-        button.success { background: #10b981; }
-        button.warning { background: #f59e0b; color: #1e293b; }
+        button.danger { background: var(--accent-red); }
+        button.success { background: var(--accent-green); }
         
-        .goal-item { background: rgba(0,0,0,0.3); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-        .goal-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); font-size: 0.85rem; cursor: pointer; }
+        .goal-item { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+        .goal-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.1); font-size: 0.85rem; cursor: pointer; }
         .goal-name { font-weight: 600; }
-        .subtask-list { padding: 6px 10px; display: block; }
-        .subtask-list.hidden { display: none; }
+        .subtask-list { padding: 6px 10px; }
         .subtask-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; margin: 4px 0; border-radius: 10px; cursor: pointer; gap: 8px; flex-wrap: wrap; font-size: 0.75rem; transition: 0.2s; }
         .subtask-item:hover { background: rgba(0,242,255,0.1); }
-        .subtask-item.selected { background: #00f2ff30; border: 1px solid #00f2ff; }
+        .subtask-item.selected { background: rgba(0,242,255,0.3); border: 1px solid var(--accent-cyan); }
         .subtask-name { flex: 1; font-weight: 500; }
-        .subtask-code { font-size: 0.65rem; color: #00f2ff; font-family: monospace; margin-right: 8px; }
-        .progress-bar-bg { background: #1e2a3e; border-radius: 10px; height: 4px; overflow: hidden; width: 70px; }
-        .progress-fill { background: #00f2ff; height: 100%; width: 0%; border-radius: 10px; }
+        .progress-bar-bg { background: #1e2a3e; border-radius: 10px; height: 4px; width: 70px; }
+        .progress-fill { background: var(--accent-cyan); height: 100%; width: 0%; border-radius: 10px; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .note-box { background: rgba(0,242,255,0.08); border-radius: 10px; padding: 8px; text-align: center; margin-top: 10px; font-size: 0.7rem; color: #7bc5ff; }
-        .running-status { background: #10b98120; border: 1px solid #10b981; border-radius: 30px; padding: 4px 12px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px; }
-        .paused-status { background: #f59e0b20; border: 1px solid #f59e0b; border-radius: 30px; padding: 4px 12px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px; }
+        .note-box { background: rgba(0,242,255,0.08); border-radius: 10px; padding: 8px; text-align: center; margin-top: 10px; font-size: 0.7rem; }
+        .running-status { background: rgba(16,185,129,0.2); border: 1px solid var(--accent-green); border-radius: 30px; padding: 4px 12px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px; }
+        .paused-status { background: rgba(245,158,11,0.2); border: 1px solid var(--accent-orange); border-radius: 30px; padding: 4px 12px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px; }
         
-        .history-section { margin-top: 16px; }
-        .history-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; color: #00f2ff; display: flex; align-items: center; gap: 8px; }
-        .history-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 12px; }
-        .history-day { background: rgba(0,0,0,0.3); border-radius: 10px; padding: 8px 4px; text-align: center; transition: 0.2s; }
-        .history-day.today { border: 1px solid #00f2ff; background: rgba(0,242,255,0.1); }
-        .day-name { font-size: 0.6rem; color: #94a3b8; margin-bottom: 4px; }
-        .day-hours { font-size: 0.7rem; font-weight: 600; color: #00f2ff; }
-        .day-bar { height: 2px; background: #1e2a3e; margin-top: 4px; border-radius: 2px; overflow: hidden; }
-        .day-bar-fill { height: 100%; background: #00f2ff; width: 0%; border-radius: 2px; }
-        .history-total { margin-top: 8px; text-align: center; font-size: 0.7rem; color: #7aaaff; }
+        .history-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 10px 0; }
+        .history-day { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px 4px; text-align: center; }
+        .history-day.today { border: 1px solid var(--accent-cyan); background: rgba(0,242,255,0.1); }
+        .day-name { font-size: 0.6rem; color: var(--text-secondary); }
+        .day-hours { font-size: 0.7rem; font-weight: 600; color: var(--accent-cyan); }
+        .day-bar { height: 2px; background: #1e2a3e; margin-top: 4px; border-radius: 2px; }
+        .day-bar-fill { height: 100%; background: var(--accent-cyan); width: 0%; border-radius: 2px; }
         
         .ranking-section { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 10px; margin-top: 10px; }
-        .ranking-title { font-size: 0.75rem; font-weight: 600; color: #f59e0b; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-        .ranking-list { list-style: none; }
-        .ranking-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.7rem; }
-        .ranking-number { width: 22px; height: 22px; background: rgba(0,242,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #00f2ff; }
+        .ranking-title { font-size: 0.75rem; font-weight: 600; color: var(--accent-orange); margin-bottom: 8px; }
+        .ranking-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 0.7rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .ranking-number { width: 22px; height: 22px; background: rgba(0,242,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--accent-cyan); }
         .ranking-name { flex: 1; }
-        .ranking-hours { color: #10b981; font-weight: 500; }
-        .ranking-percent { width: 60px; text-align: right; color: #94a3b8; font-size: 0.65rem; }
+        .ranking-hours { color: var(--accent-green); font-weight: 500; }
         
-        .arrow-icon { transition: transform 0.3s ease; }
-        .arrow-icon.rotated { transform: rotate(180deg); }
-        
-        .reset-option { display: flex; justify-content: flex-end; margin-bottom: 10px; }
-        .reset-btn-small { background: #f59e0b20; border: 1px solid #f59e0b; color: #f59e0b; padding: 4px 12px; border-radius: 30px; font-size: 0.65rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
-        .reset-btn-small:hover { background: #f59e0b; color: #1e293b; }
+        .action-bar { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .action-btn { background: rgba(245,158,11,0.2); border: 1px solid var(--accent-orange); color: var(--accent-orange); padding: 4px 12px; border-radius: 30px; font-size: 0.65rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+        .action-btn:hover { background: var(--accent-orange); color: #1e293b; }
+        .float-btn { background: rgba(0,242,255,0.2); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); }
+        .float-btn:hover { background: var(--accent-cyan); color: #1e293b; }
         
         footer { background: rgba(3,8,20,0.85); border-radius: 1rem; padding: 0.8rem; text-align: center; margin-top: 1.5rem; font-size: 0.6rem; }
-        @media (max-width: 600px) { .container { padding: 12px; } .timer-display { font-size: 1.5rem; } button { padding: 5px 12px; font-size: 0.65rem; } .history-grid { gap: 4px; } }
+        @media (max-width: 600px) { .container { padding: 12px; } .timer-display { font-size: 1.5rem; } }
     </style>
 </head>
 <body>
-<div class="tech-bg"></div>
 <div class="container">
     <div id="trackerContent"></div>
-    <footer><i class="fas fa-code"></i> Developed by <strong>Md Riyad Hossen</strong> (IRE 7th Batch)<br>© 2026 Department of IoT & Robotics Engineering | UFTB</footer>
+    <footer>© 2026 IRE Department | Time Tracker Pro</footer>
 </div>
 <div class="bottom-nav">
     <button class="nav-item" data-page="index.html"><i class="fas fa-home"></i><span>Home</span></button>
     <button class="nav-item" data-page="routine.html"><i class="fas fa-calendar-alt"></i><span>Routine</span></button>
-    <button class="nav-item active" data-page="tracker.html"><i class="fas fa-stopwatch"></i><span>Time Tracker</span></button>
+    <button class="nav-item active" data-page="tracker.html"><i class="fas fa-stopwatch"></i><span>Tracker</span></button>
     <button class="nav-item" data-page="settings.html"><i class="fas fa-cog"></i><span>Settings</span></button>
 </div>
+
 <script>
     // ==================== Data ====================
     let goals = [], taskLogs = [], selectedSubtask = null, progressChart = null;
+    let popupWindow = null;
     
     let timerState = {
         isRunning: false,
@@ -103,43 +107,31 @@
         currentGoalId: null,
         currentSubtaskId: null,
         currentSubtaskName: "",
-        sessionElapsed: 0,      // আজকের এই সেশনে যে সময় হয়েছে (সেভ হয়নি)
-        savedElapsed: 0,        // আজকের ইতিমধ্যে সেভ করা সময়
+        currentSessionSeconds: 0,
+        totalSavedSeconds: 0,
         lastResetDate: null
     };
     
-    // ==================== ডিফল্ট ডাটা: 2টি ক্যাটাগরি ====================
-    function initDefaultTrackerData() {
+    // ==================== Default Data ====================
+    function initDefaultData() {
         return [
-            {
-                id: 101,
-                name: "📚 Study",
-                pinned: true,
-                expanded: true,
-                subtasks: [
-                    { id: 1011, name: "CSE 113", code: "CSE 113", loggedSeconds: 0, targetMinutes: 180 },
-                    { id: 1012, name: "CSE 115", code: "CSE 115", loggedSeconds: 0, targetMinutes: 180 },
-                    { id: 1013, name: "PROG 111", code: "PROG 111", loggedSeconds: 0, targetMinutes: 180 },
-                    { id: 1014, name: "IRE 117", code: "IRE 117", loggedSeconds: 0, targetMinutes: 180 },
-                    { id: 1015, name: "SEC 105", code: "SEC 105", loggedSeconds: 0, targetMinutes: 120 },
-                    { id: 1016, name: "LAB REPORT", code: "LAB", loggedSeconds: 0, targetMinutes: 90 },
-                    { id: 1017, name: "ASSIGNMENT", code: "ASGN", loggedSeconds: 0, targetMinutes: 90 }
-                ]
-            },
-            {
-                id: 102,
-                name: "💻 Skill Development",
-                pinned: true,
-                expanded: true,
-                subtasks: [
-                    { id: 1021, name: "Typing", code: "TYPING", loggedSeconds: 0, targetMinutes: 60 },
-                    { id: 1022, name: "Web Development", code: "WEB", loggedSeconds: 0, targetMinutes: 120 }
-                ]
-            }
+            { id: 101, name: "📚 Study", pinned: true, expanded: true, subtasks: [
+                { id: 1011, name: "CSE 113", loggedSeconds: 0, targetMinutes: 180 },
+                { id: 1012, name: "CSE 115", loggedSeconds: 0, targetMinutes: 180 },
+                { id: 1013, name: "PROG 111", loggedSeconds: 0, targetMinutes: 180 },
+                { id: 1014, name: "IRE 117", loggedSeconds: 0, targetMinutes: 180 },
+                { id: 1015, name: "SEC 105", loggedSeconds: 0, targetMinutes: 120 },
+                { id: 1016, name: "LAB REPORT", loggedSeconds: 0, targetMinutes: 90 },
+                { id: 1017, name: "ASSIGNMENT", loggedSeconds: 0, targetMinutes: 90 }
+            ]},
+            { id: 102, name: "💻 Skill Development", pinned: true, expanded: true, subtasks: [
+                { id: 1021, name: "Typing", loggedSeconds: 0, targetMinutes: 60 },
+                { id: 1022, name: "Web Development", loggedSeconds: 0, targetMinutes: 120 }
+            ]}
         ];
     }
     
-    // ==================== Auto Reset at Midnight ====================
+    // ==================== Reset Functions ====================
     function getSecondsUntilMidnight() {
         const now = new Date();
         const midnight = new Date(now);
@@ -147,83 +139,85 @@
         return Math.floor((midnight - now) / 1000);
     }
     
-    function scheduleMidnightReset() {
-        const secondsUntilMidnight = getSecondsUntilMidnight();
-        setTimeout(() => {
-            performMidnightReset();
-            scheduleMidnightReset();
-        }, secondsUntilMidnight * 1000);
-    }
-    
-    function performMidnightReset() {
-        // আজকের সেশন সেভ করে রাখো (যদি কিছু থাকে)
-        if (timerState.sessionElapsed > 0 && timerState.currentSubtaskId) {
-            saveCurrentSessionLog();
+    function saveCurrentSessionToLog() {
+        if (timerState.currentSessionSeconds <= 0 || !timerState.currentSubtaskId) return false;
+        
+        taskLogs.push({
+            goalId: timerState.currentGoalId,
+            subtaskId: timerState.currentSubtaskId,
+            subtaskName: timerState.currentSubtaskName,
+            durationSec: timerState.currentSessionSeconds,
+            timestamp: new Date().toISOString()
+        });
+        
+        let goal = goals.find(g => g.id == timerState.currentGoalId);
+        if (goal) {
+            let subtask = goal.subtasks.find(s => s.id == timerState.currentSubtaskId);
+            if (subtask) {
+                subtask.loggedSeconds += timerState.currentSessionSeconds;
+            }
         }
         
-        // টাইমার স্টেট রিসেট (শুধু আজকের সময় রিসেট হবে)
+        timerState.totalSavedSeconds += timerState.currentSessionSeconds;
+        timerState.currentSessionSeconds = 0;
+        
+        saveAll();
+        return true;
+    }
+    
+    function performReset() {
+        if (timerState.currentSessionSeconds > 0 && timerState.currentSubtaskId) {
+            saveCurrentSessionToLog();
+        }
+        
         timerState.isRunning = false;
         timerState.startTime = null;
-        timerState.sessionElapsed = 0;
-        timerState.savedElapsed = 0;
+        timerState.currentSessionSeconds = 0;
+        timerState.totalSavedSeconds = 0;
+        timerState.currentGoalId = null;
+        timerState.currentSubtaskId = null;
+        timerState.currentSubtaskName = "";
+        selectedSubtask = null;
         
         localStorage.setItem('last_reset_date', new Date().toDateString());
         saveAll();
         renderContent();
-        showToast("🕛 Midnight auto reset completed! Today's timer reset.");
+        updatePopupTimer();
+        showToast("🕛 Daily reset completed!");
     }
     
-    // ==================== Manual Reset Function (Corrected) ====================
-    function manualDailyReset() {
-        if (confirm("⚠️ Are you sure you want to reset today's timer?\n\nThis will reset the timer for today. Your study history will be preserved.\n\nNote: Only today's timer will be reset, not the historical data.")) {
-            
-            // আজকের চলমান সেশন সেভ করে দাও
-            if (timerState.sessionElapsed > 0 && timerState.currentSubtaskId) {
-                saveCurrentSessionLog();
+    function manualReset() {
+        if (confirm("Reset today's timer? Your current session will be saved.")) {
+            if (timerState.currentSessionSeconds > 0 && timerState.currentSubtaskId) {
+                saveCurrentSessionToLog();
+                showToast(`✅ ${Math.floor(timerState.currentSessionSeconds / 60)} minutes saved`);
             }
             
-            // টাইমার স্টেট রিসেট - শুধু আজকের সময় রিসেট হবে
             timerState.isRunning = false;
             timerState.startTime = null;
-            timerState.sessionElapsed = 0;
-            timerState.savedElapsed = 0;
+            timerState.currentSessionSeconds = 0;
+            timerState.totalSavedSeconds = 0;
+            timerState.currentGoalId = null;
+            timerState.currentSubtaskId = null;
+            timerState.currentSubtaskName = "";
+            selectedSubtask = null;
             
-            // রিসেটের তারিখ আপডেট
             localStorage.setItem('last_reset_date', new Date().toDateString());
             saveAll();
             renderContent();
-            showToast("✅ Today's timer manually reset! Start fresh.");
+            updatePopupTimer();
+            showToast("✅ Manual reset completed!");
         }
     }
     
-    function checkAndResetDaily() {
-        const today = new Date().toDateString();
-        const lastReset = localStorage.getItem('last_reset_date');
-        
-        if (lastReset !== today) {
-            if (timerState.sessionElapsed > 0 && timerState.currentSubtaskId) {
-                saveCurrentSessionLog();
-            }
-            
-            timerState.sessionElapsed = 0;
-            timerState.savedElapsed = 0;
-            timerState.isRunning = false;
-            timerState.startTime = null;
-            
-            localStorage.setItem('last_reset_date', today);
-            renderContent();
-        }
+    function scheduleReset() {
+        setTimeout(() => { performReset(); scheduleReset(); }, getSecondsUntilMidnight() * 1000);
     }
     
-    // ==================== Data Load/Save ====================
+    // ==================== Core Functions ====================
     function loadData() {
         const saved = localStorage.getItem('subtask_tracker');
-        if (saved) {
-            goals = JSON.parse(saved);
-        } else {
-            goals = initDefaultTrackerData();
-        }
-        
+        goals = saved ? JSON.parse(saved) : initDefaultData();
         const savedLogs = localStorage.getItem('subtask_logs');
         taskLogs = savedLogs ? JSON.parse(savedLogs) : [];
         const savedSelected = localStorage.getItem('selected_subtask');
@@ -231,40 +225,54 @@
         
         const savedTimer = localStorage.getItem('timer_state');
         if(savedTimer) {
-            const parsed = JSON.parse(savedTimer);
-            timerState.isRunning = parsed.isRunning || false;
-            timerState.startTime = parsed.startTime;
-            timerState.currentGoalId = parsed.currentGoalId;
-            timerState.currentSubtaskId = parsed.currentSubtaskId;
-            timerState.currentSubtaskName = parsed.currentSubtaskName || "";
-            timerState.sessionElapsed = parsed.sessionElapsed || 0;
-            timerState.savedElapsed = parsed.savedElapsed || 0;
+            const p = JSON.parse(savedTimer);
+            timerState.isRunning = p.isRunning || false;
+            timerState.startTime = p.startTime;
+            timerState.currentGoalId = p.currentGoalId;
+            timerState.currentSubtaskId = p.currentSubtaskId;
+            timerState.currentSubtaskName = p.currentSubtaskName || "";
+            timerState.currentSessionSeconds = p.currentSessionSeconds || 0;
+            timerState.totalSavedSeconds = p.totalSavedSeconds || 0;
         }
         
-        checkAndResetDaily();
-        rebuildLoggedSeconds();
+        const lastReset = localStorage.getItem('last_reset_date');
+        if (lastReset !== new Date().toDateString()) {
+            if (timerState.currentSessionSeconds > 0 && timerState.currentSubtaskId) {
+                saveCurrentSessionToLog();
+            }
+            timerState.isRunning = false;
+            timerState.startTime = null;
+            timerState.currentSessionSeconds = 0;
+            timerState.totalSavedSeconds = 0;
+            timerState.currentGoalId = null;
+            timerState.currentSubtaskId = null;
+            timerState.currentSubtaskName = "";
+            selectedSubtask = null;
+            localStorage.setItem('last_reset_date', new Date().toDateString());
+        }
         
-        if(timerState.isRunning && timerState.startTime) {
-            const elapsed = Math.floor((Date.now() - timerState.startTime) / 1000);
-            timerState.sessionElapsed = elapsed;
+        rebuildLogs();
+        
+        if (timerState.isRunning && timerState.startTime) {
+            timerState.currentSessionSeconds = Math.floor((Date.now() - timerState.startTime) / 1000);
         }
     }
     
-    function rebuildLoggedSeconds() { 
-        goals.forEach(g=>g.subtasks.forEach(s=>s.loggedSeconds=0)); 
-        taskLogs.forEach(log=>{ 
-            let g=goals.find(g=>g.id==log.goalId); 
-            if(g){ 
-                let s=g.subtasks.find(s=>s.id==log.subtaskId); 
-                if(s) s.loggedSeconds+=log.durationSec; 
-            } 
-        }); 
+    function rebuildLogs() {
+        goals.forEach(g => g.subtasks.forEach(s => s.loggedSeconds = 0));
+        taskLogs.forEach(log => {
+            let g = goals.find(g => g.id == log.goalId);
+            if (g) {
+                let s = g.subtasks.find(s => s.id == log.subtaskId);
+                if (s) s.loggedSeconds += log.durationSec;
+            }
+        });
     }
     
-    function saveAll() { 
-        localStorage.setItem('subtask_tracker',JSON.stringify(goals)); 
-        localStorage.setItem('subtask_logs',JSON.stringify(taskLogs)); 
-        if(selectedSubtask) localStorage.setItem('selected_subtask',JSON.stringify(selectedSubtask)); 
+    function saveAll() {
+        localStorage.setItem('subtask_tracker', JSON.stringify(goals));
+        localStorage.setItem('subtask_logs', JSON.stringify(taskLogs));
+        if (selectedSubtask) localStorage.setItem('selected_subtask', JSON.stringify(selectedSubtask));
         else localStorage.removeItem('selected_subtask');
         
         localStorage.setItem('timer_state', JSON.stringify({
@@ -273,426 +281,300 @@
             currentGoalId: timerState.currentGoalId,
             currentSubtaskId: timerState.currentSubtaskId,
             currentSubtaskName: timerState.currentSubtaskName,
-            sessionElapsed: timerState.sessionElapsed,
-            savedElapsed: timerState.savedElapsed
+            currentSessionSeconds: timerState.currentSessionSeconds,
+            totalSavedSeconds: timerState.totalSavedSeconds
         }));
     }
     
-    function saveCurrentSessionLog() {
-        if(timerState.sessionElapsed <= 0 || !timerState.currentSubtaskId) return;
-        
-        taskLogs.push({
-            goalId: timerState.currentGoalId,
-            subtaskId: timerState.currentSubtaskId,
-            subtaskName: timerState.currentSubtaskName,
-            durationSec: timerState.sessionElapsed,
-            timestamp: new Date().toISOString()
-        });
-        
-        let g = goals.find(g=>g.id==timerState.currentGoalId);
-        if(g){
-            let s = g.subtasks.find(s=>s.id==timerState.currentSubtaskId);
-            if(s) s.loggedSeconds += timerState.sessionElapsed;
-        }
-        
-        timerState.savedElapsed += timerState.sessionElapsed;
-        timerState.sessionElapsed = 0;
-        saveAll();
-    }
-    
-    function getTotalLoggedSeconds(goalId, subtaskId) {
-        let g = goals.find(g=>g.id==goalId);
-        if(g){
-            let s = g.subtasks.find(s=>s.id==subtaskId);
-            if(s) return s.loggedSeconds;
-        }
-        return 0;
-    }
-    
-    function getCurrentTotalElapsed() {
-        let total = timerState.savedElapsed;
-        if(timerState.isRunning && timerState.startTime) {
-            total += Math.floor((Date.now() - timerState.startTime) / 1000);
-        } else {
-            total += timerState.sessionElapsed;
-        }
+    function getCurrentSubtaskTotalElapsed() {
+        let total = timerState.totalSavedSeconds;
+        total += timerState.currentSessionSeconds;
         return total;
     }
     
-    function getRemainingSeconds(goalId, subtaskId) {
-        let g=goals.find(g=>g.id==goalId);
-        if(g){
-            let s=g.subtasks.find(s=>s.id==subtaskId);
-            if(s) return Math.max(0, (s.targetMinutes*60) - s.loggedSeconds);
+    function getRemainingSeconds() {
+        if (!selectedSubtask) return 0;
+        let logged = 0;
+        let g = goals.find(g => g.id == selectedSubtask.goalId);
+        if (g) {
+            let s = g.subtasks.find(s => s.id == selectedSubtask.subtaskId);
+            if (s) logged = s.loggedSeconds;
         }
-        return 0;
+        let currentTotal = getCurrentSubtaskTotalElapsed();
+        let targetTotal = selectedSubtask.targetMinutes * 60;
+        let remaining = targetTotal - (logged + currentTotal);
+        return remaining < 0 ? 0 : remaining;
     }
     
-    function getDisplayRemainingSeconds() {
-        if(!selectedSubtask) return 0;
-        const totalLogged = getTotalLoggedSeconds(selectedSubtask.goalId, selectedSubtask.subtaskId);
-        const currentTotal = getCurrentTotalElapsed();
-        const remaining = Math.max(0, (selectedSubtask.targetMinutes * 60) - (totalLogged + currentTotal));
-        return remaining;
+    function getTodayTotal() {
+        let today = new Date().toDateString();
+        return taskLogs.filter(l => new Date(l.timestamp).toDateString() === today).reduce((s, l) => s + l.durationSec, 0);
     }
     
-    function getTodayTotalSec(){ 
-        let today=new Date().toDateString(); 
-        return taskLogs.filter(log=>new Date(log.timestamp).toDateString()===today).reduce((s,l)=>s+l.durationSec,0); 
-    }
-    
-    // ==================== Weekly History ====================
     function getWeeklyHistory() {
-        const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const result = [];
-        const today = new Date();
-        const maxHours = 6;
-        
+        let days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        let result = [];
+        let today = new Date();
         for (let i = 6; i >= 0; i--) {
-            const date = new Date(today);
-            date.setDate(today.getDate() - i);
-            const dateStr = date.toDateString();
-            
-            let totalSec = taskLogs
-                .filter(log => new Date(log.timestamp).toDateString() === dateStr)
-                .reduce((sum, log) => sum + log.durationSec, 0);
-            
-            const hours = (totalSec / 3600).toFixed(1);
-            const percent = Math.min(100, (totalSec / 3600) / maxHours * 100);
-            
-            result.push({
-                dayName: weekDays[date.getDay()],
-                date: date,
-                totalSec: totalSec,
-                hours: hours,
-                percent: percent,
-                isToday: i === 0
-            });
+            let d = new Date(today);
+            d.setDate(today.getDate() - i);
+            let total = taskLogs.filter(l => new Date(l.timestamp).toDateString() === d.toDateString()).reduce((s, l) => s + l.durationSec, 0);
+            result.push({ dayName: days[d.getDay()], hours: (total / 3600).toFixed(1), percent: Math.min(100, (total / 3600) / 6 * 100), isToday: i === 0 });
         }
         return result;
     }
     
-    // ==================== Top 5 Subtask Ranking ====================
-    function getTop5SubtaskRanking() {
-        const subtaskMap = new Map();
-        
-        taskLogs.forEach(log => {
-            const name = log.subtaskName;
-            const duration = log.durationSec;
-            if (subtaskMap.has(name)) {
-                subtaskMap.set(name, subtaskMap.get(name) + duration);
-            } else {
-                subtaskMap.set(name, duration);
-            }
-        });
-        
-        const totalSec = Array.from(subtaskMap.values()).reduce((a,b) => a+b, 0);
-        
-        const ranking = Array.from(subtaskMap.entries())
-            .map(([name, sec]) => ({ name, seconds: sec, hours: (sec / 3600).toFixed(1), percent: totalSec > 0 ? (sec / totalSec * 100).toFixed(1) : 0 }))
-            .sort((a,b) => b.seconds - a.seconds)
-            .slice(0, 5);
-        
-        return { ranking, totalHours: (totalSec / 3600).toFixed(1) };
+    function getRanking() {
+        let map = new Map();
+        taskLogs.forEach(l => map.set(l.subtaskName, (map.get(l.subtaskName) || 0) + l.durationSec));
+        let total = Array.from(map.values()).reduce((a, b) => a + b, 0);
+        return Array.from(map.entries()).map(([n, s]) => ({ name: n, hours: (s / 3600).toFixed(1), percent: total ? ((s / total) * 100).toFixed(1) : 0 })).sort((a, b) => parseFloat(b.hours) - parseFloat(a.hours)).slice(0, 5);
     }
     
-    function formatSec(sec){ 
-        if(sec<0) sec=0; 
-        let h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60; 
-        return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; 
+    function formatTime(sec) {
+        let h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     }
     
-    function formatDuration(sec){ 
-        let hrs=Math.floor(sec/3600),mins=Math.floor((sec%3600)/60); 
-        return hrs>0?`${hrs}h ${mins}m`:`${mins} minutes`; 
+    function formatDuration(sec) {
+        let h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60);
+        return h > 0 ? `${h}h ${m}m` : `${m}m`;
     }
     
-    function showToast(msg){ 
-        let t=document.createElement('div'); 
-        t.style.cssText='position:fixed; bottom:90px; left:20px; right:20px; background:#10b981; color:white; padding:10px; border-radius:60px; text-align:center; z-index:1000; animation:fadeOut 2s forwards'; 
-        t.innerText=msg; 
-        document.body.appendChild(t); 
-        setTimeout(()=>t.remove(),2000); 
+    function showToast(msg) {
+        let t = document.createElement('div');
+        t.style.cssText = 'position:fixed; bottom:100px; left:20px; right:20px; background:#10b981; color:white; padding:10px; border-radius:60px; text-align:center; z-index:1000; animation:fadeOut 2s forwards';
+        t.innerText = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2000);
     }
     
     // ==================== Timer Controls ====================
-    function startCountdown() { 
-        if(!selectedSubtask){ 
-            showToast("Please select a subtask first"); 
-            return; 
+    function startTimer() {
+        if (!selectedSubtask) { showToast("Select a subtask first"); return; }
+        if (timerState.isRunning) { showToast("Already running"); return; }
+        
+        if (timerState.currentSubtaskId !== selectedSubtask.subtaskId) {
+            if (timerState.currentSessionSeconds > 0 && timerState.currentSubtaskId) {
+                saveCurrentSessionToLog();
+            }
+            timerState.currentGoalId = selectedSubtask.goalId;
+            timerState.currentSubtaskId = selectedSubtask.subtaskId;
+            timerState.currentSubtaskName = selectedSubtask.subtaskName;
+            timerState.currentSessionSeconds = 0;
+            timerState.totalSavedSeconds = 0;
         }
         
-        const {goalId,subtaskId,subtaskName}=selectedSubtask;
-        
-        if(timerState.currentSubtaskId !== subtaskId) {
-            saveCurrentSessionLog();
-            timerState.currentGoalId = goalId;
-            timerState.currentSubtaskId = subtaskId;
-            timerState.currentSubtaskName = subtaskName;
-            timerState.sessionElapsed = 0;
-            timerState.savedElapsed = 0;
-        }
-        
-        if(!timerState.isRunning) {
-            timerState.isRunning = true;
-            timerState.startTime = Date.now();
-            saveAll();
-            showToast(`⏵ "${subtaskName}" timer started`);
-            renderContent();
-        } else {
-            showToast(`"${subtaskName}" is already running`);
-        }
+        timerState.isRunning = true;
+        timerState.startTime = Date.now();
+        saveAll();
+        showToast(`▶ "${selectedSubtask.subtaskName}" started`);
+        renderContent();
+        updatePopupTimer();
     }
     
-    function pauseCountdown() { 
-        if(!timerState.isRunning) {
-            showToast("Timer is not running");
-            return;
-        }
+    function pauseTimer() {
+        if (!timerState.isRunning) { showToast("Timer not running"); return; }
         
-        const elapsed = Math.floor((Date.now() - timerState.startTime) / 1000);
-        timerState.sessionElapsed = elapsed;
+        let elapsed = Math.floor((Date.now() - timerState.startTime) / 1000);
+        timerState.currentSessionSeconds = elapsed;
         timerState.isRunning = false;
         timerState.startTime = null;
         
+        let saved = saveCurrentSessionToLog();
+        
         saveAll();
-        showToast(`⏸ Timer paused, ${formatSec(timerState.sessionElapsed)} saved for today`);
+        if (saved) {
+            showToast(`⏸ Paused & saved: ${formatTime(elapsed)} added to "${timerState.currentSubtaskName}"`);
+        } else {
+            showToast(`⏸ Paused`);
+        }
         renderContent();
+        updatePopupTimer();
     }
     
-    function resetCountdown() { 
-        if(timerState.isRunning) {
-            const elapsed = Math.floor((Date.now() - timerState.startTime) / 1000);
-            timerState.sessionElapsed = elapsed;
+    function resetTimer() {
+        if (timerState.isRunning) {
             timerState.isRunning = false;
             timerState.startTime = null;
         }
         
-        if(timerState.sessionElapsed > 0 && timerState.currentSubtaskId) {
-            saveCurrentSessionLog();
+        if (timerState.currentSessionSeconds > 0 && timerState.currentSubtaskId) {
+            saveCurrentSessionToLog();
         }
         
-        timerState.sessionElapsed = 0;
-        timerState.savedElapsed = 0;
-        
+        timerState.currentSessionSeconds = 0;
+        timerState.totalSavedSeconds = 0;
         saveAll();
-        showToast(`🔄 Current task timer reset`);
+        showToast(`🔄 Current session reset`);
         renderContent();
+        updatePopupTimer();
     }
     
-    let updateInterval = null;
-    function startUILoop() {
-        if(updateInterval) clearInterval(updateInterval);
-        updateInterval = setInterval(() => {
-            updateTimerDisplay();
-            updateStatusDisplay();
-        }, 1000);
-    }
-    
-    function updateTimerDisplay() {
-        const disp = document.getElementById('countdownDisplay');
-        if(disp) {
-            if(selectedSubtask) {
-                const remaining = getDisplayRemainingSeconds();
-                disp.innerText = formatSec(remaining);
-            } else {
-                disp.innerText = formatSec(0);
-            }
+    // ==================== Floating Popup Window ====================
+    function openFloatingWindow() {
+        if (popupWindow && !popupWindow.closed) {
+            popupWindow.focus();
+            return;
+        }
+        let width = 320, height = 180;
+        let left = (screen.width - width) / 2;
+        let top = (screen.height - height) / 2;
+        popupWindow = window.open('', 'TimerPopup', `width=${width},height=${height},left=${left},top=${top},resizable=yes`);
+        if (popupWindow) {
+            popupWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head><title>Floating Timer</title>
+                <style>
+                    body { margin: 0; padding: 20px; background: #1e293b; color: #00f2ff; font-family: monospace; text-align: center; }
+                    h3 { margin: 0 0 10px; font-size: 14px; color: #94a3b8; }
+                    .time { font-size: 48px; font-weight: bold; letter-spacing: 3px; }
+                    .subtask { font-size: 12px; color: #a0a0a0; margin-top: 10px; }
+                    button { margin-top: 15px; padding: 5px 15px; background: #ef4444; border: none; color: white; border-radius: 20px; cursor: pointer; }
+                </style>
+                </head>
+                <body>
+                <h3>⏱️ Time Tracker</h3>
+                <div class="time" id="popupTime">00:00:00</div>
+                <div class="subtask" id="popupSubtask">No task selected</div>
+                <button onclick="window.close()">Close</button>
+                <script>
+                    window.updatePopup = function(time, subtask) {
+                        document.getElementById('popupTime').innerText = time;
+                        document.getElementById('popupSubtask').innerHTML = subtask;
+                    };
+                <\/script>
+                </body>
+                </html>
+            `);
+            popupWindow.onbeforeunload = () => { popupWindow = null; };
+            updatePopupTimer();
+        } else {
+            showToast("Popup blocked! Please allow popups for this site.");
         }
     }
     
-    function updateStatusDisplay() {
-        if(!selectedSubtask) return;
-        
-        const currentTotal = getCurrentTotalElapsed();
-        const savedTotal = getTotalLoggedSeconds(selectedSubtask.goalId, selectedSubtask.subtaskId);
-        const total = savedTotal + currentTotal;
-        
-        const statusDiv = document.getElementById('timerStatus');
-        if(statusDiv) {
-            if(timerState.isRunning) {
-                statusDiv.innerHTML = `<span class="running-status"><i class="fas fa-play-circle"></i> Running: ${formatSec(currentTotal)} today | Total completed: ${formatSec(total)}</span>`;
-            } else if(currentTotal > 0) {
-                statusDiv.innerHTML = `<span class="paused-status"><i class="fas fa-pause-circle"></i> Paused: ${formatSec(currentTotal)} today | Total completed: ${formatSec(total)}</span>`;
-            } else {
-                statusDiv.innerHTML = `<span class="paused-status"><i class="fas fa-stop-circle"></i> Stopped | Total completed: ${formatSec(total)}</span>`;
-            }
-        }
-        
-        const selectedInfoDiv = document.getElementById('selectedInfo');
-        if(selectedInfoDiv) {
-            const remaining = getDisplayRemainingSeconds();
-            const targetTotal = selectedSubtask.targetMinutes * 60;
-            selectedInfoDiv.innerHTML = `✅ Selected: ${selectedSubtask.subtaskName} | Completed: ${formatSec(total)}/${formatSec(targetTotal)} | Remaining: ${formatSec(remaining)}`;
+    function updatePopupTimer() {
+        if (popupWindow && !popupWindow.closed) {
+            let remaining = getRemainingSeconds();
+            let subtaskName = selectedSubtask ? selectedSubtask.subtaskName : "No task";
+            let status = timerState.isRunning ? "▶ Running" : (timerState.currentSessionSeconds > 0 ? "⏸ Paused" : "⏹ Stopped");
+            popupWindow.updatePopup(formatTime(remaining), `${subtaskName} | ${status}`);
         }
     }
     
-    // ==================== Category Toggle ====================
-    function toggleCategory(goalId) {
-        const goal = goals.find(g => g.id === goalId);
-        if (goal) {
-            goal.expanded = !goal.expanded;
-            saveAll();
-            renderContent();
-        }
-    }
-    
-    // ==================== Render Functions ====================
-    function renderHistory() {
-        const history = getWeeklyHistory();
-        const maxHours = 6;
+    // ==================== UI Render ====================
+    function renderContent() {
+        let todaySec = getTodayTotal();
+        let completed = goals.reduce((s, g) => s + g.subtasks.filter(st => st.loggedSeconds >= st.targetMinutes * 60).length, 0);
+        let total = goals.reduce((s, g) => s + g.subtasks.length, 0);
+        let subData = {};
+        taskLogs.forEach(l => subData[l.subtaskName] = (subData[l.subtaskName] || 0) + l.durationSec / 60);
         
-        let html = `<div class="history-section"><div class="history-title"><i class="fas fa-chart-bar"></i> Last 7 Days Summary</div><div class="history-grid">`;
-        
-        history.forEach(day => {
-            const hoursNum = parseFloat(day.hours);
-            const percent = Math.min(100, (hoursNum / maxHours) * 100);
-            html += `
-                <div class="history-day ${day.isToday ? 'today' : ''}">
-                    <div class="day-name">${day.dayName}</div>
-                    <div class="day-hours">${day.hours}h</div>
-                    <div class="day-bar"><div class="day-bar-fill" style="width: ${percent}%"></div></div>
-                </div>
-            `;
-        });
-        
-        const totalWeekSec = history.reduce((sum, d) => sum + d.totalSec, 0);
-        const totalWeekHours = (totalWeekSec / 3600).toFixed(1);
-        
-        html += `</div><div class="history-total"><i class="fas fa-clock"></i> Weekly Total: ${totalWeekHours} hours</div></div>`;
-        return html;
-    }
-    
-    function renderRanking() {
-        const { ranking, totalHours } = getTop5SubtaskRanking();
-        
-        if (ranking.length === 0) {
-            return `<div class="ranking-section"><div class="ranking-title"><i class="fas fa-trophy"></i> Top 5 Subject Ranking</div><div style="text-align:center; padding:10px; color:#94a3b8; font-size:0.7rem;">No data available yet</div></div>`;
-        }
-        
-        let html = `<div class="ranking-section"><div class="ranking-title"><i class="fas fa-trophy"></i> Top 5 Subject Ranking</div><ul class="ranking-list">`;
-        
-        ranking.forEach((item, idx) => {
-            const medalIcon = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `${idx+1}.`));
-            html += `
-                <li class="ranking-item">
-                    <span class="ranking-number">${medalIcon}</span>
-                    <span class="ranking-name">${item.name}</span>
-                    <span class="ranking-hours">${item.hours}h</span>
-                    <span class="ranking-percent">${item.percent}%</span>
-                </li>
-            `;
-        });
-        
-        html += `</ul><div style="margin-top:8px; text-align:center; font-size:0.65rem; color:#7aaaff;"><i class="fas fa-chart-line"></i> Total Study: ${totalHours} hours</div></div>`;
-        return html;
-    }
-    
-    function renderContent(){
-        let todaySec=getTodayTotalSec(), completedSubs=goals.reduce((s,g)=>s+g.subtasks.filter(st=>st.loggedSeconds>=st.targetMinutes*60).length,0), totalSubs=goals.reduce((s,g)=>s+g.subtasks.length,0);
-        let subData={}; taskLogs.forEach(l=>{ subData[l.subtaskName]=(subData[l.subtaskName]||0)+l.durationSec/60; });
-        let goalsHtml='';
-        
-        goals.forEach(g=>{ 
-            let totalSec=g.subtasks.reduce((s,st)=>s+st.loggedSeconds,0), totalTarget=g.subtasks.reduce((s,st)=>s+(st.targetMinutes*60),0), percent=totalTarget?(totalSec/totalTarget)*100:0;
-            const arrowClass = g.expanded ? 'fa-chevron-down' : 'fa-chevron-right';
-            const subtaskDisplay = g.expanded ? 'block' : 'none';
-            
-            goalsHtml+=`<div class="goal-item"><div class="goal-header" onclick="toggleCategory(${g.id})"><div><span class="goal-name">${g.name}</span> ${g.pinned?'📌':''}</div><div style="display:flex; align-items:center; gap:8px;"><span>${Math.floor(totalSec/60)}/${Math.floor(totalTarget/60)} min</span><i class="fas ${arrowClass} arrow-icon"></i></div></div><div class="progress-bar-bg"><div class="progress-fill" style="width:${Math.min(100,percent)}%"></div></div><div class="subtask-list" style="display:${subtaskDisplay}">`;
-            
-            g.subtasks.forEach(s=>{ 
-                let subPercent=(s.loggedSeconds/(s.targetMinutes*60))*100, isSelected=selectedSubtask&&selectedSubtask.subtaskId===s.id;
-                goalsHtml+=`<div class="subtask-item ${isSelected?'selected':''}" onclick="event.stopPropagation(); selectSubtask(${g.id},${s.id},'${s.name}',${s.targetMinutes})"><div><span class="subtask-code">📖</span><span class="subtask-name">${s.name}</span></div><div class="subtask-time" style="font-size:0.7rem;">${Math.floor(s.loggedSeconds/60)}/${s.targetMinutes} min</div><div style="width:60px;"><div class="progress-bar-bg"><div class="progress-fill" style="width:${Math.min(100,subPercent)}%"></div></div></div></div>`;
+        let goalsHtml = '';
+        goals.forEach(g => {
+            let totalSec = g.subtasks.reduce((s, st) => s + st.loggedSeconds, 0);
+            let totalTarget = g.subtasks.reduce((s, st) => s + (st.targetMinutes * 60), 0);
+            let percent = totalTarget ? (totalSec / totalTarget) * 100 : 0;
+            let display = g.expanded ? 'block' : 'none';
+            let arrow = g.expanded ? 'fa-chevron-down' : 'fa-chevron-right';
+            goalsHtml += `<div class="goal-item"><div class="goal-header" onclick="toggleCategory(${g.id})"><div><span class="goal-name">${g.name}</span> ${g.pinned ? '📌' : ''}</div><div>${Math.floor(totalSec / 60)}/${Math.floor(totalTarget / 60)} min <i class="fas ${arrow}"></i></div></div><div class="progress-bar-bg"><div class="progress-fill" style="width:${Math.min(100, percent)}%"></div></div><div class="subtask-list" style="display:${display}">`;
+            g.subtasks.forEach(s => {
+                let subPercent = (s.loggedSeconds / (s.targetMinutes * 60)) * 100;
+                let isSelected = selectedSubtask && selectedSubtask.subtaskId === s.id;
+                goalsHtml += `<div class="subtask-item ${isSelected ? 'selected' : ''}" onclick="selectSubtask(${g.id},${s.id},'${s.name}',${s.targetMinutes})"><div>📖 ${s.name}</div><div>${Math.floor(s.loggedSeconds / 60)}/${s.targetMinutes} min</div><div class="progress-bar-bg"><div class="progress-fill" style="width:${Math.min(100, subPercent)}%"></div></div></div>`;
             });
-            goalsHtml+=`</div></div>`;
+            goalsHtml += `</div></div>`;
         });
         
-        let statusHtml = `<div class="reset-option"><div class="reset-btn-small" onclick="manualDailyReset()"><i class="fas fa-calendar-day"></i> Manual Daily Reset</div></div>
-                         <div style="margin-bottom: 8px;"><span class="running-status" style="background:#3b82f620; border-color:#3b82f6;"><i class="fas fa-sync-alt"></i> Auto reset at 11:59:59 PM daily</span></div>
-                         <div id="timerStatus" style="margin-bottom: 8px;"></div>`;
+        let history = getWeeklyHistory();
+        let historyHtml = `<div class="history-grid">` + history.map(d => `<div class="history-day ${d.isToday ? 'today' : ''}"><div class="day-name">${d.dayName}</div><div class="day-hours">${d.hours}h</div><div class="day-bar"><div class="day-bar-fill" style="width:${d.percent}%"></div></div></div>`).join('') + `</div>`;
         
-        let selectedInfoHtml = `<div id="selectedInfo" style="margin-bottom:8px; font-size:0.75rem;">👆 Select a subtask to start</div>`;
+        let ranking = getRanking();
+        let rankingHtml = `<div class="ranking-section"><div class="ranking-title">🏆 Top 5 Subjects</div>` + ranking.map((r, i) => `<div class="ranking-item"><span class="ranking-number">${i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : `${i + 1}.`))}</span><span class="ranking-name">${r.name}</span><span class="ranking-hours">${r.hours}h</span></div>`).join('') + `</div>`;
         
-        if(selectedSubtask) {
-            const totalLogged = getTotalLoggedSeconds(selectedSubtask.goalId, selectedSubtask.subtaskId);
-            const currentTotal = getCurrentTotalElapsed();
-            const total = totalLogged + currentTotal;
-            const targetTotal = selectedSubtask.targetMinutes * 60;
-            const remaining = Math.max(0, targetTotal - total);
-            selectedInfoHtml = `<div id="selectedInfo" style="margin-bottom:8px; font-size:0.75rem;">✅ Selected: ${selectedSubtask.subtaskName} | Completed: ${formatSec(total)}/${formatSec(targetTotal)} | Remaining: ${formatSec(remaining)}</div>`;
-            updateStatusDisplay();
+        let selectedHtml = selectedSubtask ? `✅ Selected: ${selectedSubtask.subtaskName} | Remaining: ${formatTime(getRemainingSeconds())}` : `👆 Select a subtask`;
+        let statusHtml = timerState.isRunning ? `<span class="running-status"><i class="fas fa-play-circle"></i> Running: ${formatTime(timerState.currentSessionSeconds)}</span>` : (timerState.currentSessionSeconds > 0 ? `<span class="paused-status"><i class="fas fa-pause-circle"></i> Paused: ${formatTime(timerState.currentSessionSeconds)} (not saved yet)</span>` : `<span class="paused-status"><i class="fas fa-stop-circle"></i> Ready</span>`);
+        
+        let html = `<div class="glass-card"><div class="section-title"><i class="fas fa-chart-line"></i> Statistics</div><div class="stats-row"><div class="stat-box"><div class="stat-number">${formatDuration(todaySec)}</div><div class="stat-label">Today</div></div><div class="stat-box"><div class="stat-number">${goals.length}</div><div class="stat-label">Categories</div></div><div class="stat-box"><div class="stat-number">${completed}/${total}</div><div class="stat-label">Completed</div></div></div><canvas id="categoryChart"></canvas><button id="exportBtn" class="secondary" style="margin-top:5px; padding:4px 10px; font-size:10px;">📎 Export CSV</button></div>
+        <div class="glass-card"><div class="section-title"><i class="fas fa-bullseye"></i> Study Schedule</div>${goalsHtml}<div class="note-box">⚡ Click on category header to expand/collapse</div></div>
+        <div class="glass-card"><div class="section-title"><i class="fas fa-stopwatch"></i> Timer</div><div class="action-bar"><div class="action-btn" onclick="manualReset()"><i class="fas fa-calendar-day"></i> Daily Reset</div><div class="action-btn float-btn" onclick="openFloatingWindow()"><i class="fas fa-external-link-alt"></i> Floating Timer</div></div><div style="margin-bottom:8px;">${statusHtml}</div><div style="margin-bottom:8px; font-size:0.75rem;">${selectedHtml}</div><div class="timer-display" id="countdownDisplay">${formatTime(getRemainingSeconds())}</div><div class="btn-group"><button id="startBtn" class="success"><i class="fas fa-play"></i> Start</button><button id="pauseBtn" class="secondary"><i class="fas fa-pause"></i> Pause & Save</button><button id="resetBtn" class="danger"><i class="fas fa-undo-alt"></i> Reset Session</button></div>${historyHtml}${rankingHtml}<p style="font-size:0.6rem; text-align:center; margin-top:10px;">⏰ Pause করলেই সময় সেভ হবে | Auto reset at midnight</p></div>`;
+        
+        document.getElementById('trackerContent').innerHTML = html;
+        
+        let ctx = document.getElementById('categoryChart')?.getContext('2d');
+        if (ctx) {
+            if (progressChart) progressChart.destroy();
+            progressChart = new Chart(ctx, { type: 'pie', data: { labels: Object.keys(subData).length ? Object.keys(subData) : ['No data'], datasets: [{ data: Object.keys(subData).length ? Object.values(subData) : [1], backgroundColor: ['#00f2ff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'] }] }, options: { responsive: true } });
         }
         
-        let html=`<div class="glass-card"><div class="section-title"><i class="fas fa-chart-line"></i> Statistics</div><div class="stats-row"><div class="stat-box"><div class="stat-number">${formatDuration(todaySec)}</div><div class="stat-label">Today's Total</div></div><div class="stat-box"><div class="stat-number">${goals.length}</div><div class="stat-label">Total Categories</div></div><div class="stat-box"><div class="stat-number">${completedSubs}/${totalSubs}</div><div class="stat-label">Completed Subtasks</div></div></div><canvas id="categoryChart"></canvas><div class="flex-between"><span style="font-size:10px;">📈 Category wise time</span><button id="exportBtn" class="secondary" style="padding:4px 10px;font-size:10px;">📎 Export CSV</button></div></div>
-        <div class="glass-card"><div class="flex-between"><div class="section-title"><i class="fas fa-bullseye"></i> My Study Schedule</div></div><div id="goalsList">${goalsHtml}</div><div class="note-box"><i class="fas fa-info-circle"></i> Edit subtasks in Settings page</div></div>
-        <div class="glass-card"><div class="section-title"><i class="fas fa-stopwatch"></i> Timer</div>${statusHtml}${selectedInfoHtml}<div class="timer-display" id="countdownDisplay">${selectedSubtask ? formatSec(getDisplayRemainingSeconds()) : formatSec(0)}</div><div class="btn-group"><button id="startBtn" class="success"><i class="fas fa-play"></i> Start</button><button id="pauseBtn" class="secondary"><i class="fas fa-pause"></i> Pause</button><button id="resetBtn" class="danger"><i class="fas fa-undo-alt"></i> Reset</button></div>${renderHistory()}${renderRanking()}<p style="font-size:0.65rem; text-align:center; margin-top:10px; color:#7aaaff;"><i class="fas fa-info-circle"></i> Timer runs in background | Auto reset at 11:59:59 PM daily | Manual reset resets today's timer only</p></div>`;
-        
-        document.getElementById('trackerContent').innerHTML=html;
-        
-        let ctx=document.getElementById('categoryChart')?.getContext('2d'); 
-        if(ctx){ 
-            if(progressChart) progressChart.destroy(); 
-            progressChart=new Chart(ctx,{type:'pie',data:{labels:Object.keys(subData).length?Object.keys(subData):['No data'],datasets:[{data:Object.keys(subData).length?Object.values(subData):[1],backgroundColor:['#00f2ff','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ff6b6b']}]},options:{responsive:true}}); 
-        }
-        
-        document.getElementById('startBtn')?.addEventListener('click',startCountdown); 
-        document.getElementById('pauseBtn')?.addEventListener('click',pauseCountdown); 
-        document.getElementById('resetBtn')?.addEventListener('click',resetCountdown);
-        document.getElementById('exportBtn')?.addEventListener('click',()=>{ 
-            let csv="Category,Subtask,Time(minutes),Date\n"; 
-            taskLogs.forEach(l=>{ csv+=`"${l.subtaskName}",${Math.floor(l.durationSec/60)},${new Date(l.timestamp).toLocaleString()}\n`; }); 
-            let a=document.createElement('a'); 
-            a.href=URL.createObjectURL(new Blob([csv])); 
-            a.download=`study_stats_${new Date().toISOString().slice(0,10)}.csv`; 
-            a.click(); 
-            showToast("CSV downloaded successfully"); 
+        document.getElementById('startBtn')?.addEventListener('click', startTimer);
+        document.getElementById('pauseBtn')?.addEventListener('click', pauseTimer);
+        document.getElementById('resetBtn')?.addEventListener('click', resetTimer);
+        document.getElementById('exportBtn')?.addEventListener('click', () => {
+            let csv = "Subtask,Time(min),Date\n" + taskLogs.map(l => `"${l.subtaskName}",${Math.floor(l.durationSec / 60)},${new Date(l.timestamp).toLocaleString()}`).join('\n');
+            let a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([csv]));
+            a.download = `tracker_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            showToast("CSV exported");
         });
     }
     
     // ==================== Global Functions ====================
-    window.toggleCategory = toggleCategory;
-    window.manualDailyReset = manualDailyReset;
-    
-    window.selectSubtask=function(goalId,subtaskId,subtaskName,targetMinutes){ 
-        if(timerState.isRunning) {
-            const elapsed = Math.floor((Date.now() - timerState.startTime) / 1000);
-            timerState.sessionElapsed = elapsed;
-            timerState.isRunning = false;
-            timerState.startTime = null;
-            if(timerState.sessionElapsed > 0 && timerState.currentSubtaskId) {
-                saveCurrentSessionLog();
-            }
-        } else if(timerState.sessionElapsed > 0 && timerState.currentSubtaskId) {
-            saveCurrentSessionLog();
-        }
-        
-        selectedSubtask = {goalId,subtaskId,subtaskName,targetMinutes};
-        timerState.currentGoalId = goalId;
-        timerState.currentSubtaskId = subtaskId;
-        timerState.currentSubtaskName = subtaskName;
-        timerState.sessionElapsed = 0;
-        timerState.savedElapsed = 0;
-        timerState.isRunning = false;
-        timerState.startTime = null;
-        
-        saveAll();
-        renderContent();
-        showToast(`"${subtaskName}" selected`); 
+    window.toggleCategory = function(id) {
+        let g = goals.find(g => g.id === id);
+        if (g) { g.expanded = !g.expanded; saveAll(); renderContent(); }
     };
     
-    document.querySelectorAll('.nav-item').forEach(btn=>{ 
-        btn.addEventListener('click',()=>{ 
-            let page=btn.getAttribute('data-page'); 
-            if(page&&page!=='tracker.html') window.location.href=page; 
-        }); 
+    window.selectSubtask = function(gId, sId, name, target) {
+        if (timerState.isRunning) {
+            let elapsed = Math.floor((Date.now() - timerState.startTime) / 1000);
+            timerState.currentSessionSeconds = elapsed;
+            timerState.isRunning = false;
+            timerState.startTime = null;
+            if (timerState.currentSessionSeconds > 0 && timerState.currentSubtaskId) {
+                saveCurrentSessionToLog();
+            }
+        } else if (timerState.currentSessionSeconds > 0 && timerState.currentSubtaskId) {
+            saveCurrentSessionToLog();
+        }
+        
+        selectedSubtask = { goalId: gId, subtaskId: sId, subtaskName: name, targetMinutes: target };
+        timerState.currentGoalId = gId;
+        timerState.currentSubtaskId = sId;
+        timerState.currentSubtaskName = name;
+        timerState.currentSessionSeconds = 0;
+        timerState.totalSavedSeconds = 0;
+        timerState.isRunning = false;
+        timerState.startTime = null;
+        saveAll();
+        renderContent();
+        updatePopupTimer();
+        showToast(`"${name}" selected`);
+    };
+    
+    window.manualReset = manualReset;
+    window.openFloatingWindow = openFloatingWindow;
+    
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+            let page = btn.getAttribute('data-page');
+            if (page && page !== 'tracker.html') window.location.href = page;
+        });
     });
     
-    // Start midnight reset scheduler
-    scheduleMidnightReset();
+    let uiInterval = setInterval(() => {
+        if (document.getElementById('countdownDisplay')) {
+            document.getElementById('countdownDisplay').innerText = formatTime(getRemainingSeconds());
+        }
+        updatePopupTimer();
+    }, 1000);
     
-    loadData(); 
+    scheduleReset();
+    loadData();
     renderContent();
-    startUILoop();
 </script>
 </body>
 </html>
