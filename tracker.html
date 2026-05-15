@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Pro Time Tracker | IRE</title>
+    <title>Time Tracker | IRE</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -54,31 +54,27 @@
         .subtask-name { flex: 1; font-weight: 500; }
         .progress-bar-bg { background: #1e2a3e; border-radius: 10px; height: 4px; width: 70px; }
         .progress-fill { background: var(--accent-cyan); height: 100%; width: 0%; border-radius: 10px; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .note-box { background: rgba(0,242,255,0.08); border-radius: 10px; padding: 8px; text-align: center; margin-top: 10px; font-size: 0.7rem; }
+        
         .running-status { background: rgba(16,185,129,0.2); border: 1px solid var(--accent-green); border-radius: 30px; padding: 4px 12px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px; }
         .paused-status { background: rgba(245,158,11,0.2); border: 1px solid var(--accent-orange); border-radius: 30px; padding: 4px 12px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px; }
-        
-        .history-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 10px 0; }
-        .history-day { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px 4px; text-align: center; }
-        .history-day.today { border: 1px solid var(--accent-cyan); background: rgba(0,242,255,0.1); }
-        .day-name { font-size: 0.6rem; color: var(--text-secondary); }
-        .day-hours { font-size: 0.7rem; font-weight: 600; color: var(--accent-cyan); }
-        .day-bar { height: 2px; background: #1e2a3e; margin-top: 4px; border-radius: 2px; }
-        .day-bar-fill { height: 100%; background: var(--accent-cyan); width: 0%; border-radius: 2px; }
-        
-        .ranking-section { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 10px; margin-top: 10px; }
-        .ranking-title { font-size: 0.75rem; font-weight: 600; color: var(--accent-orange); margin-bottom: 8px; }
-        .ranking-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 0.7rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .ranking-number { width: 22px; height: 22px; background: rgba(0,242,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--accent-cyan); }
-        .ranking-name { flex: 1; }
-        .ranking-hours { color: var(--accent-green); font-weight: 500; }
         
         .action-bar { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
         .action-btn { background: rgba(245,158,11,0.2); border: 1px solid var(--accent-orange); color: var(--accent-orange); padding: 4px 12px; border-radius: 30px; font-size: 0.65rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
         .action-btn:hover { background: var(--accent-orange); color: #1e293b; }
         .float-btn { background: rgba(0,242,255,0.2); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); }
         .float-btn:hover { background: var(--accent-cyan); color: #1e293b; }
+        .danger-btn { background: rgba(239,68,68,0.2); border: 1px solid var(--accent-red); color: var(--accent-red); }
+        .danger-btn:hover { background: var(--accent-red); color: white; }
+        
+        /* Daily Summary Styles */
+        .daily-details { margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 8px; }
+        .daily-subtask-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 0.7rem; border-bottom: 1px dashed rgba(255,255,255,0.05); }
+        .daily-subtask-name { flex: 1; }
+        .daily-subtask-time { color: var(--accent-green); font-weight: 500; }
+        .expand-icon { cursor: pointer; margin-left: 5px; font-size: 0.6rem; transition: transform 0.2s; }
+        .expand-icon.rotated { transform: rotate(180deg); }
+        .history-details { display: none; margin-top: 8px; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 6px; }
+        .history-details.show { display: block; }
         
         footer { background: rgba(3,8,20,0.85); border-radius: 1rem; padding: 0.8rem; text-align: center; margin-top: 1.5rem; font-size: 0.6rem; }
         @media (max-width: 600px) { .container { padding: 12px; } .timer-display { font-size: 1.5rem; } }
@@ -100,6 +96,7 @@
     // ==================== Data ====================
     let goals = [], taskLogs = [], selectedSubtask = null, progressChart = null;
     let popupWindow = null;
+    let expandedDays = {};
     
     let timerState = {
         isRunning: false,
@@ -131,14 +128,6 @@
         ];
     }
     
-    // ==================== Reset Functions ====================
-    function getSecondsUntilMidnight() {
-        const now = new Date();
-        const midnight = new Date(now);
-        midnight.setHours(24, 0, 0, 0);
-        return Math.floor((midnight - now) / 1000);
-    }
-    
     function saveCurrentSessionToLog() {
         if (timerState.currentSessionSeconds <= 0 || !timerState.currentSubtaskId) return false;
         
@@ -165,11 +154,14 @@
         return true;
     }
     
-    function performReset() {
+    // ==================== AUTO DAILY RESET (ডাটা সেভ হবে) ====================
+    function performAutoDailyReset() {
+        // বর্তমান সেশন সেভ
         if (timerState.currentSessionSeconds > 0 && timerState.currentSubtaskId) {
             saveCurrentSessionToLog();
         }
         
+        // টাইমার স্টেট রিসেট
         timerState.isRunning = false;
         timerState.startTime = null;
         timerState.currentSessionSeconds = 0;
@@ -179,18 +171,84 @@
         timerState.currentSubtaskName = "";
         selectedSubtask = null;
         
+        // নতুন দিনের জন্য আপডেট
         localStorage.setItem('last_reset_date', new Date().toDateString());
         saveAll();
         renderContent();
         updatePopupTimer();
-        showToast("🕛 Daily reset completed!");
+        showToast("🕛 Auto daily reset! Yesterday's data saved to history.");
     }
     
-    function manualReset() {
-        if (confirm("Reset today's timer? Your current session will be saved.")) {
+    // ==================== MANUAL RESET (ডাটা সেভ হবে না, শুধু রিসেট) ====================
+    function manualDailyReset() {
+        if (confirm("⚠️ Manual Reset will reset today's timer WITHOUT saving current progress.\n\nYour current session data will be LOST.\n\nAre you sure?")) {
+            // টাইমার স্টেট রিসেট (ডাটা সেভ না করে)
+            timerState.isRunning = false;
+            timerState.startTime = null;
+            timerState.currentSessionSeconds = 0;
+            timerState.totalSavedSeconds = 0;
+            timerState.currentGoalId = null;
+            timerState.currentSubtaskId = null;
+            timerState.currentSubtaskName = "";
+            selectedSubtask = null;
+            
+            saveAll();
+            renderContent();
+            updatePopupTimer();
+            showToast("⚠️ Manual reset completed! Current session data was NOT saved.");
+        }
+    }
+    
+    // ==================== Midnight Reset Scheduler ====================
+    function getSecondsUntilMidnight() {
+        const now = new Date();
+        const midnight = new Date(now);
+        midnight.setHours(24, 0, 0, 0);
+        return Math.floor((midnight - now) / 1000);
+    }
+    
+    function scheduleMidnightReset() {
+        const secondsUntilMidnight = getSecondsUntilMidnight();
+        setTimeout(() => { 
+            performAutoDailyReset(); 
+            scheduleMidnightReset(); 
+        }, secondsUntilMidnight * 1000);
+    }
+    
+    // ==================== Complete Data Delete ====================
+    function completeDataReset() {
+        if (confirm("⚠️ WARNING: This will DELETE ALL your study history!\n\nThis action cannot be undone. Are you sure?")) {
+            taskLogs = [];
+            goals = initDefaultData();
+            
+            timerState.isRunning = false;
+            timerState.startTime = null;
+            timerState.currentSessionSeconds = 0;
+            timerState.totalSavedSeconds = 0;
+            timerState.currentGoalId = null;
+            timerState.currentSubtaskId = null;
+            timerState.currentSubtaskName = "";
+            selectedSubtask = null;
+            
+            localStorage.removeItem('subtask_tracker');
+            localStorage.removeItem('subtask_logs');
+            localStorage.removeItem('selected_subtask');
+            localStorage.removeItem('timer_state');
+            localStorage.setItem('last_reset_date', new Date().toDateString());
+            
+            renderContent();
+            showToast("🗑️ All data deleted! Factory reset completed.");
+        }
+    }
+    
+    // ==================== Check Daily Reset on Load ====================
+    function checkAndResetDaily() {
+        const today = new Date().toDateString();
+        const lastReset = localStorage.getItem('last_reset_date');
+        
+        if (lastReset !== today) {
             if (timerState.currentSessionSeconds > 0 && timerState.currentSubtaskId) {
                 saveCurrentSessionToLog();
-                showToast(`✅ ${Math.floor(timerState.currentSessionSeconds / 60)} minutes saved`);
             }
             
             timerState.isRunning = false;
@@ -202,16 +260,9 @@
             timerState.currentSubtaskName = "";
             selectedSubtask = null;
             
-            localStorage.setItem('last_reset_date', new Date().toDateString());
-            saveAll();
+            localStorage.setItem('last_reset_date', today);
             renderContent();
-            updatePopupTimer();
-            showToast("✅ Manual reset completed!");
         }
-    }
-    
-    function scheduleReset() {
-        setTimeout(() => { performReset(); scheduleReset(); }, getSecondsUntilMidnight() * 1000);
     }
     
     // ==================== Core Functions ====================
@@ -235,22 +286,7 @@
             timerState.totalSavedSeconds = p.totalSavedSeconds || 0;
         }
         
-        const lastReset = localStorage.getItem('last_reset_date');
-        if (lastReset !== new Date().toDateString()) {
-            if (timerState.currentSessionSeconds > 0 && timerState.currentSubtaskId) {
-                saveCurrentSessionToLog();
-            }
-            timerState.isRunning = false;
-            timerState.startTime = null;
-            timerState.currentSessionSeconds = 0;
-            timerState.totalSavedSeconds = 0;
-            timerState.currentGoalId = null;
-            timerState.currentSubtaskId = null;
-            timerState.currentSubtaskName = "";
-            selectedSubtask = null;
-            localStorage.setItem('last_reset_date', new Date().toDateString());
-        }
-        
+        checkAndResetDaily();
         rebuildLogs();
         
         if (timerState.isRunning && timerState.startTime) {
@@ -311,17 +347,56 @@
         return taskLogs.filter(l => new Date(l.timestamp).toDateString() === today).reduce((s, l) => s + l.durationSec, 0);
     }
     
+    // ==================== Detailed Weekly History ====================
     function getWeeklyHistory() {
-        let days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        let shortDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         let result = [];
         let today = new Date();
+        
         for (let i = 6; i >= 0; i--) {
-            let d = new Date(today);
-            d.setDate(today.getDate() - i);
-            let total = taskLogs.filter(l => new Date(l.timestamp).toDateString() === d.toDateString()).reduce((s, l) => s + l.durationSec, 0);
-            result.push({ dayName: days[d.getDay()], hours: (total / 3600).toFixed(1), percent: Math.min(100, (total / 3600) / 6 * 100), isToday: i === 0 });
+            let date = new Date(today);
+            date.setDate(today.getDate() - i);
+            let dateStr = date.toDateString();
+            
+            let dayLogs = taskLogs.filter(l => new Date(l.timestamp).toDateString() === dateStr);
+            let totalSec = dayLogs.reduce((s, l) => s + l.durationSec, 0);
+            let hours = (totalSec / 3600).toFixed(1);
+            let percent = Math.min(100, (totalSec / 3600) / 6 * 100);
+            
+            // প্রতিদিনের সাবটাস্ক ভিত্তিক ডিটেইলস
+            let subtaskMap = new Map();
+            dayLogs.forEach(log => {
+                let name = log.subtaskName;
+                let sec = log.durationSec;
+                subtaskMap.set(name, (subtaskMap.get(name) || 0) + sec);
+            });
+            
+            let details = Array.from(subtaskMap.entries()).map(([name, sec]) => ({
+                name: name,
+                minutes: Math.floor(sec / 60),
+                hours: (sec / 3600).toFixed(1)
+            })).sort((a, b) => b.minutes - a.minutes);
+            
+            result.push({
+                fullDayName: days[date.getDay()],
+                shortDayName: shortDays[date.getDay()],
+                date: date,
+                dateStr: dateStr,
+                totalSec: totalSec,
+                hours: hours,
+                percent: percent,
+                isToday: i === 0,
+                details: details,
+                totalMinutes: Math.floor(totalSec / 60)
+            });
         }
         return result;
+    }
+    
+    function toggleDayDetails(dateStr) {
+        expandedDays[dateStr] = !expandedDays[dateStr];
+        renderContent();
     }
     
     function getRanking() {
@@ -488,18 +563,50 @@
             goalsHtml += `</div></div>`;
         });
         
+        // Detailed Weekly History
         let history = getWeeklyHistory();
-        let historyHtml = `<div class="history-grid">` + history.map(d => `<div class="history-day ${d.isToday ? 'today' : ''}"><div class="day-name">${d.dayName}</div><div class="day-hours">${d.hours}h</div><div class="day-bar"><div class="day-bar-fill" style="width:${d.percent}%"></div></div></div>`).join('') + `</div>`;
+        let historyHtml = `<div style="margin-top:15px;"><div class="section-title"><i class="fas fa-calendar-week"></i> Last 7 Days Summary</div>`;
+        
+        history.forEach(day => {
+            let isExpanded = expandedDays[day.dateStr] || false;
+            let totalHours = (day.totalSec / 3600).toFixed(1);
+            
+            historyHtml += `
+                <div class="glass-card" style="padding:0.8rem; margin-bottom:0.6rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleDayDetails('${day.dateStr}')">
+                        <div>
+                            <span style="font-weight:600;">${day.fullDayName}</span>
+                            ${day.isToday ? '<span style="background:var(--accent-cyan); color:#1e293b; padding:2px 8px; border-radius:20px; font-size:0.6rem; margin-left:8px;">Today</span>' : ''}
+                            <div style="font-size:0.65rem; color:var(--text-secondary);">${day.date.toLocaleDateString()}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-weight:600; color:var(--accent-cyan);">${totalHours} hours</div>
+                            <div style="font-size:0.6rem; color:var(--text-secondary);">${day.totalMinutes} minutes</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar-bg" style="width:100%; margin:8px 0;"><div class="progress-fill" style="width:${day.percent}%;"></div></div>
+                    <div class="history-details ${isExpanded ? 'show' : ''}">
+                        ${day.details.length > 0 ? day.details.map(d => `
+                            <div class="daily-subtask-item">
+                                <span class="daily-subtask-name">📖 ${d.name}</span>
+                                <span class="daily-subtask-time">${d.minutes} min (${d.hours}h)</span>
+                            </div>
+                        `).join('') : '<div style="text-align:center; padding:8px; color:var(--text-secondary);">No study recorded</div>'}
+                    </div>
+                </div>
+            `;
+        });
+        historyHtml += `</div>`;
         
         let ranking = getRanking();
-        let rankingHtml = `<div class="ranking-section"><div class="ranking-title">🏆 Top 5 Subjects</div>` + ranking.map((r, i) => `<div class="ranking-item"><span class="ranking-number">${i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : `${i + 1}.`))}</span><span class="ranking-name">${r.name}</span><span class="ranking-hours">${r.hours}h</span></div>`).join('') + `</div>`;
+        let rankingHtml = `<div class="ranking-section" style="margin-top:15px;"><div class="ranking-title">🏆 Top 5 Subjects (All Time)</div>` + ranking.map((r, i) => `<div class="ranking-item"><span class="ranking-number">${i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : `${i + 1}.`))}</span><span class="ranking-name">${r.name}</span><span class="ranking-hours">${r.hours}h</span><span style="font-size:0.6rem;">${r.percent}%</span></div>`).join('') + `</div>`;
         
         let selectedHtml = selectedSubtask ? `✅ Selected: ${selectedSubtask.subtaskName} | Remaining: ${formatTime(getRemainingSeconds())}` : `👆 Select a subtask`;
         let statusHtml = timerState.isRunning ? `<span class="running-status"><i class="fas fa-play-circle"></i> Running: ${formatTime(timerState.currentSessionSeconds)}</span>` : (timerState.currentSessionSeconds > 0 ? `<span class="paused-status"><i class="fas fa-pause-circle"></i> Paused: ${formatTime(timerState.currentSessionSeconds)} (not saved yet)</span>` : `<span class="paused-status"><i class="fas fa-stop-circle"></i> Ready</span>`);
         
         let html = `<div class="glass-card"><div class="section-title"><i class="fas fa-chart-line"></i> Statistics</div><div class="stats-row"><div class="stat-box"><div class="stat-number">${formatDuration(todaySec)}</div><div class="stat-label">Today</div></div><div class="stat-box"><div class="stat-number">${goals.length}</div><div class="stat-label">Categories</div></div><div class="stat-box"><div class="stat-number">${completed}/${total}</div><div class="stat-label">Completed</div></div></div><canvas id="categoryChart"></canvas><button id="exportBtn" class="secondary" style="margin-top:5px; padding:4px 10px; font-size:10px;">📎 Export CSV</button></div>
-        <div class="glass-card"><div class="section-title"><i class="fas fa-bullseye"></i> Study Schedule</div>${goalsHtml}<div class="note-box">⚡ Click on category header to expand/collapse</div></div>
-        <div class="glass-card"><div class="section-title"><i class="fas fa-stopwatch"></i> Timer</div><div class="action-bar"><div class="action-btn" onclick="manualReset()"><i class="fas fa-calendar-day"></i> Daily Reset</div><div class="action-btn float-btn" onclick="openFloatingWindow()"><i class="fas fa-external-link-alt"></i> Floating Timer</div></div><div style="margin-bottom:8px;">${statusHtml}</div><div style="margin-bottom:8px; font-size:0.75rem;">${selectedHtml}</div><div class="timer-display" id="countdownDisplay">${formatTime(getRemainingSeconds())}</div><div class="btn-group"><button id="startBtn" class="success"><i class="fas fa-play"></i> Start</button><button id="pauseBtn" class="secondary"><i class="fas fa-pause"></i> Pause & Save</button><button id="resetBtn" class="danger"><i class="fas fa-undo-alt"></i> Reset Session</button></div>${historyHtml}${rankingHtml}<p style="font-size:0.6rem; text-align:center; margin-top:10px;">⏰ Pause করলেই সময় সেভ হবে | Auto reset at midnight</p></div>`;
+        <div class="glass-card"><div class="section-title"><i class="fas fa-bullseye"></i> Study Schedule</div>${goalsHtml}<div class="note-box" style="background:rgba(0,242,255,0.08); border-radius:10px; padding:8px; text-align:center; margin-top:10px; font-size:0.7rem;">⚡ Click on category header to expand/collapse</div></div>
+        <div class="glass-card"><div class="section-title"><i class="fas fa-stopwatch"></i> Timer</div><div class="action-bar"><div class="action-btn" onclick="manualDailyReset()"><i class="fas fa-calendar-day"></i> Manual Reset (No Save)</div><div class="action-btn float-btn" onclick="openFloatingWindow()"><i class="fas fa-external-link-alt"></i> Floating Timer</div><div class="action-btn danger-btn" onclick="completeDataReset()"><i class="fas fa-trash-alt"></i> Delete All Data</div></div><div style="margin-bottom:8px;">${statusHtml}</div><div style="margin-bottom:8px; font-size:0.75rem;">${selectedHtml}</div><div class="timer-display" id="countdownDisplay">${formatTime(getRemainingSeconds())}</div><div class="btn-group"><button id="startBtn" class="success"><i class="fas fa-play"></i> Start</button><button id="pauseBtn" class="secondary"><i class="fas fa-pause"></i> Pause & Save</button><button id="resetBtn" class="danger"><i class="fas fa-undo-alt"></i> Reset Session</button></div>${historyHtml}${rankingHtml}<p style="font-size:0.6rem; text-align:center; margin-top:10px; color:var(--text-secondary);">⏰ Auto reset at midnight (data saved) | Manual reset (data lost)</p></div>`;
         
         document.getElementById('trackerContent').innerHTML = html;
         
@@ -513,7 +620,7 @@
         document.getElementById('pauseBtn')?.addEventListener('click', pauseTimer);
         document.getElementById('resetBtn')?.addEventListener('click', resetTimer);
         document.getElementById('exportBtn')?.addEventListener('click', () => {
-            let csv = "Subtask,Time(min),Date\n" + taskLogs.map(l => `"${l.subtaskName}",${Math.floor(l.durationSec / 60)},${new Date(l.timestamp).toLocaleString()}`).join('\n');
+            let csv = "Date,Subtask,Time(minutes)\n" + taskLogs.map(l => `${new Date(l.timestamp).toLocaleDateString()},"${l.subtaskName}",${Math.floor(l.durationSec / 60)}`).join('\n');
             let a = document.createElement('a');
             a.href = URL.createObjectURL(new Blob([csv]));
             a.download = `tracker_${new Date().toISOString().slice(0,10)}.csv`;
@@ -526,6 +633,11 @@
     window.toggleCategory = function(id) {
         let g = goals.find(g => g.id === id);
         if (g) { g.expanded = !g.expanded; saveAll(); renderContent(); }
+    };
+    
+    window.toggleDayDetails = function(dateStr) {
+        expandedDays[dateStr] = !expandedDays[dateStr];
+        renderContent();
     };
     
     window.selectSubtask = function(gId, sId, name, target) {
@@ -555,7 +667,8 @@
         showToast(`"${name}" selected`);
     };
     
-    window.manualReset = manualReset;
+    window.manualDailyReset = manualDailyReset;
+    window.completeDataReset = completeDataReset;
     window.openFloatingWindow = openFloatingWindow;
     
     document.querySelectorAll('.nav-item').forEach(btn => {
@@ -572,7 +685,7 @@
         updatePopupTimer();
     }, 1000);
     
-    scheduleReset();
+    scheduleMidnightReset();
     loadData();
     renderContent();
 </script>
