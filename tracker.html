@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Time Tracker | IRE</title>
+    <title>Time Tracker Pro | IRE</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -72,7 +72,6 @@
         .daily-subtask-name { flex: 1; }
         .daily-subtask-time { color: var(--accent-green); font-weight: 500; }
         
-        /* Ranking Section - Fixed Spacing */
         .ranking-section { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 12px; margin-top: 10px; }
         .ranking-title { font-size: 0.8rem; font-weight: 600; color: var(--accent-orange); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         .ranking-list { list-style: none; }
@@ -83,7 +82,7 @@
         .ranking-percent { width: 60px; text-align: right; font-size: 0.7rem; color: var(--text-secondary); }
         
         footer { background: rgba(3,8,20,0.85); border-radius: 1rem; padding: 0.8rem; text-align: center; margin-top: 1.5rem; font-size: 0.6rem; }
-        @media (max-width: 600px) { .container { padding: 12px; } .timer-display { font-size: 1.5rem; } .ranking-item { gap: 8px; } .ranking-name { font-size: 0.7rem; } .ranking-hours { font-size: 0.7rem; } .ranking-percent { width: 50px; font-size: 0.65rem; } }
+        @media (max-width: 600px) { .container { padding: 12px; } .timer-display { font-size: 1.5rem; } }
     </style>
 </head>
 <body>
@@ -320,7 +319,6 @@
         }));
     }
     
-    // বর্তমানে চলমান সেশনের সময় (রিয়েল টাইম)
     function getCurrentLiveSessionSeconds() {
         if (timerState.isRunning && timerState.startTime) {
             return Math.floor((Date.now() - timerState.startTime) / 1000);
@@ -497,13 +495,13 @@
         updatePopupTimer();
     }
     
-    // ==================== Floating Popup Window ====================
+    // ==================== Floating Popup Window with Controls ====================
     function openFloatingWindow() {
         if (popupWindow && !popupWindow.closed) {
             popupWindow.focus();
             return;
         }
-        let width = 320, height = 180;
+        let width = 350, height = 250;
         let left = (screen.width - width) / 2;
         let top = (screen.height - height) / 2;
         popupWindow = window.open('', 'TimerPopup', `width=${width},height=${height},left=${left},top=${top},resizable=yes`);
@@ -511,26 +509,87 @@
             popupWindow.document.write(`
                 <!DOCTYPE html>
                 <html>
-                <head><title>Floating Timer</title>
-                <style>
-                    body { margin: 0; padding: 20px; background: #1e293b; color: #00f2ff; font-family: monospace; text-align: center; }
-                    h3 { margin: 0 0 10px; font-size: 14px; color: #94a3b8; }
-                    .time { font-size: 48px; font-weight: bold; letter-spacing: 3px; }
-                    .subtask { font-size: 12px; color: #a0a0a0; margin-top: 10px; }
-                    button { margin-top: 15px; padding: 5px 15px; background: #ef4444; border: none; color: white; border-radius: 20px; cursor: pointer; }
-                </style>
+                <head>
+                    <title>Floating Timer</title>
+                    <style>
+                        body {
+                            margin: 0;
+                            padding: 20px;
+                            background: #1e293b;
+                            color: #00f2ff;
+                            font-family: monospace;
+                            text-align: center;
+                        }
+                        .time {
+                            font-size: 48px;
+                            font-weight: bold;
+                            letter-spacing: 3px;
+                            margin: 15px 0;
+                            background: #0f172a;
+                            padding: 15px;
+                            border-radius: 20px;
+                        }
+                        .subtask {
+                            font-size: 14px;
+                            color: #a0a0a0;
+                            margin: 10px 0;
+                            word-break: break-all;
+                        }
+                        .btn-group {
+                            display: flex;
+                            gap: 10px;
+                            justify-content: center;
+                            margin-top: 15px;
+                        }
+                        button {
+                            padding: 8px 20px;
+                            border: none;
+                            border-radius: 30px;
+                            cursor: pointer;
+                            font-weight: bold;
+                            font-size: 14px;
+                            transition: 0.2s;
+                        }
+                        button:hover {
+                            transform: translateY(-2px);
+                            opacity: 0.9;
+                        }
+                        .btn-pause { background: #f59e0b; color: #1e293b; }
+                        .btn-stop { background: #ef4444; color: white; }
+                        .btn-close { background: #64748b; color: white; }
+                        .status {
+                            font-size: 12px;
+                            margin-top: 10px;
+                            color: #10b981;
+                        }
+                    </style>
                 </head>
                 <body>
-                <h3>⏱️ Time Tracker</h3>
-                <div class="time" id="popupTime">00:00:00</div>
-                <div class="subtask" id="popupSubtask">No task selected</div>
-                <button onclick="window.close()">Close</button>
-                <script>
-                    window.updatePopup = function(time, subtask) {
-                        document.getElementById('popupTime').innerText = time;
-                        document.getElementById('popupSubtask').innerHTML = subtask;
-                    };
-                <\/script>
+                    <h3>⏱️ Floating Timer</h3>
+                    <div class="subtask" id="popupSubtask">No task selected</div>
+                    <div class="time" id="popupTime">00:00:00</div>
+                    <div class="status" id="popupStatus">Ready</div>
+                    <div class="btn-group">
+                        <button class="btn-pause" id="popupPauseBtn">⏸ Pause</button>
+                        <button class="btn-stop" id="popupStopBtn">⏹ Stop</button>
+                        <button class="btn-close" id="popupCloseBtn">✖ Close</button>
+                    </div>
+                    <script>
+                        window.updatePopup = function(time, subtask, status) {
+                            document.getElementById('popupTime').innerText = time;
+                            document.getElementById('popupSubtask').innerHTML = subtask;
+                            document.getElementById('popupStatus').innerHTML = status;
+                        };
+                        document.getElementById('popupPauseBtn').onclick = function() {
+                            window.opener.pauseTimerFromPopup();
+                        };
+                        document.getElementById('popupStopBtn').onclick = function() {
+                            window.opener.resetTimerFromPopup();
+                        };
+                        document.getElementById('popupCloseBtn').onclick = function() {
+                            window.close();
+                        };
+                    <\/script>
                 </body>
                 </html>
             `);
@@ -546,9 +605,18 @@
             let remaining = getRemainingSeconds();
             let subtaskName = selectedSubtask ? selectedSubtask.subtaskName : "No task";
             let status = timerState.isRunning ? "▶ Running" : (timerState.currentSessionSeconds > 0 ? "⏸ Paused" : "⏹ Stopped");
-            popupWindow.updatePopup(formatTime(remaining), `${subtaskName} | ${status}`);
+            popupWindow.updatePopup(formatTime(remaining), subtaskName, status);
         }
     }
+    
+    // পপআপ থেকে কন্ট্রোল করার জন্য গ্লোবাল ফাংশন
+    window.pauseTimerFromPopup = function() {
+        pauseTimer();
+    };
+    
+    window.resetTimerFromPopup = function() {
+        resetTimer();
+    };
     
     // ==================== UI Render ====================
     function renderContent() {
@@ -608,7 +676,6 @@
         });
         historyHtml += `</div>`;
         
-        // Ranking with proper spacing
         let ranking = getRanking();
         let rankingHtml = `<div class="ranking-section"><div class="ranking-title"><i class="fas fa-trophy"></i> 🏆 Top 5 Subjects (All Time)</div><div class="ranking-list">`;
         ranking.forEach((r, i) => {
@@ -695,6 +762,8 @@
     window.manualDailyReset = manualDailyReset;
     window.completeDataReset = completeDataReset;
     window.openFloatingWindow = openFloatingWindow;
+    window.pauseTimerFromPopup = pauseTimer;
+    window.resetTimerFromPopup = resetTimer;
     
     document.querySelectorAll('.nav-item').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -703,7 +772,7 @@
         });
     });
     
-    // লাইভ আপডেট
+    // লাইভ আপডেটের জন্য ইন্টারভাল
     let uiInterval = setInterval(() => {
         let remaining = getRemainingSeconds();
         let displayElem = document.getElementById('countdownDisplay');
